@@ -121,3 +121,9 @@ TEMPLATE_DIRS = (
 )
 
 SITE_ID = 1
+
+LOGIN_URL = 'auth_login'
+
+LOGOUT_URL = 'auth_logout'
+
+LOGIN_REDIRECT_URL = 'home'
