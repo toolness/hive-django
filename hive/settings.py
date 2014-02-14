@@ -15,7 +15,8 @@ import urlparse
 import dj_database_url
 
 from .settings_utils import set_default_env, set_default_db, \
-                            parse_email_backend_url
+                            parse_email_backend_url, \
+                            parse_secure_proxy_ssl_header
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 path = lambda *parts: os.path.join(BASE_DIR, *parts)
@@ -30,6 +31,11 @@ if os.path.basename(sys.argv[0]) == 'manage.py':
         PORT='8000',
         # TODO: Set ORIGIN to include any passed-in IP address.
         EMAIL_BACKEND_URL='console:',
+    )
+
+if 'SECURE_PROXY_SSL_HEADER' in os.environ:
+    SECURE_PROXY_SSL_HEADER = parse_secure_proxy_ssl_header(
+        os.environ['SECURE_PROXY_SSL_HEADER']
     )
 
 SECRET_KEY = os.environ['SECRET_KEY']
