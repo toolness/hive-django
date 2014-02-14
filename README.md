@@ -35,8 +35,8 @@ boolean value, if the variable exists with *any* value (even the empty
 string), the boolean is true; otherwise, it's false.
 
 **Note:** When running `manage.py`, the following environment
-variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`. Also,
-`DEBUG` is enabled.
+variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
+`EMAIL_BACKEND_URL`. Also, `DEBUG` is enabled.
 
 * `SECRET_KEY` is a large random value.
 * `DEBUG` is a boolean value that indicates whether debugging is enabled
@@ -50,6 +50,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`. Also,
   value is the name of another (all-caps) environment variable, e.g.
   `HEROKU_POSTGRESQL_AMBER_URL`, that variable's value will be used
   as the database URL.
+* `EMAIL_BACKEND_URL` is a URL representing the email backend to use.
+  Examples include `console:`, `smtp://hostname:port`, and
+  `smtp+tls://user:pass@hostname:port`.
 
 <!-- Links -->
 

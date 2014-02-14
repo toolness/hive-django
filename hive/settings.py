@@ -14,7 +14,8 @@ import sys
 import urlparse
 import dj_database_url
 
-from .settings_utils import set_default_env, set_default_db
+from .settings_utils import set_default_env, set_default_db, \
+                            parse_email_backend_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 path = lambda *parts: os.path.join(BASE_DIR, *parts)
@@ -28,6 +29,7 @@ if os.path.basename(sys.argv[0]) == 'manage.py':
         # TODO: Support any alternative port passed-in from the command-line.
         PORT='8000',
         # TODO: Set ORIGIN to include any passed-in IP address.
+        EMAIL_BACKEND_URL='console:',
     )
 
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -37,6 +39,8 @@ PORT = int(os.environ['PORT'])
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
 set_default_db('sqlite:///%s' % path('db.sqlite3'))
+
+globals().update(parse_email_backend_url(os.environ['EMAIL_BACKEND_URL']))
 
 ORIGIN = os.environ['ORIGIN']
 
@@ -111,8 +115,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = path('staticfiles')
 
 ACCOUNT_ACTIVATION_DAYS = 7
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 TEMPLATE_DIRS = (
     path('hive', 'templates'),
