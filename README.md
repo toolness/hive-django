@@ -46,7 +46,10 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`. Also,
   to users. If `DEBUG` is enabled, this defaults to
   `http://localhost:PORT`. Otherwise, it must be defined.
 * `DATABASE_URL` is the URL for the database. Defaults to a `sqlite://`
-  URL pointing to `db.sqlite3` at the root of the repository.
+  URL pointing to `db.sqlite3` at the root of the repository. If this
+  value is the name of another (all-caps) environment variable, e.g.
+  `HEROKU_POSTGRESQL_AMBER_URL`, that variable's value will be used
+  as the database URL.
 
 <!-- Links -->
 

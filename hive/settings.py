@@ -21,6 +21,14 @@ def set_default_env(**kwargs):
         if not key in os.environ:
             os.environ[key] = kwargs[key]
 
+def set_default_db(default):
+    set_default_env(DATABASE_URL=default)
+    url = os.environ['DATABASE_URL']
+    if url.upper() == url:
+        # The environment variable is naming another environment variable,
+        # whose value we should retrieve.
+        os.environ['DATABASE_URL'] = os.environ[url]
+
 if sys.argv[:1] == ['manage.py']:
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -38,9 +46,7 @@ PORT = int(os.environ['PORT'])
 
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
-set_default_env(
-    DATABASE_URL='sqlite:///%s' % os.path.join(BASE_DIR, 'db.sqlite3')
-)
+set_default_db('sqlite:///%s' % os.path.join(BASE_DIR, 'db.sqlite3'))
 
 ORIGIN = os.environ['ORIGIN']
 
