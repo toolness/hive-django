@@ -17,9 +17,7 @@ import dj_database_url
 from .settings_utils import set_default_env, set_default_db
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-def path(*parts):
-    return os.path.join(BASE_DIR, *parts)
+path = lambda *parts: os.path.join(BASE_DIR, *parts)
 
 if os.path.basename(sys.argv[0]) == 'manage.py':
     # Quick-start development settings - unsuitable for production
