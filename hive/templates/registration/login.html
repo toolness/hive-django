@@ -11,4 +11,11 @@ Please login.
   <input type="hidden" name="next" value="{{ next }}">
   <input type="submit" value="Login">
 </form>
+
+<p>If you don't have an account, you can
+  <a href="{% url 'registration_register' %}">register</a> a new one.</p>
+
+<p>If you don't remember your password, you can
+  <a href="{% url 'password_reset' %}">reset</a> it.</p>
+
 {% endblock %}
