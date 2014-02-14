@@ -16,6 +16,9 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+def path(*parts):
+    return os.path.join(BASE_DIR, *parts)
+
 def set_default_env(**kwargs):
     for key in kwargs:
         if not key in os.environ:
@@ -46,7 +49,7 @@ PORT = int(os.environ['PORT'])
 
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
-set_default_db('sqlite:///%s' % os.path.join(BASE_DIR, 'db.sqlite3'))
+set_default_db('sqlite:///%s' % path('db.sqlite3'))
 
 ORIGIN = os.environ['ORIGIN']
 
@@ -81,10 +84,7 @@ WSGI_APPLICATION = 'hive.wsgi.application'
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config()
 }
 
 # Internationalization
@@ -106,4 +106,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = path('staticfiles')
