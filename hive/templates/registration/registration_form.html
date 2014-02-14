@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}New User Registration{% endblock %}
+
+{% block content %}
 Fill out the form below to sign up.
 
 <form method="post">
@@ -5,3 +10,4 @@ Fill out the form below to sign up.
   {{ form.as_p }}
   <input type="submit">
 </form>
+{% endblock %}
