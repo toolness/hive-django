@@ -10,22 +10,41 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+import urlparse
+import dj_database_url
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+def set_default_env(**kwargs):
+    for key in kwargs:
+        if not key in os.environ:
+            os.environ[key] = kwargs[key]
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+if sys.argv[:1] == ['manage.py']:
+    # Quick-start development settings - unsuitable for production
+    # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+    set_default_env(
+        SECRET_KEY='development mode',
+        DEBUG='indeed',
+        # TODO: Support any alternative port passed-in from the command-line.
+        PORT='8000',
+        # TODO: Set ORIGIN to include any passed-in IP address.
+    )
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0lom0^6v2(z_6=8dre*3p98xekcu5*+%w5sd+vxwd352mpbj&r'
+SECRET_KEY = os.environ['SECRET_KEY']
+DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
+PORT = int(os.environ['PORT'])
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
-TEMPLATE_DEBUG = True
+set_default_env(
+    DATABASE_URL='sqlite:///%s' % os.path.join(BASE_DIR, 'db.sqlite3')
+)
 
-ALLOWED_HOSTS = []
+ORIGIN = os.environ['ORIGIN']
 
+ALLOWED_HOSTS = [urlparse.urlparse(ORIGIN).hostname]
 
 # Application definition
 
@@ -80,3 +99,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = 'staticfiles'
