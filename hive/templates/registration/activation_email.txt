@@ -1,0 +1,3 @@
+Hello! To activate your {{ site.name }} account, go to:
+
+  {{ ORIGIN }}{% url 'registration_activate' activation_key %}

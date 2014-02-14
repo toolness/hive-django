@@ -1,0 +1,1 @@
+Activate your new {{ site.name }} account
