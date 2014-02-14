@@ -14,23 +14,12 @@ import sys
 import urlparse
 import dj_database_url
 
+from .settings_utils import set_default_env, set_default_db
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 def path(*parts):
     return os.path.join(BASE_DIR, *parts)
-
-def set_default_env(**kwargs):
-    for key in kwargs:
-        if not key in os.environ:
-            os.environ[key] = kwargs[key]
-
-def set_default_db(default):
-    set_default_env(DATABASE_URL=default)
-    url = os.environ['DATABASE_URL']
-    if url.upper() == url:
-        # The environment variable is naming another environment variable,
-        # whose value we should retrieve.
-        os.environ['DATABASE_URL'] = os.environ[url]
 
 if os.path.basename(sys.argv[0]) == 'manage.py':
     # Quick-start development settings - unsuitable for production
