@@ -120,6 +120,10 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = path('staticfiles')
 
+STATICFILES_DIRS = (
+    path('hive', 'static'),
+)
+
 ACCOUNT_ACTIVATION_DAYS = 7
 
 TEMPLATE_DIRS = (
