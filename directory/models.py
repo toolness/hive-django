@@ -2,11 +2,13 @@ import re
 from django.db import models
 from django.core.exceptions import ValidationError
 
+MAX_TWITTER_NAME_LEN = 15
+
 def validate_twitter_name(value):
     base_err = '"%s" is not a valid Twitter name.' % value
-    if len(value) > 15:
+    if len(value) > MAX_TWITTER_NAME_LEN:
         raise ValidationError(base_err + ' A username cannot be longer than '
-                              '15 characters.')
+                              '%d characters.' % MAX_TWITTER_NAME_LEN)
     if not re.match('^[A-Za-z_]+$', value):
         raise ValidationError(
             base_err +
@@ -26,7 +28,7 @@ class Organization(models.Model):
         help_text="The full address of the organization's main office."
     )
     twitter_name = models.CharField(
-        max_length=15,
+        max_length=MAX_TWITTER_NAME_LEN,
         help_text="The twitter account for the organization.",
         blank=True,
         validators=[validate_twitter_name]
