@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 MAX_TWITTER_NAME_LEN = 15
 
 def validate_twitter_name(value):
-    base_err = '"%s" is not a valid Twitter name.' % value
+    base_err = '"%s" is not a valid Twitter username.' % value
     if len(value) > MAX_TWITTER_NAME_LEN:
         raise ValidationError(base_err + ' A username cannot be longer than '
                               '%d characters.' % MAX_TWITTER_NAME_LEN)
