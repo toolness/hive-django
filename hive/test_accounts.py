@@ -1,3 +1,8 @@
+import re
+from mock import patch
+from django.contrib.auth.models import User
+from django.conf import settings
+from django.core import mail
 from django.test import TestCase
 from django.test.client import Client
 
@@ -33,3 +38,28 @@ class AccountTests(TestCase):
     def test_registration_paths(self):
         self.assertPathExists('/accounts/register/')
         self.assertPathExists('/accounts/register/complete/')
+
+    @patch.dict(settings.__dict__, {'ORIGIN': 'http://me.org'})
+    def test_registration_works(self):
+        c = Client()
+        response = c.post('/accounts/register/', {
+            'username': 'foo',
+            'email': 'foo@example.org',
+            'password1': 'lol',
+            'password2': 'lol',
+        })
+        self.assertRedirects(response, '/accounts/register/complete/')
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+        self.assertEqual(msg.to, ['foo@example.org'])
+        self.assertRegexpMatches(msg.body,
+                                 r'http://me\.org/accounts/activate/')
+        key = re.search(r'/activate/([0-9a-f]+)/', msg.body).group(1)
+
+        self.assertFalse(User.objects.get(username='foo').is_active)
+
+        response = c.get('/accounts/activate/%s/' % key)
+        self.assertRedirects(response, '/accounts/activate/complete/')
+
+        self.assertTrue(User.objects.get(username='foo').is_active)
