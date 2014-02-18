@@ -1,6 +1,7 @@
 import re
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 MAX_TWITTER_NAME_LEN = 15
 
@@ -17,6 +18,10 @@ def validate_twitter_name(value):
         )
 
 class Organization(models.Model):
+    '''
+    Represents a Hive member organization.
+    '''
+
     name = models.CharField(
         help_text="The full name of the organization.",
         max_length=100
@@ -44,3 +49,16 @@ class Organization(models.Model):
 
     # TODO: How to represent different content channels? e.g.,
     # youtube, blog, flickr, instagram, etc?
+
+class OrganizationMembership(models.Model):
+    '''
+    Represents a person who is a member of an organization.
+    '''
+
+    user = models.OneToOneField(User)
+    organization = models.ForeignKey(Organization)
+    is_listed = models.BooleanField(
+        default=True,
+        help_text="Whether the person is listed under their organization in "
+                  "the Hive member directory."
+    )
