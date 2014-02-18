@@ -85,6 +85,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "hive.context_processors.origin",
+    "hive.context_processors.site",
 )
 
 ROOT_URLCONF = 'hive.urls'

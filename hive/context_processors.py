@@ -1,8 +1,12 @@
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.contrib.sites.models import Site
 
 def origin(request=None):
     return {'ORIGIN': settings.ORIGIN}
+
+def site(request=None):
+    return {'site': Site.objects.get_current()}
 
 def monkeypatch_registration_email_contexts():
     import registration.models
