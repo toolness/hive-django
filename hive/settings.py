@@ -127,7 +127,7 @@ STATICFILES_DIRS = (
     path('hive', 'static'),
 )
 
-ACCOUNT_ACTIVATION_DAYS = 7
+ACCOUNT_ACTIVATION_DAYS = 3
 
 TEMPLATE_DIRS = (
     path('hive', 'templates'),
