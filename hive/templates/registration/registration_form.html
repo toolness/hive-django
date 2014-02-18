@@ -1,13 +1,18 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}New User Registration{% endblock %}
 
 {% block content %}
-Fill out the form below to sign up.
+<div class="row">
+  <div class="col-md-4 col-md-offset-4">
+    <p>Fill out the form below to sign up.</p>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <input type="submit" class="btn btn-primary" value="Sign Up">
+    </form>
+  </div>
+</div>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit">
-</form>
 {% endblock %}
