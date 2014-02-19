@@ -5,6 +5,19 @@ from django.core.exceptions import ValidationError
 from .models import Organization, validate_twitter_name
 
 class DirectoryTests(TestCase):
+    def test_org_has_memberships(self):
+        org = Organization(name='foo', website='http://foo.org', 
+                           address='123 Main St.',
+                           hive_member_since='1970-01-01',
+                           mission='awesome')
+        org.save()
+        self.assertEqual(org.memberships.count(), 0)
+        user = User(username='foo')
+        user.save()
+        user.membership.organization = org
+        user.membership.save()
+        self.assertEqual(org.memberships.count(), 1)
+
     def test_user_membership_is_created_on_save(self):
         user = User(username='foo')
         user.save()

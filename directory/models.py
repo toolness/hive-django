@@ -58,7 +58,8 @@ class Membership(models.Model):
     '''
 
     user = models.OneToOneField(User)
-    organization = models.ForeignKey(Organization, blank=True, null=True)
+    organization = models.ForeignKey(Organization, blank=True, null=True,
+                                     related_name='memberships')
     is_listed = models.BooleanField(
         default=True,
         help_text="Whether the person is listed under their organization in "
