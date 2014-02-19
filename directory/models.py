@@ -60,6 +60,11 @@ class Membership(models.Model):
     user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True,
                                      related_name='memberships')
+    title = models.CharField(
+        help_text="The person's title at their organization.",
+        max_length=100,
+        blank=True
+    )
     is_listed = models.BooleanField(
         default=True,
         help_text="Whether the person is listed under their organization in "
