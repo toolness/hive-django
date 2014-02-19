@@ -52,12 +52,12 @@ class Organization(models.Model):
     # TODO: How to represent different content channels? e.g.,
     # youtube, blog, flickr, instagram, etc?
 
-class OrganizationMembership(models.Model):
+class Membership(models.Model):
     '''
     Represents a person who is a member of an organization.
     '''
 
-    user = models.OneToOneField(User, related_name='membership')
+    user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True)
     is_listed = models.BooleanField(
         default=True,
@@ -68,6 +68,6 @@ class OrganizationMembership(models.Model):
 @receiver(post_save, sender=User)
 def create_membership_for_user(sender, raw, instance, **kwargs):
     if raw: return
-    if not len(OrganizationMembership.objects.filter(user=instance)):
-        membership = OrganizationMembership(user=instance)
+    if not len(Membership.objects.filter(user=instance)):
+        membership = Membership(user=instance)
         membership.save()
