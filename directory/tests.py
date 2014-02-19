@@ -3,7 +3,8 @@ from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import Organization, validate_twitter_name
+from .models import Organization
+from .twitter import validate_twitter_name
 
 def create_user(username, password=None, organization=None, **kwargs):
     user = User(username=username, **kwargs)

@@ -1,23 +1,9 @@
-import re
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-MAX_TWITTER_NAME_LEN = 15
-
-def validate_twitter_name(value):
-    base_err = '"%s" is not a valid Twitter username.' % value
-    if len(value) > MAX_TWITTER_NAME_LEN:
-        raise ValidationError(base_err + ' A username cannot be longer than '
-                              '%d characters.' % MAX_TWITTER_NAME_LEN)
-    if not re.match('^[A-Za-z_]+$', value):
-        raise ValidationError(
-            base_err +
-            ' A username can only contain alphanumeric characters (letters '
-            'A-Z, numbers 0-9) with the exception of underscores.'
-        )
+from .twitter import TwitterNameField
 
 class Organization(models.Model):
     '''
@@ -34,11 +20,9 @@ class Organization(models.Model):
     address = models.TextField(
         help_text="The full address of the organization's main office."
     )
-    twitter_name = models.CharField(
-        max_length=MAX_TWITTER_NAME_LEN,
+    twitter_name = TwitterNameField(
         help_text="The twitter account for the organization.",
         blank=True,
-        validators=[validate_twitter_name]
     )
     hive_member_since = models.DateField(
         help_text="The date the organization joined the Hive network."
