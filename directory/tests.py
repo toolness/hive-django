@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -15,6 +16,11 @@ class OrganizationTests(TestCase):
         user.membership.organization = org
         user.membership.save()
         self.assertEqual(org.memberships.count(), 1)
+
+    def test_directory_listing_works(self):
+        c = Client()
+        response = c.get('/')
+        self.assertContains(response, 'Radio Rookies')
 
 class MembershipTests(TestCase):
     def test_user_membership_is_created_on_save(self):
