@@ -12,8 +12,7 @@
     <ul class="list-unstyled">
     {% for membership in org.membership_directory %}
       <li>
-        <address><strong>{{ membership.user.first_name }}
-          {{ membership.user.last_name }}</strong><br>
+        <address><strong>{{ membership.user.get_full_name }}</strong><br>
           {% if membership.title %}{{ membership.title }}<br>{% endif %}
         <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
         </address>
