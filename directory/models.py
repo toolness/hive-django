@@ -47,6 +47,9 @@ class Organization(models.Model):
         help_text="The organization's mission and philosophy."
     )
 
+    def __unicode__(self):
+        return self.name
+
     # TODO: How to represent youth audience?
 
     # TODO: How to represent different content channels? e.g.,
