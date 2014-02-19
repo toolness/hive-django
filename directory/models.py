@@ -2,6 +2,8 @@ import re
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 MAX_TWITTER_NAME_LEN = 15
 
@@ -55,10 +57,17 @@ class OrganizationMembership(models.Model):
     Represents a person who is a member of an organization.
     '''
 
-    user = models.OneToOneField(User)
-    organization = models.ForeignKey(Organization)
+    user = models.OneToOneField(User, related_name='membership')
+    organization = models.ForeignKey(Organization, blank=True, null=True)
     is_listed = models.BooleanField(
         default=True,
         help_text="Whether the person is listed under their organization in "
                   "the Hive member directory."
     )
+
+@receiver(post_save, sender=User)
+def create_membership_for_user(sender, raw, instance, **kwargs):
+    if raw: return
+    if not len(OrganizationMembership.objects.filter(user=instance)):
+        membership = OrganizationMembership(user=instance)
+        membership.save()
