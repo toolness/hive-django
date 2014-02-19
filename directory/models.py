@@ -50,6 +50,9 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
+    def membership_directory(self):
+        return self.memberships.filter(is_listed=True)
+
     # TODO: How to represent youth audience?
 
     # TODO: How to represent different content channels? e.g.,

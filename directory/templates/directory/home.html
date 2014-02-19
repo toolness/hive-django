@@ -8,5 +8,18 @@
   <p><a href="{{ org.website }}">{{ org.website }}</a></p>
   <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
   <p>{{ org.mission }}</p>
+  {% if show_privileged_info %}
+    <ul class="list-unstyled">
+    {% for membership in org.membership_directory %}
+      <li>
+        <address><strong>{{ membership.user.first_name }}
+          {{ membership.user.last_name }}</strong><br>
+          {% if membership.title %}{{ membership.title }}<br>{% endif %}
+        <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
+        </address>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
 {% endfor %}
 {% endblock %}
