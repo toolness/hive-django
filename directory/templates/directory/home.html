@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load directory %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
 {% for org in orgs %}
   <h2>{{ org.name }}</h2>
-  <p><a href="{{ org.website }}">{{ org.website }}</a></p>
+  <p><a href="{{ org.website }}">{{ org.website|domainname }}</a></p>
   <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
   <p>{{ org.mission }}</p>
   {% if show_privileged_info %}

@@ -3,6 +3,7 @@ from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+from .templatetags.directory import get_domainname
 from .models import Organization
 from .twitter import validate_twitter_name
 
@@ -62,3 +63,7 @@ class TwitterNameTests(TestCase):
         validate_twitter_name('toolness')
         validate_twitter_name('t')
         validate_twitter_name('super_burger')
+
+class TemplateTagsAndFiltersTests(TestCase):
+    def test_get_domainname(self):
+        self.assertEqual(get_domainname('http://foo.org:34'), 'foo.org')
