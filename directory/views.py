@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
 from django.forms import ModelForm
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -16,6 +17,12 @@ class UserProfileForm(ModelForm):
         model = User
         fields = ['username', 'first_name', 'last_name']
 
+class OrganizationForm(ModelForm):
+    class Meta:
+        model = Organization
+        fields = ['name', 'website', 'address', 'twitter_name',
+                  'hive_member_since', 'mission']
+
 def validate_and_save_forms(*forms):
     forms = [form for form in forms if form is not None]
     for form in forms:
@@ -23,14 +30,39 @@ def validate_and_save_forms(*forms):
     for form in forms: form.save()
     return True
 
-def is_user_hive_member(user):
-    return user.is_authenticated() and user.is_active and \
-           user.membership.organization
+def is_user_hive_member(user, organization=None):
+    if not (user.is_authenticated() and user.is_active and \
+            user.membership.organization):
+        return False
+    if organization is None: return True
+    return user.membership.organization == organization
 
 def home(request):
     return render(request, 'directory/home.html', {
         'orgs': Organization.objects.all(),
         'show_privileged_info': is_user_hive_member(request.user)
+    })
+
+@login_required
+def organization_profile(request, organization_id):
+    org = get_object_or_404(Organization, pk=organization_id)
+    if not (request.user.is_superuser or
+            is_user_hive_member(request.user, org)):
+        return HttpResponseForbidden('Permission denied.')
+    if request.method == 'POST':
+        form = OrganizationForm(request.POST, instance=org)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                             'The organization profile has been updated.')
+            return redirect('organization_profile', org.id)
+        else:
+            messages.error(request, 'Your submission had some problems.')
+    else:
+        form = OrganizationForm(instance=org)
+    return render(request, 'directory/organization_profile.html', {
+        'org': org,
+        'form': form
     })
 
 @login_required
@@ -50,9 +82,9 @@ def user_profile(request):
     if request.method == 'POST':
         if validate_and_save_forms(user_profile_form, membership_form):
             messages.success(request, 'Your profile has been updated.')
+            return redirect('user_profile')
         else:
             messages.error(request, 'Your submission had some problems.')
-        return redirect('user_profile')
 
     return render(request, 'directory/user_profile.html', {
         'membership_form': membership_form,

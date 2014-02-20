@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Organization{% endblock %}
+
+{% block content %}
+<form method="post" action={% url 'organization_profile' org.id %}>
+{% csrf_token %}
+{{ form|crispy }}
+<button type="submit" class="btn btn-primary">Update Profile</button>
+</form>
+{% endblock %}

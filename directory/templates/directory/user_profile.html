@@ -10,6 +10,8 @@
 {{ user_profile_form|crispy }}
 {% if membership_form %}
   <h2>Membership Information</h3>
+  <p>The following information pertains to your membership in 
+    <a href="{% url 'organization_profile' user.membership.organization.id %}">{{ user.membership.organization.name }}</a>.</p>
   {{ membership_form|crispy }}
 {% endif %}
 <button type="submit" class="btn btn-primary">Update Profile</button>

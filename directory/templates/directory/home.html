@@ -9,6 +9,9 @@
   <p><a href="{{ org.website }}">{{ org.website|domainname }}</a></p>
   <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
   <p>{{ org.mission }}</p>
+  {% if user.is_superuser or user.membership.organization == org %}
+    <a href="{% url 'organization_profile' org.id %}" class="btn btn-sm btn-default">Edit</a>
+  {% endif %}
   {% if show_privileged_info %}
     <ul class="list-unstyled">
     {% for membership in org.membership_directory %}
