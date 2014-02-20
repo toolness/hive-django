@@ -18,7 +18,7 @@ def create_user(username, password=None, organization=None, **kwargs):
     return user
 
 class OrganizationTests(TestCase):
-    fixtures = ['radio-rookies.json']
+    fixtures = ['wnyc.json']
 
     def test_org_has_memberships(self):
         org = Organization.objects.get(pk=1)
