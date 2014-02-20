@@ -17,6 +17,34 @@ def create_user(username, password=None, organization=None, **kwargs):
         user.membership.save()
     return user
 
+class AccountProfileTests(TestCase):
+    fixtures = ['wnyc.json']
+
+    def setUp(self):
+        super(AccountProfileTests, self).setUp()
+        self.wnyc = Organization.objects.get(pk=1)
+        create_user('non_member', password='lol')
+        create_user('wnyc_member', email='member@wnyc.org', password='lol',
+                    organization=self.wnyc)
+
+    def test_edit_org_redirects_anonymous_users_to_login(self):
+        c = Client()
+        response = c.get('/accounts/profile/', follow=True)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/accounts/profile/')
+
+    def test_profile_hides_membership_form_for_nonmembers(self):
+        c = Client()
+        c.login(username='wnyc_member', password='lol')
+        response = c.get('/accounts/profile/')
+        self.assertContains(response, 'Membership Information')
+
+    def test_profile_shows_membership_form_for_members(self):
+        c = Client()
+        c.login(username='non_member', password='lol')
+        response = c.get('/accounts/profile/')
+        self.assertNotContains(response, 'Membership Information')
+
 class OrganizationProfileTests(TestCase):
     fixtures = ['wnyc.json', 'hivenyc.json']
 
