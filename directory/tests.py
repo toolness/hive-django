@@ -20,11 +20,14 @@ def create_user(username, password=None, organization=None, **kwargs):
 class OrganizationTests(TestCase):
     fixtures = ['wnyc.json']
 
+    def setUp(self):
+        super(OrganizationTests, self).setUp()
+        self.wnyc = Organization.objects.get(pk=1)
+
     def test_org_has_memberships(self):
-        org = Organization.objects.get(pk=1)
-        self.assertEqual(org.memberships.count(), 0)
-        create_user('foo', organization=org)
-        self.assertEqual(org.memberships.count(), 1)
+        self.assertEqual(self.wnyc.memberships.count(), 0)
+        create_user('foo', organization=self.wnyc)
+        self.assertEqual(self.wnyc.memberships.count(), 1)
 
     def test_directory_listing_shows_orgs(self):
         c = Client()
@@ -34,7 +37,7 @@ class OrganizationTests(TestCase):
     def test_directory_listing_shows_emails_to_hive_members_only(self):
         create_user('non_member', password='lol')
         create_user('member', email='member@wnyc.org', password='lol',
-                    organization=Organization.objects.get(pk=1))
+                    organization=self.wnyc)
 
         c = Client()
         c.login(username='non_member', password='lol')
