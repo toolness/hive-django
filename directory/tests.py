@@ -17,6 +17,36 @@ def create_user(username, password=None, organization=None, **kwargs):
         user.membership.save()
     return user
 
+class OrganizationProfileTests(TestCase):
+    fixtures = ['wnyc.json', 'hivenyc.json']
+
+    def setUp(self):
+        super(OrganizationProfileTests, self).setUp()
+        self.wnyc = Organization.objects.get(pk=1)
+        self.hivenyc = Organization.objects.get(pk=2)
+        create_user('non_member', password='lol')
+        create_user('wnyc_member', email='member@wnyc.org', password='lol',
+                    organization=self.wnyc)
+        create_user('hivenyc_member', email='member@hivenyc.org',
+                    password='lol', organization=self.hivenyc)
+
+    def test_edit_org_redirects_anonymous_users_to_login(self):
+        c = Client()
+        response = c.get('/orgs/1/edit/', follow=True)
+        self.assertRedirects(response, '/accounts/login/?next=/orgs/1/edit/')
+
+    def test_edit_org_gives_non_org_members_403(self):
+        c = Client()
+        c.login(username='hivenyc_member', password='lol')
+        response = c.get('/orgs/1/edit/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_edit_org_gives_org_members_200(self):
+        c = Client()
+        c.login(username='wnyc_member', password='lol')
+        response = c.get('/orgs/1/edit/')
+        self.assertEqual(response.status_code, 200)
+
 class OrganizationTests(TestCase):
     fixtures = ['wnyc.json']
 

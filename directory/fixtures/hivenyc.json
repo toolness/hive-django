@@ -1,0 +1,14 @@
+[
+{
+  "pk": 2, 
+  "model": "directory.organization", 
+  "fields": {
+    "website": "http://hivenyc.org/", 
+    "hive_member_since": "2010-01-01", 
+    "mission": "Explore. Create. Share.", 
+    "twitter_name": "hivelearningnyc", 
+    "address": "Somewhere, New York, NY",
+    "name": "Hive NYC"
+  }
+}
+]
