@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.forms import ModelForm
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 from .models import Organization, Membership
 
@@ -32,6 +33,7 @@ def home(request):
         'show_privileged_info': is_user_hive_member(request.user)
     })
 
+@login_required
 def user_profile(request):
     user = request.user
     membership_form = None
