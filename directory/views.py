@@ -11,6 +11,15 @@ class MembershipForm(ModelForm):
     class Meta:
         model = Membership
         fields = ['title', 'is_listed']
+        labels = {
+            'is_listed': 'List me under my organization\'s entry in the '
+                         'Hive member directory.'
+        }
+        help_texts = {
+            'is_listed': '',
+            'title': 'Your title at your organization, e.g. '
+                     '"Executive Director of Awesome".'
+        }
 
 class UserProfileForm(ModelForm):
     class Meta:
