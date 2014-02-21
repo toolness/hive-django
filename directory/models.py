@@ -47,7 +47,7 @@ class Organization(models.Model):
         return self.name
 
     def membership_directory(self):
-        return self.memberships.filter(is_listed=True)
+        return self.memberships.filter(is_listed=True, user__is_active=True)
 
     # TODO: How to represent youth audience?
 
