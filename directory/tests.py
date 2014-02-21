@@ -1,3 +1,6 @@
+import StringIO
+from mock import patch
+from django.core.management import call_command
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
@@ -7,6 +10,18 @@ from .templatetags.directory import get_domainname
 from .models import Organization
 from .twitter import validate_twitter_name
 from .management.commands.seeddata import create_user
+
+class ManagementCommandTests(TestCase):
+    def test_seeddata_works_with_password(self):
+        output = StringIO.StringIO()
+        with patch('sys.stdout', output):
+            call_command('seeddata', password="LOL")
+        self.assertRegexpMatches(output.getvalue(), "password 'LOL'")
+
+    def test_seeddata_works_with_no_options(self):
+        output = StringIO.StringIO()
+        with patch('sys.stdout', output): call_command('seeddata')
+        self.assertRegexpMatches(output.getvalue(), "password 'test'")
 
 class AccountProfileTests(TestCase):
     fixtures = ['wnyc.json']
