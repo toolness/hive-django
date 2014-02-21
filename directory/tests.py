@@ -45,6 +45,18 @@ class AccountProfileTests(TestCase):
         response = c.get('/accounts/profile/')
         self.assertNotContains(response, 'Membership Information')
 
+    def test_submitting_valid_form_changes_model(self):
+        c = Client()
+        c.login(username='non_member', password='lol')
+        response = c.post('/accounts/profile/', {
+            'user_profile-username': 'non_member',
+            'user_profile-first_name': 'Non',
+            'user_profile-last_name': 'Member'
+        })
+        self.assertRedirects(response, '/accounts/profile/')
+        self.assertEqual(User.objects.get(username='non_member').first_name,
+                         'Non')
+
 class OrganizationProfileTests(TestCase):
     fixtures = ['wnyc.json', 'hivenyc.json']
 
