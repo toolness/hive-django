@@ -1,3 +1,4 @@
+from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -18,9 +19,16 @@ def create_user(username, password=None, organization=None, **kwargs):
 
 class Command(BaseCommand):
     help = 'Seeds the database with sample organizations and users.'
+    option_list = BaseCommand.option_list + (
+        make_option('--password',
+            dest='password',
+            default='test',
+            help='Specify password to use for all seeded users'
+        ),
+    )
 
     def handle(self, *args, **options):
-        passwd = 'test'
+        passwd = options['password']
 
         call_command('loaddata', 'wnyc.json', 'hivenyc.json', 'amnh.json')
         create_user('admin', password=passwd, email='admin@example.org',
