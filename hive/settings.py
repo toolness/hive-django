@@ -72,6 +72,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'hive.ssl.RedirectToHttpsMiddleware',
     'hive.ssl.HstsMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -145,3 +146,5 @@ LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
