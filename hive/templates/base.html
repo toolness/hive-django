@@ -21,6 +21,9 @@
             <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
             {% endif %}
             <li><a href="{% url 'user_profile' %}">Edit Profile</a></li>
+            {% if request.session.user_switched_from %}
+            <li><a href="{% url 'switch_user_back' %}">Switch back to {{ request.session.user_switched_from }}</a></li>
+            {% endif %}
             <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </li>
