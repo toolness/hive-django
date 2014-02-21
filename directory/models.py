@@ -5,6 +5,12 @@ from django.dispatch import receiver
 
 from .twitter import TwitterNameField
 
+def is_user_hive_member(user, organization=None):
+    if not (user.is_active and user.membership.organization):
+        return False
+    if organization is None: return True
+    return organization == user.membership.organization
+
 class Organization(models.Model):
     '''
     Represents a Hive member organization.

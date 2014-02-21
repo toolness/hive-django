@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .models import Organization, Membership
+from .models import Organization, Membership, is_user_hive_member
 
 class MembershipForm(ModelForm):
     class Meta:
@@ -39,24 +39,18 @@ def validate_and_save_forms(*forms):
     for form in forms: form.save()
     return True
 
-def is_user_hive_member(user, organization=None):
-    if not (user.is_authenticated() and user.is_active and \
-            user.membership.organization):
-        return False
-    if organization is None: return True
-    return user.membership.organization == organization
-
 def home(request):
     return render(request, 'directory/home.html', {
         'orgs': Organization.objects.all(),
-        'show_privileged_info': is_user_hive_member(request.user)
+        'show_privileged_info': request.user.is_authenticated()
+                                and is_user_hive_member(request.user)
     })
 
 @login_required
 def organization_profile(request, organization_id):
     org = get_object_or_404(Organization, pk=organization_id)
-    if not (request.user.is_superuser or
-            is_user_hive_member(request.user, org)):
+    user = request.user
+    if not (user.is_superuser or is_user_hive_member(user, org)):
         return HttpResponseForbidden('Permission denied.')
     if request.method == 'POST':
         form = OrganizationForm(request.POST, instance=org)
