@@ -5,7 +5,8 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .models import Organization, Membership, is_user_hive_member
+from .models import Organization, Membership, is_user_hive_member, \
+                    is_user_privileged
 
 class MembershipForm(ModelForm):
     class Meta:
@@ -43,7 +44,7 @@ def home(request):
     return render(request, 'directory/home.html', {
         'orgs': Organization.objects.filter(is_active=True),
         'show_privileged_info': request.user.is_authenticated()
-                                and is_user_hive_member(request.user)
+                                and is_user_privileged(request.user)
     })
 
 @login_required

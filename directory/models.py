@@ -6,11 +6,25 @@ from django.dispatch import receiver
 from .twitter import TwitterNameField
 
 def is_user_hive_member(user, organization=None):
+    '''
+    Returns whether the given user belongs to a Hive member
+    organization. If an organization is supplied, returns
+    whether the user belongs to that organization specifically.
+    '''
+
     if not (user.is_active and user.membership.organization
             and user.membership.organization.is_active):
         return False
     if organization is None: return True
     return organization == user.membership.organization
+
+def is_user_privileged(user):
+    '''
+    Returns whether the given user can view personally identifiable
+    information, phone numbers, and so forth.
+    '''
+
+    return is_user_hive_member(user) or (user.is_active and user.is_staff)
 
 class Organization(models.Model):
     '''

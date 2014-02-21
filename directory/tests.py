@@ -6,16 +6,7 @@ from django.core.exceptions import ValidationError
 from .templatetags.directory import get_domainname
 from .models import Organization
 from .twitter import validate_twitter_name
-
-def create_user(username, password=None, organization=None, **kwargs):
-    user = User(username=username, **kwargs)
-    if password:
-        user.set_password(password)
-    user.save()
-    if organization:
-        user.membership.organization = organization
-        user.membership.save()
-    return user
+from .management.commands.seeddata import create_user
 
 class AccountProfileTests(TestCase):
     fixtures = ['wnyc.json']
