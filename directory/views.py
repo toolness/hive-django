@@ -47,8 +47,8 @@ def home(request):
     })
 
 @login_required
-def organization_profile(request, organization_id):
-    org = get_object_or_404(Organization, pk=organization_id)
+def organization_profile(request, organization_slug):
+    org = get_object_or_404(Organization, slug=organization_slug)
     user = request.user
     if not (user.is_superuser or is_user_hive_member(user, org)):
         return HttpResponseForbidden('Permission denied.')
@@ -58,7 +58,7 @@ def organization_profile(request, organization_id):
             form.save()
             messages.success(request,
                              'The organization profile has been updated.')
-            return redirect('organization_profile', org.id)
+            return redirect('organization_profile', org.slug)
         else:
             messages.error(request, 'Your submission had some problems.')
     else:

@@ -4,7 +4,7 @@
 {% block title %}Edit Organization{% endblock %}
 
 {% block content %}
-<form method="post" action={% url 'organization_profile' org.id %}>
+<form method="post" action={% url 'organization_profile' org.slug %}>
 {% csrf_token %}
 {{ form|crispy }}
 <button type="submit" class="btn btn-primary">Update Profile</button>

@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin
 from . import models
 
 class OrganizationAdmin(admin.ModelAdmin):
-    pass
+    prepopulated_fields = {"slug": ("name",)}
 
 admin.site.register(models.Organization, OrganizationAdmin)
 

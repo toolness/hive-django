@@ -20,6 +20,12 @@ class Organization(models.Model):
         help_text="The full name of the organization.",
         max_length=100
     )
+    slug = models.SlugField(
+        help_text="A short identifier for the organization, used in "
+                  "URLs and such. Only letters, numbers, underscores, and "
+                  "hyphens are allowed.",
+        unique=True
+    )
     website = models.URLField(
         help_text="The URL of the organization's primary website."
     )
