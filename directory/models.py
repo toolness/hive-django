@@ -6,7 +6,8 @@ from django.dispatch import receiver
 from .twitter import TwitterNameField
 
 def is_user_hive_member(user, organization=None):
-    if not (user.is_active and user.membership.organization):
+    if not (user.is_active and user.membership.organization
+            and user.membership.organization.is_active):
         return False
     if organization is None: return True
     return organization == user.membership.organization
@@ -41,6 +42,12 @@ class Organization(models.Model):
     )
     mission = models.TextField(
         help_text="The organization's mission and philosophy."
+    )
+    is_active = models.BooleanField(
+        help_text="Designates whether this organization should be treated "
+                  "as active. Unselect this instead of deleting "
+                  "organizations.",
+        default=True
     )
 
     def __unicode__(self):

@@ -41,14 +41,15 @@ def validate_and_save_forms(*forms):
 
 def home(request):
     return render(request, 'directory/home.html', {
-        'orgs': Organization.objects.all(),
+        'orgs': Organization.objects.filter(is_active=True),
         'show_privileged_info': request.user.is_authenticated()
                                 and is_user_hive_member(request.user)
     })
 
 @login_required
 def organization_profile(request, organization_slug):
-    org = get_object_or_404(Organization, slug=organization_slug)
+    org = get_object_or_404(Organization, slug=organization_slug,
+                            is_active=True)
     user = request.user
     if not (user.is_superuser or is_user_hive_member(user, org)):
         return HttpResponseForbidden('Permission denied.')
