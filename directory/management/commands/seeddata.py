@@ -1,4 +1,5 @@
 from optparse import make_option
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
@@ -58,6 +59,7 @@ class Command(BaseCommand):
         hivenyc.save()
 
         site = Site.objects.get(pk=1)
+        site.domain = settings.ALLOWED_HOSTS[0]
         site.name = "Hive TESTING"
         site.save()
 
