@@ -1,5 +1,6 @@
 from optparse import make_option
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
@@ -55,6 +56,10 @@ class Command(BaseCommand):
         hivenyc.is_active = False
         hivenyc.name = "%s **INACTIVE**" % hivenyc.name
         hivenyc.save()
+
+        site = Site.objects.get(pk=1)
+        site.name = "Hive TESTING"
+        site.save()
 
         print "Database seeded. Login as admin with password '%s' " \
               "to view the site as an administrator. All seeded users " \
