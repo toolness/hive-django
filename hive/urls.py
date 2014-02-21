@@ -5,6 +5,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'directory.views.home', name='home'),
+    url(r'^admin/switch-user/(?P<username>.+)', 'hive.admin_utils.switch_user',
+        name='switch_user'),
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/edit/',

@@ -10,7 +10,7 @@
   <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
   <p>{{ org.mission }}</p>
   {% if user.is_superuser or user.membership.organization == org %}
-    <a href="{% url 'organization_profile' org.slug %}" class="btn btn-sm btn-default">Edit</a>
+    <p><a href="{% url 'organization_profile' org.slug %}" class="btn btn-sm btn-default">Edit</a></p>
   {% endif %}
   {% if show_privileged_info %}
     <ul class="list-unstyled">
@@ -19,6 +19,12 @@
         <address><strong>{{ membership.user.get_full_name }}</strong><br>
           {% if membership.title %}{{ membership.title }}<br>{% endif %}
         <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
+        {% if user.is_superuser %}
+          <form method="post" action="{% url 'switch_user' membership.user.username %}" style="display: inline-block">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-default btn-xs">Login as this user</button>
+          </form>
+        {% endif %}
         </address>
       </li>
     {% endfor %}
