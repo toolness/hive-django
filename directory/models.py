@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from registration.signals import user_activated
 
 from .twitter import TwitterNameField
 
@@ -43,6 +44,12 @@ class Organization(models.Model):
     )
     website = models.URLField(
         help_text="The URL of the organization's primary website."
+    )
+    email_domain = models.TextField(
+        help_text="The domain which members of this organization have "
+                  "email addresses at.",
+        blank=True,
+        max_length=50
     )
     address = models.TextField(
         help_text="The full address of the organization's main office."
@@ -100,3 +107,14 @@ def create_membership_for_user(sender, raw, instance, **kwargs):
     if not len(Membership.objects.filter(user=instance)):
         membership = Membership(user=instance)
         membership.save()
+
+@receiver(user_activated)
+def auto_register_user_with_organization(sender, user, request, **kwargs):
+    if not (user.email and '@' in user.email): return
+    if user.membership.organization: return
+    domain_name = user.email.split('@')[1]
+    orgs = Organization.objects.filter(email_domain=domain_name)
+    if orgs.count() != 1: return
+    org = orgs[0]
+    user.membership.organization = org
+    user.membership.save()

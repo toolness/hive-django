@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from registration.models import RegistrationProfile
 
 from .templatetags.directory import get_domainname
 from .models import Organization
@@ -124,6 +125,26 @@ class OrganizationTests(TestCase):
         c.login(username='member', password='lol')
         response = c.get('/')
         self.assertContains(response, 'member@wnyc.org')
+
+    def activate_user(self, *args, **kwargs):
+        user = create_user(is_active=False, *args, **kwargs)
+        profile = RegistrationProfile.objects.create_profile(user)
+        c = Client()
+        response = c.get('/accounts/activate/%s/' % profile.activation_key)
+        self.assertRedirects(response, '/accounts/activate/complete/')
+        user = User.objects.get(username='somebody')
+        self.assertEqual(user.is_active, True)
+        return user
+
+    def test_user_org_is_blank_on_activation_if_email_does_not_match(self):
+        user = self.activate_user('somebody', password='lol',
+                                  email='somebody@example.org')
+        self.assertEqual(user.membership.organization, None)
+
+    def test_user_org_is_assigned_on_activation_if_email_matches(self):
+        user = self.activate_user('somebody', password='lol',
+                                  email='somebody@wnyc.org')
+        self.assertEqual(user.membership.organization.slug, 'wnyc')
 
 class MembershipTests(TestCase):
     def test_user_membership_is_created_on_save(self):
