@@ -4,7 +4,11 @@ from django.contrib.auth.admin import UserAdmin
 
 from . import models
 
+class ContentChannelInline(admin.TabularInline):
+    model = models.ContentChannel
+
 class OrganizationAdmin(admin.ModelAdmin):
+    inlines = (ContentChannelInline,)
     prepopulated_fields = {"slug": ("name",)}
 
 admin.site.register(models.Organization, OrganizationAdmin)

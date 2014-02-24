@@ -6,7 +6,12 @@
 {% block content %}
 <form method="post" action={% url 'organization_profile' org.slug %}>
 {% csrf_token %}
+
 {{ form|crispy }}
+
+<h2>Content Channels</h2>
+{% crispy channel_formset channel_formset_helper %}
+
 <button type="submit" class="btn btn-primary">Update Profile</button>
 </form>
 {% endblock %}

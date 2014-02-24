@@ -1,12 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.forms import ModelForm
+from django.forms.models import inlineformset_factory
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from crispy_forms.helper import FormHelper
 
 from .models import Organization, Membership, is_user_hive_member, \
-                    is_user_privileged
+                    is_user_privileged, ContentChannel
+
+ContentChannelFormSet = inlineformset_factory(
+    Organization, ContentChannel,
+    fields = ['category', 'name', 'url'],
+    help_texts = {'category': '', 'name': '', 'url': ''},
+    labels = {'url': 'URL', 'name': 'Name (if other)'}
+)
+
+class ChannelFormSetHelper(FormHelper):
+    form_tag = False
+    template = 'directory/table_inline_formset.html'
 
 class MembershipForm(ModelForm):
     class Meta:
@@ -55,19 +68,26 @@ def organization_profile(request, organization_slug):
     if not (user.is_superuser or is_user_hive_member(user, org)):
         return HttpResponseForbidden('Permission denied.')
     if request.method == 'POST':
-        form = OrganizationForm(request.POST, instance=org)
-        if form.is_valid():
+        form = OrganizationForm(request.POST, instance=org, prefix='org')
+        channel_formset = ContentChannelFormSet(request.POST, instance=org,
+                                                prefix='chan')
+        if form.is_valid() and channel_formset.is_valid():
             form.save()
+            channel_formset.save()
             messages.success(request,
                              'The organization profile has been updated.')
             return redirect('organization_profile', org.slug)
         else:
             messages.error(request, 'Your submission had some problems.')
     else:
-        form = OrganizationForm(instance=org)
+        form = OrganizationForm(instance=org, prefix='org')
+        channel_formset = ContentChannelFormSet(instance=org, prefix='chan')
+    channel_formset_helper = ChannelFormSetHelper()
     return render(request, 'directory/organization_profile.html', {
         'org': org,
-        'form': form
+        'form': form,
+        'channel_formset': channel_formset,
+        'channel_formset_helper': channel_formset_helper
     })
 
 @login_required

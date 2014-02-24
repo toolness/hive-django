@@ -79,8 +79,43 @@ class Organization(models.Model):
 
     # TODO: How to represent youth audience?
 
-    # TODO: How to represent different content channels? e.g.,
-    # youtube, blog, flickr, instagram, etc?
+class ContentChannel(models.Model):
+    '''
+    Represents a content channel for a Hive member organization.
+    '''
+
+    CATEGORY_CHOICES = (
+        ('fb', 'Facebook'),
+        ('yt', 'YouTube'),
+        ('vi', 'Vimeo'),
+        ('fl', 'Flickr'),
+        ('tu', 'Tumblr'),
+        ('pi', 'Pinterest'),
+        ('gh', 'GitHub'),
+        ('ig', 'Instagram'),
+        ('ot', 'Other'),
+    )
+
+    category = models.CharField(
+        help_text="The type of the content channel",
+        choices=CATEGORY_CHOICES,
+        max_length=2,
+    )
+
+    name = models.CharField(
+        help_text="The name of the content channel.",
+        max_length=100,
+        blank=True
+    )
+
+    url = models.URLField(
+        help_text="The URL of the content channel.",
+    )
+
+    organization = models.ForeignKey(
+        Organization,
+        related_name='content_channels'
+    )
 
 class Membership(models.Model):
     '''
