@@ -107,12 +107,13 @@ class AccountSwitchingTests(TestCase):
         c, response = self.post('/admin/switch-user/joe', 'admin')
         self.assertEqual(response.context['user'].username, 'joe')
 
-        response = c.get('/admin/switch-user-back', follow=True)
+        response = c.post('/admin/switch-user-back', follow=True)
         self.assertRedirects(response, '/')
         self.assertEqual(response.context['user'].username, 'admin')
 
     def test_get_method_is_not_allowed(self):
         c = Client()
         c.login(username='admin', password='lol')
-        response = c.get('/admin/switch-user/joe')
-        self.assertEqual(response.status_code, 405)
+
+        self.assertEqual(c.get('/admin/switch-user/joe').status_code, 405)
+        self.assertEqual(c.get('/admin/switch-user-back').status_code, 405)

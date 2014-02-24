@@ -28,7 +28,12 @@
             {% endif %}
             <li><a href="{% url 'user_profile' %}">Edit Profile</a></li>
             {% if request.session.user_switched_from %}
-            <li><a href="{% url 'switch_user_back' %}">Switch back to {{ request.session.user_switched_from }}</a></li>
+            <li><a href="#" data-submit-form-onclick>
+              <form method="post" action="{% url 'switch_user_back' %}">
+                {% csrf_token %}
+              </form>
+              Switch back to {{ request.session.user_switched_from }}
+            </a></li>
             {% endif %}
             <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
@@ -55,4 +60,5 @@
 
 <script src="{% static 'admin/js/jquery.js' %}"></script>
 <script src="{% static 'js/bootstrap.js' %}"></script>
+<script src="{% static 'js/submit-form-onclick.js' %}"></script>
 {% block scripts %}{% endblock %}

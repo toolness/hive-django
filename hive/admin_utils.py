@@ -23,6 +23,7 @@ def switch_user(request, username):
 
     return redirect('home')
 
+@require_POST
 @login_required
 def switch_user_back(request):
     superuser_name = request.session.get('user_switched_from')
