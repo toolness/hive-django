@@ -146,5 +146,3 @@ LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
