@@ -146,3 +146,21 @@ LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = 'home'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'stream': sys.stdout
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR'
+        }
+    }
+}
