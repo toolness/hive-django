@@ -59,7 +59,8 @@ class Organization(models.Model):
         blank=True,
     )
     hive_member_since = models.DateField(
-        help_text="The date the organization joined the Hive network."
+        help_text="The date the organization joined the Hive network. "
+                  "Only the month and year will be used."
     )
     mission = models.TextField(
         help_text="The organization's mission and philosophy."
