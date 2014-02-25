@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -65,6 +67,18 @@ class Organization(models.Model):
     mission = models.TextField(
         help_text="The organization's mission and philosophy."
     )
+    min_youth_audience_age = models.SmallIntegerField(
+        help_text="Minimum age of youth, in years, that the organization's "
+                  "programs target.",
+        validators=[MinValueValidator(0)],
+        default=0
+    )
+    max_youth_audience_age = models.SmallIntegerField(
+        help_text="Maximum age of youth, in years, that the organization's "
+                  "programs target.",
+        validators=[MinValueValidator(0)],
+        default=18
+    )
     is_active = models.BooleanField(
         help_text="Designates whether this organization should be treated "
                   "as active. Unselect this instead of deleting "
@@ -78,7 +92,11 @@ class Organization(models.Model):
     def membership_directory(self):
         return self.memberships.filter(is_listed=True, user__is_active=True)
 
-    # TODO: How to represent youth audience?
+    def clean(self):
+        if self.max_youth_audience_age < self.min_youth_audience_age:
+            raise ValidationError("Minimum youth audience age may not "
+                                  "be greater than maximum youth audience "
+                                  "age.")
 
 class ContentChannel(models.Model):
     '''

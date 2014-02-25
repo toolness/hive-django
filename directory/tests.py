@@ -146,6 +146,16 @@ class OrganizationTests(TestCase):
                                   email='somebody@wnyc.org')
         self.assertEqual(user.membership.organization.slug, 'wnyc')
 
+    def test_min_age_greater_than_max_raises_validation_error(self):
+        self.wnyc.full_clean()
+        self.wnyc.min_youth_audience_age = 99
+        self.wnyc.max_youth_audience_age = 1
+        self.assertRaisesRegexp(
+            ValidationError,
+            "Minimum youth audience age may not be greater than maximum",
+            self.wnyc.full_clean
+        )
+
 class MembershipTests(TestCase):
     def test_user_membership_is_created_on_save(self):
         user = User(username='foo')
