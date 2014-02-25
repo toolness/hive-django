@@ -84,22 +84,33 @@ class ContentChannel(models.Model):
     Represents a content channel for a Hive member organization.
     '''
 
+    FA_ICONS = {
+        'facebook': 'fa-facebook-square',
+        'youtube': 'fa-youtube-square',
+        'vimeo': 'fa-vimeo-square',
+        'flickr': 'fa-flickr',
+        'tumblr': 'fa-tumblr-square',
+        'pinterest': 'fa-pinterest-square',
+        'github': 'fa-github-square',
+        'instagram': 'fa-instagram',
+    }
+
     CATEGORY_CHOICES = (
-        ('fb', 'Facebook'),
-        ('yt', 'YouTube'),
-        ('vi', 'Vimeo'),
-        ('fl', 'Flickr'),
-        ('tu', 'Tumblr'),
-        ('pi', 'Pinterest'),
-        ('gh', 'GitHub'),
-        ('ig', 'Instagram'),
-        ('ot', 'Other'),
+        ('facebook', 'Facebook'),
+        ('youtube', 'YouTube'),
+        ('vimeo', 'Vimeo'),
+        ('flickr', 'Flickr'),
+        ('tumblr', 'Tumblr'),
+        ('pinterest', 'Pinterest'),
+        ('github', 'GitHub'),
+        ('instagram', 'Instagram'),
+        ('other', 'Other'),
     )
 
     category = models.CharField(
         help_text="The type of the content channel",
         choices=CATEGORY_CHOICES,
-        max_length=2,
+        max_length=15,
     )
 
     name = models.CharField(
@@ -116,6 +127,29 @@ class ContentChannel(models.Model):
         Organization,
         related_name='content_channels'
     )
+
+    @property
+    def fa_icon(self):
+        '''
+        The Font Awesome icon name for the channel.
+        '''
+
+        return self.FA_ICONS.get(self.category, '')
+
+    @property
+    def display_name(self):
+        '''
+        The full name of the content channel, for display to users.
+        '''
+
+        for name, display_name in self.CATEGORY_CHOICES:
+            if name == self.category:
+                break
+
+        if self.category == 'other' and self.name:
+            return self.name
+
+        return display_name
 
 class Membership(models.Model):
     '''

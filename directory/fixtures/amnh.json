@@ -11,5 +11,14 @@
     "slug": "amnh",
     "name": "American Museum of Natural History"
   }
+},
+{
+  "pk": 3,
+  "model": "directory.contentchannel",
+  "fields": {
+    "category": "flickr",
+    "url": "http://flickr.com/amnh",
+    "organization": 3
+  }
 }
 ]

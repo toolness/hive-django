@@ -12,5 +12,14 @@
     "email_domain": "wnyc.org",
     "name": "WNYC's Radio Rookies"
   }
+},
+{
+  "pk": 1,
+  "model": "directory.contentchannel",
+  "fields": {
+    "category": "facebook",
+    "url": "https://www.facebook.com/groups/12692245380/",
+    "organization": 1
+  }
 }
 ]

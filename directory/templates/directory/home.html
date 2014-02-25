@@ -6,7 +6,14 @@
 {% block content %}
 {% for org in orgs %}
   <h2>{{ org.name }}</h2>
-  <p><a href="{{ org.website }}">{{ org.website|domainname }}</a></p>
+  <p>
+    <a href="{{ org.website }}">{{ org.website|domainname }}</a>
+    {% for channel in org.content_channels.all %}
+      {% if channel.category != 'other' %}
+        <a href="{{ channel.url }}" title="{{ channel.display_name }}"><i class="fa {{ channel.fa_icon }}"></i></a>
+      {% endif %}
+    {% endfor %}
+  </p>
   <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
   <p>{{ org.mission }}</p>
   {% if user.is_superuser or user.membership.organization == org %}
