@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from registration.models import RegistrationProfile
 
 from .templatetags.directory import get_domainname
-from .models import Organization
+from .models import Organization, ContentChannel
 from .twitter import validate_twitter_name
 from .management.commands.seeddata import create_user
 
@@ -153,6 +153,27 @@ class MembershipTests(TestCase):
         self.assertTrue(user.membership)
         self.assertTrue(user.membership.is_listed)
         self.assertFalse(user.membership.organization)
+
+class ContentChannelTests(TestCase):
+    def test_fa_icon_returns_empty_string_if_none_available(self):
+        c = ContentChannel(category='other')
+        self.assertEqual(c.fa_icon, '')
+
+    def test_fa_icon_returns_css_class_name_if_available(self):
+        c = ContentChannel(category='flickr')
+        self.assertEqual(c.fa_icon, 'fa-flickr')
+
+    def test_display_name_is_category_when_category_is_not_other(self):
+        c = ContentChannel(category='flickr')
+        self.assertEqual(c.display_name, 'Flickr')
+
+    def test_display_name_is_other_when_category_is_other(self):
+        c = ContentChannel(category='other')
+        self.assertEqual(c.display_name, 'Other')
+
+    def test_display_name_is_name_when_category_is_other(self):
+        c = ContentChannel(category='other', name='Foo')
+        self.assertEqual(c.display_name, 'Foo')
 
 class TwitterNameTests(TestCase):
     def test_validate_twitter_name_rejects_invalid_names(self):
