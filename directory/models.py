@@ -45,7 +45,7 @@ class Organization(models.Model):
     website = models.URLField(
         help_text="The URL of the organization's primary website."
     )
-    email_domain = models.TextField(
+    email_domain = models.CharField(
         help_text="The domain which members of this organization have "
                   "email addresses at.",
         blank=True,
