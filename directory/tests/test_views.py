@@ -1,28 +1,10 @@
-import StringIO
-from mock import patch
-from django.core.management import call_command
 from django.test import TestCase
 from django.test.client import Client
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from registration.models import RegistrationProfile
 
-from .templatetags.directory import get_domainname
-from .models import Organization
-from .twitter import validate_twitter_name
-from .management.commands.seeddata import create_user
-
-class ManagementCommandTests(TestCase):
-    def test_seeddata_works_with_password(self):
-        output = StringIO.StringIO()
-        with patch('sys.stdout', output):
-            call_command('seeddata', password="LOL")
-        self.assertRegexpMatches(output.getvalue(), "password 'LOL'")
-
-    def test_seeddata_works_with_no_options(self):
-        output = StringIO.StringIO()
-        with patch('sys.stdout', output): call_command('seeddata')
-        self.assertRegexpMatches(output.getvalue(), "password 'test'")
+from ..models import Organization
+from ..management.commands.seeddata import create_user
 
 class AccountProfileTests(TestCase):
     fixtures = ['wnyc.json']
@@ -145,26 +127,3 @@ class OrganizationTests(TestCase):
         user = self.activate_user('somebody', password='lol',
                                   email='somebody@wnyc.org')
         self.assertEqual(user.membership.organization.slug, 'wnyc')
-
-class MembershipTests(TestCase):
-    def test_user_membership_is_created_on_save(self):
-        user = User(username='foo')
-        user.save()
-        self.assertTrue(user.membership)
-        self.assertTrue(user.membership.is_listed)
-        self.assertFalse(user.membership.organization)
-
-class TwitterNameTests(TestCase):
-    def test_validate_twitter_name_rejects_invalid_names(self):
-        self.assertRaises(ValidationError, validate_twitter_name, '$')
-        self.assertRaises(ValidationError, validate_twitter_name,
-                          'reallyreallyreallyreallylongusername')
-
-    def test_validate_twitter_name_accepts_valid_names(self):
-        validate_twitter_name('toolness')
-        validate_twitter_name('t')
-        validate_twitter_name('super_burger')
-
-class TemplateTagsAndFiltersTests(TestCase):
-    def test_get_domainname(self):
-        self.assertEqual(get_domainname('http://foo.org:34'), 'foo.org')
