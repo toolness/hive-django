@@ -6,12 +6,14 @@ from registration.models import RegistrationProfile
 from ..models import Organization
 from ..management.commands.seeddata import create_user
 
+get_org = lambda slug: Organization.objects.get(slug=slug)
+
 class AccountProfileTests(TestCase):
     fixtures = ['wnyc.json']
 
     def setUp(self):
         super(AccountProfileTests, self).setUp()
-        self.wnyc = Organization.objects.get(pk=1)
+        self.wnyc = get_org('wnyc')
         create_user('non_member', password='lol')
         create_user('wnyc_member', email='member@wnyc.org', password='lol',
                     organization=self.wnyc)
@@ -51,8 +53,8 @@ class OrganizationProfileTests(TestCase):
 
     def setUp(self):
         super(OrganizationProfileTests, self).setUp()
-        self.wnyc = Organization.objects.get(pk=1)
-        self.hivenyc = Organization.objects.get(pk=2)
+        self.wnyc = get_org('wnyc')
+        self.hivenyc = get_org('hivenyc')
         create_user('non_member', password='lol')
         create_user('wnyc_member', email='member@wnyc.org', password='lol',
                     organization=self.wnyc)
@@ -82,7 +84,7 @@ class OrganizationTests(TestCase):
 
     def setUp(self):
         super(OrganizationTests, self).setUp()
-        self.wnyc = Organization.objects.get(pk=1)
+        self.wnyc = get_org('wnyc')
 
     def test_directory_listing_shows_orgs(self):
         c = Client()
@@ -105,7 +107,7 @@ class OrganizationTests(TestCase):
 
 class ActivationTests(TestCase):
     fixtures = ['wnyc.json']
-    
+
     def activate_user(self, *args, **kwargs):
         user = create_user(is_active=False, *args, **kwargs)
         profile = RegistrationProfile.objects.create_profile(user)

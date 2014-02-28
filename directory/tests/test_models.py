@@ -15,11 +15,8 @@ class MembershipTests(TestCase):
 class OrganizationTests(TestCase):
     fixtures = ['wnyc.json']
 
-    def setUp(self):
-        super(OrganizationTests, self).setUp()
-        self.wnyc = Organization.objects.get(pk=1)
-
     def test_org_has_memberships(self):
-        self.assertEqual(self.wnyc.memberships.count(), 0)
-        create_user('foo', organization=self.wnyc)
-        self.assertEqual(self.wnyc.memberships.count(), 1)
+        wnyc = Organization.objects.get(slug='wnyc')
+        self.assertEqual(wnyc.memberships.count(), 0)
+        create_user('foo', organization=wnyc)
+        self.assertEqual(wnyc.memberships.count(), 1)
