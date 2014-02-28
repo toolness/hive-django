@@ -84,11 +84,6 @@ class OrganizationTests(TestCase):
         super(OrganizationTests, self).setUp()
         self.wnyc = Organization.objects.get(pk=1)
 
-    def test_org_has_memberships(self):
-        self.assertEqual(self.wnyc.memberships.count(), 0)
-        create_user('foo', organization=self.wnyc)
-        self.assertEqual(self.wnyc.memberships.count(), 1)
-
     def test_directory_listing_shows_orgs(self):
         c = Client()
         response = c.get('/')
@@ -108,6 +103,9 @@ class OrganizationTests(TestCase):
         response = c.get('/')
         self.assertContains(response, 'member@wnyc.org')
 
+class ActivationTests(TestCase):
+    fixtures = ['wnyc.json']
+    
     def activate_user(self, *args, **kwargs):
         user = create_user(is_active=False, *args, **kwargs)
         profile = RegistrationProfile.objects.create_profile(user)
