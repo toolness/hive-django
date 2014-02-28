@@ -2,10 +2,9 @@ import os
 from django.test import TestCase
 from mock import patch
 
-from .settings_utils import set_default_env, set_default_db, \
-                            parse_email_backend_url, \
-                            parse_secure_proxy_ssl_header
-from .test_accounts import *
+from ..settings_utils import set_default_env, set_default_db, \
+                             parse_email_backend_url, \
+                             parse_secure_proxy_ssl_header
 
 class SetDefaultEnvTests(TestCase):
     def test_sets_default_values(self):
