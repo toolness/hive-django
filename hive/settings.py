@@ -21,7 +21,7 @@ from .settings_utils import set_default_env, set_default_db, \
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 path = lambda *parts: os.path.join(BASE_DIR, *parts)
 
-if os.path.basename(sys.argv[0]) == 'manage.py':
+if os.path.basename(sys.argv[0]) == 'manage.py' or 'DEBUG' in os.environ:
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
     set_default_env(
