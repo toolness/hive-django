@@ -54,7 +54,8 @@ class Organization(models.Model):
         max_length=50
     )
     address = models.TextField(
-        help_text="The full address of the organization's main office."
+        help_text="The full address of the organization's main office.",
+        blank=True,
     )
     twitter_name = TwitterNameField(
         help_text="The twitter account for the organization.",
@@ -65,7 +66,8 @@ class Organization(models.Model):
                   "Only the month and year will be used."
     )
     mission = models.TextField(
-        help_text="The organization's mission and philosophy."
+        help_text="The organization's mission and philosophy.",
+        blank=True,
     )
     min_youth_audience_age = models.SmallIntegerField(
         help_text="Minimum age of youth, in years, that the organization's "
