@@ -2,3 +2,6 @@
 
 # Only required if using Postgres as a backend.
 psycopg2==2.5.2
+
+# Required for importing data from Google spreadsheets.
+gspread==0.1.0
