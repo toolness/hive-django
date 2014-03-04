@@ -1,7 +1,9 @@
 import csv
+import datetime
 from optparse import make_option
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.text import slugify
 
@@ -9,6 +11,11 @@ from directory.models import Organization
 
 class DryRunFinished(Exception):
     pass
+
+def normalize_url(url):
+    if url.startswith('http://') or url.startswith('https://'):
+        return url
+    return 'http://%s' % url
 
 def convert_rows_to_dicts(rows):
     column_names = None
@@ -30,11 +37,6 @@ def convert_rows_to_dicts(rows):
             dicts.append(info)
     return dicts
 
-def import_rows(rows):
-    orgs = convert_rows_to_dicts(rows)
-    print orgs
-    raise NotImplementedError("TODO: Import stuff here!")
-
 class ImportOrgsCommand(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--dry-run',
@@ -48,15 +50,42 @@ class ImportOrgsCommand(BaseCommand):
     def get_rows(self, *args, **options):
         raise NotImplementedError()
 
+    def import_rows(self, rows):
+        for info in convert_rows_to_dicts(rows):
+            orgname = unicode(info['name-of-organization'])
+            try:
+                org = Organization(
+                    name=orgname,
+                    slug=slugify(orgname),
+                    # TODO: Parse the 'hive-nyc-member-since' column.
+                    hive_member_since=datetime.datetime.now(),
+                    mission=info['organizational-mission'],
+                    website=normalize_url(info['url']),
+                    address=info['mailing-address'],
+                    # TODO: Import organization URL.
+                    # TODO: Import youth audience min/max age.
+                    # TODO: Import email domain, if any.
+                    # TODO: Import mailing address.
+                )
+                org.full_clean()
+                org.save()
+                # TODO: Import organization content channels.
+                # TODO: Import users from 'contact-1' columns etc.
+            except Exception:
+                self.stderr.write('Error importing row '
+                                  '%d (%s)' % (info['row'], orgname))
+                raise
+
     def handle(self, *args, **options):
+        self.latest_row = None
         rows = self.get_rows(*args, **options)
 
         try:
             with transaction.atomic():
-                import_rows(rows)
+                self.import_rows(rows)
                 if options['dry_run']: raise DryRunFinished()
         except DryRunFinished:
-            print "Dry run complete."
+            self.stdout.write("Dry run complete.")
 
 class Command(ImportOrgsCommand):
     help = 'Import organizations and users from a CSV file.'
