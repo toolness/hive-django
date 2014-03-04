@@ -39,6 +39,19 @@ class AccountUrlTests(TestCase):
         self.assertPathExists('/accounts/register/')
         self.assertPathExists('/accounts/register/complete/')
 
+    def test_registration_enforces_unique_email(self):
+        User(username='foo', email='foo@example.org').save()
+        c = Client()
+        response = c.post('/accounts/register/', {
+            'username': 'bar',
+            'email': 'foo@example.org',
+            'password1': 'lol',
+            'password2': 'lol',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'email address is already in use')
+        self.assertContains(response, 'password reset')
+
     @patch.dict(settings.__dict__, {'ORIGIN': 'http://me.org'})
     def test_registration_works(self):
         c = Client()
