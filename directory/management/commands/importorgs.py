@@ -56,7 +56,7 @@ class ImportOrgsCommand(BaseCommand):
             try:
                 org = Organization(
                     name=orgname,
-                    slug=slugify(orgname),
+                    slug=slugify(orgname)[:50],
                     # TODO: Parse the 'hive-nyc-member-since' column.
                     hive_member_since=datetime.datetime.now(),
                     mission=info['organizational-mission'],
