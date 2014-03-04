@@ -63,6 +63,8 @@ class Command(BaseCommand):
         site.name = "Hive TESTING"
         site.save()
 
-        print "Database seeded. Login as admin with password '%s' " \
-              "to view the site as an administrator. All seeded users " \
-              "have the same password." % passwd
+        self.stdout.write(
+            "Database seeded. Login as admin with password '%s' "
+            "to view the site as an administrator. All seeded users "
+            "have the same password." % passwd
+        )
