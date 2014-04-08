@@ -70,16 +70,14 @@ class ImportOrgsCommand(BaseCommand):
                 org = Organization(
                     name=orgname,
                     slug=slugify(orgname)[:50],
-                    # TODO: Parse the 'hive-nyc-member-since' column.
                     hive_member_since=datetime.datetime.now(),
                     mission=info['organizational-mission'],
                     website=normalize_url(info['url']),
                     address=info['mailing-address'],
                     twitter_name=parse_twitter_name(info['twitter']),
-                    # TODO: Import organization URL.
+                    # TODO: Parse the 'hive-nyc-member-since' column.
                     # TODO: Import youth audience min/max age.
                     # TODO: Import email domain, if any.
-                    # TODO: Import mailing address.
                 )
                 org.full_clean()
                 org.save()
