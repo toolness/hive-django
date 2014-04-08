@@ -9,8 +9,22 @@ from django.utils.text import slugify
 
 from directory.models import Organization
 
+MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
+          'july', 'august', 'september', 'october', 'november', 'december']
+
 class DryRunFinished(Exception):
     pass
+
+def parse_month_and_year(s):
+    '''
+    >>> parse_month_and_year('January 2011')
+    datetime.date(2011, 1, 1)
+    '''
+
+    s = s.strip()
+    if not s: return datetime.date.today()
+    month, year = s.split()
+    return datetime.date(int(year), int(MONTHS.index(month.lower())) + 1, 1)
 
 def parse_twitter_name(t):
     if not t: return ''
@@ -70,12 +84,13 @@ class ImportOrgsCommand(BaseCommand):
                 org = Organization(
                     name=orgname,
                     slug=slugify(orgname)[:50],
-                    hive_member_since=datetime.datetime.now(),
+                    hive_member_since=parse_month_and_year(
+                        info['hive-nyc-member-since']
+                    ),
                     mission=info['organizational-mission'],
                     website=normalize_url(info['url']),
                     address=info['mailing-address'],
                     twitter_name=parse_twitter_name(info['twitter']),
-                    # TODO: Parse the 'hive-nyc-member-since' column.
                     # TODO: Import youth audience min/max age.
                     # TODO: Import email domain, if any.
                 )
