@@ -50,9 +50,17 @@ class ImportOrgsCommand(BaseCommand):
     def get_rows(self, *args, **options):
         raise NotImplementedError()
 
+    def log(self, msg):
+        self.stdout.write(msg)
+
+    def debug(self, msg):
+        if self.verbosity >= 2:
+            self.stdout.write(msg)
+
     def import_rows(self, rows):
         for info in convert_rows_to_dicts(rows):
             orgname = unicode(info['name-of-organization'])
+            self.log('Importing %s...' % orgname)
             try:
                 org = Organization(
                     name=orgname,
@@ -77,6 +85,7 @@ class ImportOrgsCommand(BaseCommand):
                 raise
 
     def handle(self, *args, **options):
+        self.verbosity = int(options['verbosity'])
         self.latest_row = None
         rows = self.get_rows(*args, **options)
 
