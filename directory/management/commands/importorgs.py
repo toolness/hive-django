@@ -12,6 +12,11 @@ from directory.models import Organization
 class DryRunFinished(Exception):
     pass
 
+def parse_twitter_name(t):
+    if not t: return ''
+    if t[0] != '@': raise Exception('not a twitter name: %s' % t)
+    return t[1:]
+
 def normalize_url(url):
     if url.startswith('http://') or url.startswith('https://'):
         return url
@@ -70,6 +75,7 @@ class ImportOrgsCommand(BaseCommand):
                     mission=info['organizational-mission'],
                     website=normalize_url(info['url']),
                     address=info['mailing-address'],
+                    twitter_name=parse_twitter_name(info['twitter']),
                     # TODO: Import organization URL.
                     # TODO: Import youth audience min/max age.
                     # TODO: Import email domain, if any.
