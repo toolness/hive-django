@@ -15,6 +15,18 @@ MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
 class DryRunFinished(Exception):
     pass
 
+def parse_age_range(s):
+    '''
+    >>> parse_age_range('11 - 18, 19 - 100')
+    (11, 18)
+    '''
+
+    s = s.strip()
+    if not s: return (0, 100)
+    s = s.split(',')[0].strip()
+    min_age, max_age = s.split(' - ')
+    return int(min_age), int(max_age)
+
 def parse_month_and_year(s):
     '''
     >>> parse_month_and_year('January 2011')
@@ -81,6 +93,7 @@ class ImportOrgsCommand(BaseCommand):
             orgname = unicode(info['name-of-organization'])
             self.log('Importing %s...' % orgname)
             try:
+                min_age, max_age = parse_age_range(info['youth-audience'])
                 org = Organization(
                     name=orgname,
                     slug=slugify(orgname)[:50],
@@ -91,7 +104,8 @@ class ImportOrgsCommand(BaseCommand):
                     website=normalize_url(info['url']),
                     address=info['mailing-address'],
                     twitter_name=parse_twitter_name(info['twitter']),
-                    # TODO: Import youth audience min/max age.
+                    min_youth_audience_age=min_age,
+                    max_youth_audience_age=max_age
                     # TODO: Import email domain, if any.
                 )
                 org.full_clean()
