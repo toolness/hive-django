@@ -243,6 +243,11 @@ class Membership(models.Model):
         help_text="The person's phone number.",
         blank=True
     )
+    receives_minigroup_digest = models.BooleanField(
+        default=False,
+        help_text="Whether the person is sent a daily digest of Minigroup "
+                  "activity."
+    )
     is_listed = models.BooleanField(
         default=True,
         help_text="Whether the person is listed under their organization in "

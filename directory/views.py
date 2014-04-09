@@ -35,13 +35,17 @@ class ChannelFormSetHelper(FormHelper):
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
-        fields = ['title', 'twitter_name', 'phone_number', 'is_listed']
+        fields = ['title', 'twitter_name', 'phone_number', 'is_listed',
+                  'receives_minigroup_digest']
         labels = {
+            'receives_minigroup_digest': 'Send me a daily digest of all '
+                                         'activity on the Hive minigroup.',
             'is_listed': 'List me under my organization\'s entry in the '
                          'Hive member directory.'
         }
         help_texts = {
             'is_listed': '',
+            'receives_minigroup_digest': '',
             'twitter_name': 'Your twitter name, e.g. "leahatplay".',
             'phone_number': 'Your phone number, e.g. 123-456-7890.',
             'title': 'Your title at your organization, e.g. '
