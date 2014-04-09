@@ -11,6 +11,7 @@ class ImportOrgsTests(unittest.TestCase):
     def test_parse_contact(self):
         pc = importorgs.parse_contact
         self.assertEqual(pc('Foo Bar\nCool Person\nfoo@bar.org'), dict(
+            full_name='Foo Bar',
             first_name='Foo',
             last_name='Bar',
             title='Cool Person',

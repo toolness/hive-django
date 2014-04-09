@@ -36,6 +36,7 @@ def parse_contact(s, stderr=sys.stderr):
     if len(lines) < 3:
         stderr.write('WARNING: cannot parse contact: %s' % repr(s))
         return None
+    result['full_name'] = lines[0]
     result['first_name'], result['last_name'] = lines[0].split(' ', 1)
     result['title'] = lines[1]
     for line in lines[2:]:
@@ -158,13 +159,6 @@ class ImportOrgsCommand(BaseCommand):
                 for field in CONTACT_FIELDS:
                     contacts.extend(parse_contacts(info[field], self.stderr))
 
-                for contact in contacts:
-                    self.debug("  Found contact: %s %s (%s, %s)." % (
-                        contact['first_name'],
-                        contact['last_name'],
-                        contact['title'],
-                        contact['email']
-                    ))
                 total_contacts += len(contacts)
                 total_phone_numbers += len([
                     contact for contact in contacts
@@ -199,8 +193,31 @@ class ImportOrgsCommand(BaseCommand):
                 )
                 org.full_clean()
                 org.save()
+
+                for contact in contacts:
+                    username = unicode(contact['full_name'])
+                    username = slugify(username)
+                    username = username.replace('-', '')
+
+                    self.debug("  Importing contact: %s (%s, %s, %s)." % (
+                        contact['full_name'],
+                        username,
+                        contact['title'],
+                        contact['email']
+                    ))
+
+                    user = User(
+                        username=username,
+                        first_name=contact['first_name'],
+                        last_name=contact['last_name'],
+                        email=contact['email'],
+                    )
+                    user.save()
+                    user.membership.organization = org
+                    user.membership.title = contact['title']
+                    user.membership.save()
+
                 # TODO: Import organization content channels.
-                # TODO: Actually import contacts.
             except Exception:
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
