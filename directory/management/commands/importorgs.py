@@ -38,6 +38,8 @@ def parse_contact(s, stderr=sys.stderr):
     for line in lines[2:]:
         if '@' in line and not line.startswith('@'):
             result['email'] = line
+        elif line.startswith('@'):
+            result['twitter'] = line
     if 'email' not in result:
         stderr.write('WARNING: no email address for %s %s' % (
             result['first_name'], result['last_name']
@@ -119,6 +121,8 @@ class ImportOrgsCommand(BaseCommand):
             self.stdout.write(msg)
 
     def import_rows(self, rows):
+        total_twitterers = 0
+        total_contacts = 0
         for info in convert_rows_to_dicts(rows):
             orgname = unicode(info['name-of-organization'])
             self.log('Importing %s...' % orgname)
@@ -135,7 +139,11 @@ class ImportOrgsCommand(BaseCommand):
                         contact['title'],
                         contact['email']
                     ))
-
+                total_contacts += len(contacts)
+                total_twitterers += len([
+                    contact for contact in contacts
+                    if 'twitter' in contact
+                ])
                 if contacts:
                     email_domain = contacts[0]['email'].split('@')[1]
                     if email_domain in NON_ORG_DOMAINS:
@@ -167,6 +175,8 @@ class ImportOrgsCommand(BaseCommand):
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
                 raise
+        self.debug('Total contacts: %d' % total_contacts)
+        self.debug('Total twitterers: %d' % total_twitterers)
 
     def handle(self, *args, **options):
         self.verbosity = int(options['verbosity'])
