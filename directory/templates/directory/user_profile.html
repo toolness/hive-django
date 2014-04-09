@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load directory %}
 
 {% block title %}User Profile{% endblock %}
 
@@ -7,6 +8,14 @@
 <form method="post" action="{% url 'user_profile' %}">
 {% csrf_token %}
 <h2>Basic Information</h2>
+<div class="media">
+  <img class="pull-left media-object" src="//gravatar.com/avatar/{{ user.email|emailhash }}?d=mm" alt="gravatar for {{ user.email }}">
+  <div class="media-body">
+    <p>This is the Globally Recognized Avatar (gravatar) for <strong>{{ user.email }}</strong>.</p>
+    <p>If you don't like it, you can change it at <a href="http://gravatar.com/">gravatar.com</a>.</p>
+  </div>
+</div>
+<br>
 {{ user_profile_form|crispy }}
 {% if membership_form %}
   <h2>Membership Information</h3>

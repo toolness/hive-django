@@ -20,30 +20,34 @@
     <p><a href="{% url 'organization_profile' org.slug %}" class="btn btn-sm btn-default">Edit</a></p>
   {% endif %}
   {% if show_privileged_info %}
-    <ul class="list-unstyled">
+    <ul class="media-list">
     {% for membership in org.membership_directory %}
-      <li>
-        <address><strong>{{ membership.user.get_full_name }}</strong><br>
-          {% if membership.title %}{{ membership.title }}<br>{% endif %}
-          {% if membership.phone_number %}
-          <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
+      <li class="media">
+        <img class="pull-left media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
+        <div class="media-body">
+          <address><strong>{{ membership.user.get_full_name }}</strong><br>
+            {% if membership.title %}{{ membership.title }}<br>{% endif %}
+            {% if membership.phone_number %}
+            <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
+            {% endif %}
+            {% if membership.twitter_name %}
+            <a href="https://twitter.com/{{membership.twitter_name}}">@{{membership.twitter_name}}</a><br>
+            {% endif %}
+          
+          <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
+          {% if user.is_superuser and user != membership.user %}
+            <a href="#" class="btn btn-default btn-xs" data-submit-form-onclick>
+              <form method="post" action="{% url 'switch_user' membership.user.username %}">
+                {% csrf_token %}
+              </form>
+              Login as this user
+            </a>
           {% endif %}
-          {% if membership.twitter_name %}
-          <a href="https://twitter.com/{{membership.twitter_name}}">@{{membership.twitter_name}}</a><br>
+          {% if user == membership.user %}
+            <a href="{% url 'user_profile' %}" class="btn btn-default btn-xs">Edit</a>
           {% endif %}
-        <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
-        {% if user.is_superuser and user != membership.user %}
-          <a href="#" class="btn btn-default btn-xs" data-submit-form-onclick>
-            <form method="post" action="{% url 'switch_user' membership.user.username %}">
-              {% csrf_token %}
-            </form>
-            Login as this user
-          </a>
-        {% endif %}
-        {% if user == membership.user %}
-          <a href="{% url 'user_profile' %}" class="btn btn-default btn-xs">Edit</a>
-        {% endif %}
-        </address>
+          </address>
+        </div>
       </li>
     {% endfor %}
     </ul>
