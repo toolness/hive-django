@@ -189,14 +189,6 @@ class ImportOrgsCommand(BaseCommand):
                     contacts.extend(parse_contacts(info[field], self.stderr))
 
                 total_contacts += len(contacts)
-                total_phone_numbers += len([
-                    contact for contact in contacts
-                    if 'phone' in contact
-                ])
-                total_twitterers += len([
-                    contact for contact in contacts
-                    if 'twitter' in contact
-                ])
                 if contacts:
                     email_domain = contacts[0]['email'].split('@')[1]
                     if email_domain in NON_ORG_DOMAINS:
@@ -265,10 +257,13 @@ class ImportOrgsCommand(BaseCommand):
                     membership = user.membership
                     membership.organization = org
                     membership.title = contact['title']
-                    if 'twitter' in contact:
+                    if ('twitter' in contact and
+                        contact['twitter'] != org.twitter_name):
                         membership.twitter_name = contact['twitter']
+                        total_twitterers += 1
                     if 'phone' in contact:
                         membership.phone_number = contact['phone']
+                        total_phone_numbers += 1
                     membership.full_clean()
                     membership.save()
             except Exception:
