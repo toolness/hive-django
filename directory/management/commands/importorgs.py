@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.text import slugify
 
-from directory.models import Organization
+from directory.models import Organization, ContentChannel
 from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
@@ -16,11 +16,60 @@ MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
 
 CONTACT_FIELDS = ['contact-1', 'contact-2', 'contact-3',
                   'other-contacts']
-
+CONTENT_CHANNEL_FIELDS = ['facebook', 'blog', 'youtube',
+                          'flickr', 'other-social-content-channels']
 NON_ORG_DOMAINS = ['gmail.com']
 
 class DryRunFinished(Exception):
     pass
+
+def split_urls(s):
+    '''
+    >>> split_urls('meh.com/u\\nu.com/blah')
+    ['http://meh.com/u', 'http://u.com/blah']
+
+    >>> split_urls('meh.com/u; u.com/blah')
+    ['http://meh.com/u', 'http://u.com/blah']
+    '''
+
+    urls = []
+    for line in s.splitlines():
+        line = line.strip()
+        if not line: continue
+        if ';' in line:
+            lineparts = line.split(';')
+        else:
+            lineparts = [line]
+        for linepart in lineparts:
+            linepart = linepart.strip()
+            if not linepart: continue
+            urls.append(normalize_url(linepart))
+    return urls
+
+def parse_content_channels(s):
+    '''
+    >>> parse_content_channels('http://facebook.com/blah')
+    [('facebook', 'http://facebook.com/blah')]
+
+    >>> parse_content_channels('http://twitter.com/blah')
+    []
+
+    >>> parse_content_channels('\\n\\n\\nmeh.com/blah\\n\\n\\n')
+    [('other', 'http://meh.com/blah')]
+    '''
+
+    channels = []
+    for url in split_urls(s):
+        url = url.strip()
+        if not url: continue
+        if 'twitter.com' in url: continue
+        url = normalize_url(url)
+        url_category = 'other'
+        for category, name in ContentChannel.CATEGORY_CHOICES:
+            if ('%s.com' % category) in url.lower():
+                url_category = category
+        channels.append((url_category, url))
+    return channels
 
 def parse_contacts(s, stderr=sys.stderr):
     s = s.strip()
@@ -174,6 +223,23 @@ class ImportOrgsCommand(BaseCommand):
                 org.full_clean()
                 org.save()
 
+                channels = []
+                for field in CONTENT_CHANNEL_FIELDS:
+                    channels.extend(parse_content_channels(info[field]))
+
+                for category, url in channels:
+                    self.debug("  Importing channel: %s (%s)" % (
+                        url,
+                        category
+                    ))
+                    channel = ContentChannel(
+                        category=category,
+                        url=url,
+                        organization=org
+                    )
+                    channel.full_clean()
+                    channel.save()
+
                 for contact in contacts:
                     username = unicode(contact['full_name'])
                     username = slugify(username)
@@ -205,8 +271,6 @@ class ImportOrgsCommand(BaseCommand):
                         membership.phone_number = contact['phone']
                     membership.full_clean()
                     membership.save()
-
-                # TODO: Import organization content channels.
             except Exception:
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
