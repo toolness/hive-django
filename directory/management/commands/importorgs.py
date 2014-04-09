@@ -251,7 +251,7 @@ class ImportOrgsCommand(BaseCommand):
                         is_active=True,
                         email=contact['email'],
                     )
-                    user.set_password(None)
+                    user.set_password(User.objects.make_random_password())
                     user.full_clean()
                     user.save()
                     membership = user.membership
