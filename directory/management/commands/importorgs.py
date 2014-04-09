@@ -1,6 +1,5 @@
 import sys
 import csv
-import re
 import datetime
 from optparse import make_option
 from django.contrib.auth.models import User
@@ -10,6 +9,7 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from directory.models import Organization
+from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
           'july', 'august', 'september', 'october', 'november', 'december']
@@ -18,8 +18,6 @@ CONTACT_FIELDS = ['contact-1', 'contact-2', 'contact-3',
                   'other-contacts']
 
 NON_ORG_DOMAINS = ['gmail.com']
-
-PHONE_NUMBER_RE = re.compile(r'^[0-9]{3}-[0-9]{3}-[0-9]{4}$')
 
 class DryRunFinished(Exception):
     pass
@@ -53,24 +51,6 @@ def parse_contact(s, stderr=sys.stderr):
         ))
         return None
     return result
-
-def is_phone_number(s):
-    '''
-    >>> is_phone_number('123-456-7890')
-    True
-
-    >>> is_phone_number('lol')
-    False
-
-    >>> is_phone_number('hmm123-456-7890')
-    False
-
-    >>> is_phone_number('123-456-7890o')
-    False
-    '''
-
-    if PHONE_NUMBER_RE.match(s): return True
-    return False
 
 def parse_age_range(s):
     '''
