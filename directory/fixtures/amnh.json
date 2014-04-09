@@ -3,8 +3,8 @@
   "pk": 3, 
   "model": "directory.organization", 
   "fields": {
-    "created": "2001-01-01",
-    "modified": "2001-01-01",    
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",
     "website": "http://www.amnh.org/", 
     "hive_member_since": "2011-01-01", 
     "mission": "The American Museum of Natural History is one of the world’s preeminent scientific and cultural institutions. Since its founding in 1869, the Museum has advanced its global mission to discover, interpret, and disseminate information about human cultures, the natural world, and the universe through a wide-ranging program of scientific research, education, and exhibition.", 
@@ -19,8 +19,8 @@
   "pk": 3,
   "model": "directory.contentchannel",
   "fields": {
-    "created": "2001-01-01",
-    "modified": "2001-01-01",    
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",
     "category": "flickr",
     "url": "http://flickr.com/amnh",
     "organization": 3

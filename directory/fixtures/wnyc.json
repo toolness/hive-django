@@ -3,8 +3,8 @@
   "pk": 1, 
   "model": "directory.organization", 
   "fields": {
-    "created": "2001-01-01",
-    "modified": "2001-01-01",    
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",    
     "website": "http://www.radiorookies.org/", 
     "hive_member_since": "2014-02-19", 
     "mission": "Radio Rookies is a New York Public Radio initiative that provides teenagers with the tools and training to create radio stories about themselves, their communities and their world.", 
@@ -19,8 +19,8 @@
   "pk": 1,
   "model": "directory.contentchannel",
   "fields": {
-    "created": "2001-01-01",
-    "modified": "2001-01-01",    
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",    
     "category": "facebook",
     "url": "https://www.facebook.com/groups/12692245380/",
     "organization": 1
