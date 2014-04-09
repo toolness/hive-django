@@ -13,3 +13,4 @@ class TwitterNameTests(TestCase):
         validate_twitter_name('toolness')
         validate_twitter_name('t')
         validate_twitter_name('super_burger')
+        validate_twitter_name('blargy23')

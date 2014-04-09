@@ -9,7 +9,7 @@ def validate_twitter_name(value):
     if len(value) > MAX_TWITTER_NAME_LEN:
         raise ValidationError(base_err + ' A username cannot be longer than '
                               '%d characters.' % MAX_TWITTER_NAME_LEN)
-    if not re.match('^[A-Za-z_]+$', value):
+    if not re.match('^[A-Za-z0-9_]+$', value):
         raise ValidationError(
             base_err +
             ' A username can only contain alphanumeric characters (letters '

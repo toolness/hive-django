@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from registration.signals import user_activated
 
 from .twitter import TwitterNameField
+from .phonenumber import PhoneNumberField
 
 def is_user_hive_member(user, organization=None):
     '''
@@ -183,6 +184,14 @@ class Membership(models.Model):
     title = models.CharField(
         help_text="The person's title at their organization.",
         max_length=100,
+        blank=True
+    )
+    twitter_name = TwitterNameField(
+        help_text="The twitter account for the person.",
+        blank=True,
+    )
+    phone_number = PhoneNumberField(
+        help_text="The person's phone number.",
         blank=True
     )
     is_listed = models.BooleanField(

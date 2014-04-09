@@ -42,7 +42,7 @@ def parse_contact(s, stderr=sys.stderr):
         if '@' in line and not line.startswith('@'):
             result['email'] = line
         elif line.startswith('@'):
-            result['twitter'] = line
+            result['twitter'] = line[1:]
         elif is_phone_number(line):
             result['phone'] = line
     if 'email' not in result:
@@ -194,10 +194,17 @@ class ImportOrgsCommand(BaseCommand):
                         email=contact['email'],
                     )
                     user.set_password(None)
+                    user.full_clean()
                     user.save()
-                    user.membership.organization = org
-                    user.membership.title = contact['title']
-                    user.membership.save()
+                    membership = user.membership
+                    membership.organization = org
+                    membership.title = contact['title']
+                    if 'twitter' in contact:
+                        membership.twitter_name = contact['twitter']
+                    if 'phone' in contact:
+                        membership.phone_number = contact['phone']
+                    membership.full_clean()
+                    membership.save()
 
                 # TODO: Import organization content channels.
             except Exception:
