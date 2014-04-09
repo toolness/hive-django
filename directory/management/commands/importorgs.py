@@ -1,3 +1,4 @@
+import sys
 import csv
 import datetime
 from optparse import make_option
@@ -12,8 +13,35 @@ from directory.models import Organization
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
           'july', 'august', 'september', 'october', 'november', 'december']
 
+CONTACT_FIELDS = ['contact-1', 'contact-2', 'contact-3',
+                  'other-contacts']
+
 class DryRunFinished(Exception):
     pass
+
+def parse_contacts(s, stderr=sys.stderr):
+    s = s.strip()
+    if not s: return []
+    results = [parse_contact(chunk, stderr) for chunk in s.split('\n\n')]
+    return [result for result in results if result is not None]
+
+def parse_contact(s, stderr=sys.stderr):
+    result = {}
+    lines = s.splitlines()
+    if len(lines) < 3:
+        stderr.write('WARNING: cannot parse contact: %s' % repr(s))
+        return None
+    result['first_name'], result['last_name'] = lines[0].split(' ', 1)
+    result['title'] = lines[1]
+    for line in lines[2:]:
+        if '@' in line and not line.startswith('@'):
+            result['email'] = line
+    if 'email' not in result:
+        stderr.write('WARNING: no email address for %s %s' % (
+            result['first_name'], result['last_name']
+        ))
+        return None
+    return result
 
 def parse_age_range(s):
     '''
@@ -110,8 +138,17 @@ class ImportOrgsCommand(BaseCommand):
                 )
                 org.full_clean()
                 org.save()
+                for field in CONTACT_FIELDS:
+                    contacts = parse_contacts(info[field], self.stderr)
+                    for contact in contacts:
+                        print "  Importing %s %s (%s, %s)..." % (
+                            contact['first_name'],
+                            contact['last_name'],
+                            contact['title'],
+                            contact['email']
+                        )
+                        # TODO: Actually import contact.
                 # TODO: Import organization content channels.
-                # TODO: Import users from 'contact-1' columns etc.
             except Exception:
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
