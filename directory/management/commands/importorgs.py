@@ -1,5 +1,6 @@
 import sys
 import csv
+import re
 import datetime
 from optparse import make_option
 from django.contrib.auth.models import User
@@ -17,6 +18,8 @@ CONTACT_FIELDS = ['contact-1', 'contact-2', 'contact-3',
                   'other-contacts']
 
 NON_ORG_DOMAINS = ['gmail.com']
+
+PHONE_NUMBER_RE = re.compile(r'^[0-9]{3}-[0-9]{3}-[0-9]{4}$')
 
 class DryRunFinished(Exception):
     pass
@@ -36,16 +39,37 @@ def parse_contact(s, stderr=sys.stderr):
     result['first_name'], result['last_name'] = lines[0].split(' ', 1)
     result['title'] = lines[1]
     for line in lines[2:]:
+        line = line.strip()
         if '@' in line and not line.startswith('@'):
             result['email'] = line
         elif line.startswith('@'):
             result['twitter'] = line
+        elif is_phone_number(line):
+            result['phone'] = line
     if 'email' not in result:
         stderr.write('WARNING: no email address for %s %s' % (
             result['first_name'], result['last_name']
         ))
         return None
     return result
+
+def is_phone_number(s):
+    '''
+    >>> is_phone_number('123-456-7890')
+    True
+
+    >>> is_phone_number('lol')
+    False
+
+    >>> is_phone_number('hmm123-456-7890')
+    False
+
+    >>> is_phone_number('123-456-7890o')
+    False
+    '''
+
+    if PHONE_NUMBER_RE.match(s): return True
+    return False
 
 def parse_age_range(s):
     '''
@@ -122,6 +146,7 @@ class ImportOrgsCommand(BaseCommand):
 
     def import_rows(self, rows):
         total_twitterers = 0
+        total_phone_numbers = 0
         total_contacts = 0
         orginfos = convert_rows_to_dicts(rows)
         for info in orginfos:
@@ -141,6 +166,10 @@ class ImportOrgsCommand(BaseCommand):
                         contact['email']
                     ))
                 total_contacts += len(contacts)
+                total_phone_numbers += len([
+                    contact for contact in contacts
+                    if 'phone' in contact
+                ])
                 total_twitterers += len([
                     contact for contact in contacts
                     if 'twitter' in contact
@@ -179,6 +208,7 @@ class ImportOrgsCommand(BaseCommand):
         self.debug('Total orgs: %d' % len(orginfos))
         self.debug('Total contacts: %d' % total_contacts)
         self.debug('Total twitterers: %d' % total_twitterers)
+        self.debug('Total phone numbers: %d' % total_phone_numbers)
 
     def handle(self, *args, **options):
         self.verbosity = int(options['verbosity'])
