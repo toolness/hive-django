@@ -40,6 +40,9 @@ class AccountProfileTests(TestCase):
         c = Client()
         c.login(username='non_member', password='lol')
         response = c.post('/accounts/profile/', {
+            'expertise-TOTAL_FORMS': '3',
+            'expertise-INITIAL_FORMS': '0',
+            'expertise-MAX_NUM_FORMS': '1000',
             'user_profile-username': 'non_member',
             'user_profile-first_name': 'Non',
             'user_profile-last_name': 'Member'

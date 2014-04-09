@@ -8,7 +8,18 @@ from django.contrib.auth.decorators import login_required
 from crispy_forms.helper import FormHelper
 
 from .models import Organization, Membership, is_user_hive_member, \
-                    is_user_privileged, ContentChannel
+                    is_user_privileged, ContentChannel, Expertise
+
+ExpertiseFormSet = inlineformset_factory(
+    User, Expertise,
+    fields = ['category', 'details'],
+    help_texts = {'category': '', 'details': ''},
+    labels = {'category': 'Category', 'details': 'Additional notes'}
+)
+
+class ExpertiseFormSetHelper(FormHelper):
+    form_tag = False
+    template = 'directory/table_inline_formset.html'
 
 ContentChannelFormSet = inlineformset_factory(
     Organization, ContentChannel,
@@ -106,8 +117,11 @@ def user_profile(request):
     user_profile_form = UserProfileForm(data=data,
                                         instance=user,
                                         prefix='user_profile')
+    expertise_formset = ExpertiseFormSet(data=data, instance=user,
+                                         prefix='expertise')
     if request.method == 'POST':
-        if validate_and_save_forms(user_profile_form, membership_form):
+        if validate_and_save_forms(user_profile_form, membership_form,
+                                   expertise_formset):
             messages.success(request, 'Your profile has been updated.')
             return redirect('user_profile')
         else:
@@ -115,5 +129,7 @@ def user_profile(request):
 
     return render(request, 'directory/user_profile.html', {
         'membership_form': membership_form,
-        'user_profile_form': user_profile_form
+        'user_profile_form': user_profile_form,
+        'expertise_formset': expertise_formset,
+        'expertise_formset_helper': ExpertiseFormSetHelper()
     })

@@ -103,6 +103,48 @@ class Organization(models.Model):
                                   "be greater than maximum youth audience "
                                   "age.")
 
+class Expertise(models.Model):
+    '''
+    Represents an expertise that a user has.
+    '''
+
+    CATEGORY_CHOICES = (
+        ('youth', 'Youth'),
+        ('partnerships', 'Collaboration and Partnerships'),
+        ('rfp', 'RFP'),
+        ('leveragingresources', 'Leveraging Resources'),
+        ('volunteers', 'Mentors and Volunteers'),
+        ('sharingoutcomes', 'Sharing Outcomes'),
+        ('events', 'Activities and Events'),
+        ('programdesign', 'Program Design and Facilitation'),
+        ('badges', 'Badges'),
+        ('innovation', 'Innovation Design Strategies'),
+        ('leveraginghive', 'Leveraging Hive'),
+        ('curriculum', 'Curriculum Development'),
+        ('assessment', 'Assessment and Evaluative Approaches'),
+        ('technology', 'Technological Solutions and Possibilities'),
+        ('other', 'Other'),
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    category = models.CharField(
+        help_text="The type of the expertise",
+        choices=CATEGORY_CHOICES,
+        max_length=25,
+    )
+
+    details = models.CharField(
+        max_length=255,
+        help_text="Details about the expertise",
+    )
+
+    user = models.ForeignKey(
+        User,
+        related_name='skills'
+    )
+
 class ContentChannel(models.Model):
     '''
     Represents a content channel for a Hive member organization.
