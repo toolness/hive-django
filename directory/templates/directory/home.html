@@ -25,6 +25,9 @@
       <li>
         <address><strong>{{ membership.user.get_full_name }}</strong><br>
           {% if membership.title %}{{ membership.title }}<br>{% endif %}
+          {% if membership.phone_number %}
+          <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
+          {% endif %}
           {% if membership.twitter_name %}
           <a href="https://twitter.com/{{membership.twitter_name}}">@{{membership.twitter_name}}</a><br>
           {% endif %}
