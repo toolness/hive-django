@@ -137,6 +137,7 @@ class Expertise(models.Model):
 
     details = models.CharField(
         max_length=255,
+        blank=True,
         help_text="Details about the expertise",
     )
 
