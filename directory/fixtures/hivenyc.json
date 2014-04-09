@@ -3,6 +3,8 @@
   "pk": 2, 
   "model": "directory.organization", 
   "fields": {
+    "created": "2001-01-01",
+    "modified": "2001-01-01",    
     "website": "http://hivenyc.org/", 
     "hive_member_since": "2010-01-01", 
     "mission": "Explore. Create. Share.", 

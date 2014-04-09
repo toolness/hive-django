@@ -35,6 +35,8 @@ class Organization(models.Model):
     Represents a Hive member organization.
     '''
 
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     name = models.CharField(
         help_text="The full name of the organization.",
         max_length=100
@@ -129,6 +131,9 @@ class ContentChannel(models.Model):
         ('other', 'Other'),
     )
 
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
     category = models.CharField(
         help_text="The type of the content channel",
         choices=CATEGORY_CHOICES,
@@ -178,6 +183,8 @@ class Membership(models.Model):
     Represents a person who is a member of an organization.
     '''
 
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True,
                                      related_name='memberships')
