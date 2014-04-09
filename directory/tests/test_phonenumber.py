@@ -10,6 +10,9 @@ def load_tests(loader, tests, ignore):
     return tests
 
 class PhoneNumberTests(unittest.TestCase):
+    def test_phone_number_field_instantiates(self):
+        phonenumber.PhoneNumberField()
+
     def test_validate_phone_number_rejects_invalid_numbers(self):
         self.assertRaises(ValidationError, validate_phone_number, '$')
 
