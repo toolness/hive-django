@@ -24,15 +24,17 @@ class ChannelFormSetHelper(FormHelper):
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
-        fields = ['title', 'is_listed']
+        fields = ['title', 'twitter_name', 'phone_number', 'is_listed']
         labels = {
             'is_listed': 'List me under my organization\'s entry in the '
                          'Hive member directory.'
         }
         help_texts = {
             'is_listed': '',
+            'twitter_name': 'Your twitter name, e.g. "leahatplay".',
+            'phone_number': 'Your phone number, e.g. 123-456-7890.',
             'title': 'Your title at your organization, e.g. '
-                     '"Executive Director of Awesome".'
+                     '"Executive Director of Awesome".',
         }
 
 class UserProfileForm(ModelForm):
