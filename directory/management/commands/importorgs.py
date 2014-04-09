@@ -210,8 +210,10 @@ class ImportOrgsCommand(BaseCommand):
                         username=username,
                         first_name=contact['first_name'],
                         last_name=contact['last_name'],
+                        is_active=True,
                         email=contact['email'],
                     )
+                    user.set_password(None)
                     user.save()
                     user.membership.organization = org
                     user.membership.title = contact['title']
