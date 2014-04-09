@@ -123,7 +123,8 @@ class ImportOrgsCommand(BaseCommand):
     def import_rows(self, rows):
         total_twitterers = 0
         total_contacts = 0
-        for info in convert_rows_to_dicts(rows):
+        orginfos = convert_rows_to_dicts(rows)
+        for info in orginfos:
             orgname = unicode(info['name-of-organization'])
             self.log('Importing %s...' % orgname)
             try:
@@ -175,6 +176,7 @@ class ImportOrgsCommand(BaseCommand):
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
                 raise
+        self.debug('Total orgs: %d' % len(orginfos))
         self.debug('Total contacts: %d' % total_contacts)
         self.debug('Total twitterers: %d' % total_twitterers)
 
