@@ -16,6 +16,8 @@ MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
 CONTACT_FIELDS = ['contact-1', 'contact-2', 'contact-3',
                   'other-contacts']
 
+NON_ORG_DOMAINS = ['gmail.com']
+
 class DryRunFinished(Exception):
     pass
 
@@ -121,6 +123,27 @@ class ImportOrgsCommand(BaseCommand):
             orgname = unicode(info['name-of-organization'])
             self.log('Importing %s...' % orgname)
             try:
+                contacts = []
+                email_domain = ''
+                for field in CONTACT_FIELDS:
+                    contacts.extend(parse_contacts(info[field], self.stderr))
+
+                for contact in contacts:
+                    self.debug("  Found contact: %s %s (%s, %s)." % (
+                        contact['first_name'],
+                        contact['last_name'],
+                        contact['title'],
+                        contact['email']
+                    ))
+
+                if contacts:
+                    email_domain = contacts[0]['email'].split('@')[1]
+                    if email_domain in NON_ORG_DOMAINS:
+                        email_domain = ''
+
+                if email_domain:
+                    self.debug("  Email domain is %s." % email_domain)
+
                 min_age, max_age = parse_age_range(info['youth-audience'])
                 org = Organization(
                     name=orgname,
@@ -133,22 +156,13 @@ class ImportOrgsCommand(BaseCommand):
                     address=info['mailing-address'],
                     twitter_name=parse_twitter_name(info['twitter']),
                     min_youth_audience_age=min_age,
-                    max_youth_audience_age=max_age
-                    # TODO: Import email domain, if any.
+                    max_youth_audience_age=max_age,
+                    email_domain=email_domain
                 )
                 org.full_clean()
                 org.save()
-                for field in CONTACT_FIELDS:
-                    contacts = parse_contacts(info[field], self.stderr)
-                    for contact in contacts:
-                        print "  Importing %s %s (%s, %s)..." % (
-                            contact['first_name'],
-                            contact['last_name'],
-                            contact['title'],
-                            contact['email']
-                        )
-                        # TODO: Actually import contact.
                 # TODO: Import organization content channels.
+                # TODO: Actually import contacts.
             except Exception:
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
