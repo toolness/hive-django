@@ -22,6 +22,8 @@ $(function() {
       cb(matches);
     }
   }).on('typeahead:selected typeahead:autocompleted', function(e, sugg) {
+    var self = $(this);
     window.location.hash = '#' + sugg.id;
+    setTimeout(function() { self.val(''); }, 0);
   });
 });
