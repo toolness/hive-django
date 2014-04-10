@@ -24,6 +24,6 @@ $(function() {
   }).on('typeahead:selected typeahead:autocompleted', function(e, sugg) {
     var self = $(this);
     window.location.hash = '#' + sugg.id;
-    setTimeout(function() { self.val(''); }, 0);
+    setTimeout(function() { self.typeahead('val', ''); }, 0);
   });
 });
