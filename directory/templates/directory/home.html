@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 {% load directory %}
+{% load static from staticfiles %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/typeaheadjs.css' %}">
+{% endblock %}
 
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<div class="jumbotron">
+  <h1>Welcome to the Hive Directory.</h1>
+  <div class="input-group">
+    <input class="form-control" data-staticsearchbox placeholder="Search for organizations and people here">
+    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+  </div>
+</div>
 {% for org in orgs %}
-  <h2>{{ org.name }}</h2>
+  <h2 id="org_{{ org.slug }}" data-staticsearchable>{{ org.name }}</h2>
   <p>
     <a href="{{ org.website }}">{{ org.website|domainname }}</a>
     {% for channel in org.content_channels.all %}
@@ -25,7 +37,7 @@
       <li class="media">
         <img class="pull-left media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
         <div class="media-body">
-          <address><strong>{{ membership.user.get_full_name }}</strong><br>
+          <address><strong id="user_{{ user.username }}" data-staticsearchable>{{ membership.user.get_full_name }}</strong><br>
             {% if membership.title %}{{ membership.title }}<br>{% endif %}
             {% if membership.phone_number %}
             <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
@@ -53,4 +65,9 @@
     </ul>
   {% endif %}
 {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/typeahead.jquery.js' %}"></script>
+  <script src="{% static 'js/staticsearch.js' %}"></script>
 {% endblock %}
