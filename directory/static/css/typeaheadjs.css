@@ -1,4 +1,8 @@
 /* https://github.com/bassjobsen/typeahead.js-bootstrap-css */
+span.twitter-typeahead {
+  width: 100%;
+  position: relative;
+}
 
 .tt-dropdown-menu {
   position: absolute;
@@ -19,6 +23,7 @@
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   background-clip: padding-box;
+  width: 100%;
 }
 .tt-suggestion > p {
   display: block;

@@ -11,10 +11,7 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Welcome to the Hive Directory.</h1>
-  <div class="input-group">
-    <input class="form-control" data-staticsearchbox placeholder="Search for organizations and people here">
-    <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-  </div>
+  <input class="form-control" data-staticsearchbox placeholder="Search for organizations and people here">
 </div>
 {% for org in orgs %}
   <h2 id="org_{{ org.slug }}" data-staticsearchable>{{ org.name }}</h2>
