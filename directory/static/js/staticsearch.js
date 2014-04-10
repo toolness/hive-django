@@ -13,10 +13,15 @@ $(function() {
       $('[data-staticsearchable]').each(function() {
         var text = $(this).text();
         if (text.toLowerCase().indexOf(q) != -1)
-          matches.push({value: text});
+          matches.push({
+            value: text,
+            id: this.id
+          });
       });
 
       cb(matches);
     }
+  }).on('typeahead:selected typeahead:autocompleted', function(e, sugg) {
+    window.location.hash = '#' + sugg.id;
   });
 });
