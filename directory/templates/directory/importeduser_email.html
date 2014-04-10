@@ -1,0 +1,20 @@
+{% autoescape off %}
+Hi {{ user.first_name }}!
+
+A new account has been created for you at {{ site_name }}.
+
+Your username is {{ user.get_username }}, but if you don't like it, you can
+change it once you log in.
+
+Please go to the following page to choose a password for your account
+and log in:
+
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+{% endblock %}
+
+We look forward to seeing you on the site!
+
+The {{ site_name }} team
+
+{% endautoescape %}

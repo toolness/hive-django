@@ -255,6 +255,21 @@ class Membership(models.Model):
                   "the Hive member directory."
     )
 
+class ImportedUserInfo(models.Model):
+    '''
+    Represents book-keeping about users who were imported from another
+    data source, e.g. a Google Spreadsheet.
+    '''
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User)
+    was_sent_email = models.BooleanField(
+        default=False,
+        help_text="Whether the imported user has been sent an email "
+                  "informing them of their new account."
+    )
+
 @receiver(post_save, sender=User)
 def create_membership_for_user(sender, raw, instance, **kwargs):
     if raw: return

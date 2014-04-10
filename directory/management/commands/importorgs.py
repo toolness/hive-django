@@ -8,7 +8,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.text import slugify
 
-from directory.models import Organization, ContentChannel
+from directory.models import Organization, ContentChannel, \
+                             ImportedUserInfo
 from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
@@ -266,6 +267,8 @@ class ImportOrgsCommand(BaseCommand):
                         total_phone_numbers += 1
                     membership.full_clean()
                     membership.save()
+                    import_info = ImportedUserInfo(user=user)
+                    import_info.save()
             except Exception:
                 self.stderr.write('Error importing row '
                                   '%d (%s)' % (info['row'], orgname))
