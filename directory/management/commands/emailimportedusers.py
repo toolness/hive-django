@@ -6,6 +6,8 @@ from django.conf import settings
 
 from directory.models import ImportedUserInfo
 
+CONSOLE_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--dry-run',
@@ -33,14 +35,22 @@ class Command(BaseCommand):
 
     args = '[email1] [email2] ...'
 
-    def send_email(self, email):
+    def send_email(self, email, dry_run):
+        use_https = urlparse.urlparse(settings.ORIGIN).scheme == 'https'
         form = PasswordResetForm({'email': email})
         if not form.is_valid(): raise AssertionError('Form is not valid')
-        form.save(
-            use_https=urlparse.urlparse(settings.ORIGIN).scheme == 'https',
-            subject_template_name='directory/importeduser_subject.txt',
-            email_template_name='directory/importeduser_email.html'
-        )
+        if dry_run:
+            original_backend = settings.EMAIL_BACKEND
+            settings.EMAIL_BACKEND = CONSOLE_EMAIL_BACKEND
+        try:
+            form.save(
+                use_https=use_https,
+                subject_template_name='directory/importeduser_subject.txt',
+                email_template_name='directory/importeduser_email.html'
+            )
+        finally:
+            if dry_run:
+                settings.EMAIL_BACKEND = original_backend
 
     def handle(self, *args, **kwargs):
         criteria = {}
@@ -58,7 +68,7 @@ class Command(BaseCommand):
         for info in non_emailed_userinfo:
             user = info.user
             write("  Emailing %s <%s>" % (user.get_full_name(), user.email))
+            self.send_email(user.email, kwargs['dry_run'])
             if not kwargs['dry_run']:
-                self.send_email(user.email)
                 info.was_sent_email = True
                 info.save()
