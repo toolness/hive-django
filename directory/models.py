@@ -69,7 +69,8 @@ class Organization(models.Model):
                   "Only the month and year will be used."
     )
     mission = models.TextField(
-        help_text="The organization's mission and philosophy.",
+        help_text="The organization's mission and philosophy. Markdown "
+                  "and basic HTML tags are allowed.",
         blank=True,
     )
     min_youth_audience_age = models.SmallIntegerField(
