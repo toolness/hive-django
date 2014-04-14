@@ -26,6 +26,24 @@ class MarkdownRenderingTests(TestCase):
     def test_accepts_em_tags(self):
         self.assertRendering('<em>hello</em>', '<p><em>hello</em></p>')
 
+    def test_accepts_a_tags_without_nofollow(self):
+        self.assertRendering(
+            '<a href="http://foo.org">hi</a>',
+            '<p><a href="http://foo.org">hi</a></p>'
+        )
+
+    def test_accepts_markdown_hyperlinks(self):
+        self.assertRendering(
+            '[hi](http://foo.org)',
+            '<p><a href="http://foo.org">hi</a></p>'
+        )
+
+    def test_rejects_javascript_urls(self):
+        self.assertRendering(
+            '<a href="javascript:lol()">hi</a>',
+            '<p><a>hi</a></p>'
+        )
+
     def test_escapes_script_tags(self):
         self.assertRendering('<script>h</script>',
                              '&lt;script&gt;h&lt;/script&gt;')
