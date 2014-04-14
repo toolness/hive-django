@@ -1,8 +1,24 @@
 import urlparse
 import hashlib
+import markdown
+import bleach
 from django import template
+from django.utils.safestring import mark_safe
 
 register = template.Library()
+
+@register.filter(name='markdown')
+def render_markdown(text):
+    """
+    Render the given markdown/HTML text as sanitized HTML.
+    """
+
+    return mark_safe(bleach.clean(
+        text=markdown.markdown(text),
+        tags=bleach.ALLOWED_TAGS + [
+            'p'
+        ]
+    ))
 
 @register.filter(name='domainname')
 def get_domainname(url):

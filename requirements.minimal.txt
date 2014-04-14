@@ -11,5 +11,11 @@ django-crispy-forms==1.4.0
 South==0.8.4
 docutils==0.11
 
+# For safe markdown/HTML rendering...
+Markdown==2.4
+bleach==1.4
+html5lib==0.999
+six==1.6.1
+
 # For tests to run...
 mock==1.0.1
