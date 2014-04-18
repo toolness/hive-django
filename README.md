@@ -51,6 +51,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `EMAIL_BACKEND_URL` is a URL representing the email backend to use.
   Examples include `console:`, `smtp://hostname:port`, and
   `smtp+tls://user:pass@hostname:port`.
+* `DEFAULT_FROM_EMAIL` is the default email address to use for various
+  automated correspondence from the site manager(s), such as password
+  resets. Defaults to `webmaster@localhost`.
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.

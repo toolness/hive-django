@@ -38,6 +38,9 @@ if 'SECURE_PROXY_SSL_HEADER' in os.environ:
         os.environ['SECURE_PROXY_SSL_HEADER']
     )
 
+if 'DEFAULT_FROM_EMAIL' in os.environ:
+    DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
 PORT = int(os.environ['PORT'])
