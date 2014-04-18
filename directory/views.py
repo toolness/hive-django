@@ -1,67 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from django.forms import ModelForm
-from django.forms.models import inlineformset_factory
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from crispy_forms.helper import FormHelper
 
-from .models import Organization, Membership, is_user_hive_member, \
-                    is_user_privileged, ContentChannel, Expertise
-
-ExpertiseFormSet = inlineformset_factory(
-    User, Expertise,
-    fields = ['category', 'details'],
-    help_texts = {'category': '', 'details': ''},
-    labels = {'category': 'Category', 'details': 'Additional notes'}
-)
-
-class ExpertiseFormSetHelper(FormHelper):
-    form_tag = False
-    template = 'directory/table_inline_formset.html'
-
-ContentChannelFormSet = inlineformset_factory(
-    Organization, ContentChannel,
-    fields = ['category', 'name', 'url'],
-    help_texts = {'category': '', 'name': '', 'url': ''},
-    labels = {'url': 'URL', 'name': 'Name (if other)'}
-)
-
-class ChannelFormSetHelper(FormHelper):
-    form_tag = False
-    template = 'directory/table_inline_formset.html'
-
-class MembershipForm(ModelForm):
-    class Meta:
-        model = Membership
-        fields = ['title', 'twitter_name', 'phone_number', 'is_listed',
-                  'receives_minigroup_digest']
-        labels = {
-            'receives_minigroup_digest': 'Send me a daily digest of all '
-                                         'activity on the Hive minigroup.',
-            'is_listed': 'List me under my organization\'s entry in the '
-                         'Hive member directory.'
-        }
-        help_texts = {
-            'is_listed': '',
-            'receives_minigroup_digest': '',
-            'twitter_name': 'Your twitter name, e.g. "leahatplay".',
-            'phone_number': 'Your phone number, e.g. 123-456-7890.',
-            'title': 'Your title at your organization, e.g. '
-                     '"Executive Director of Awesome".',
-        }
-
-class UserProfileForm(ModelForm):
-    class Meta:
-        model = User
-        fields = ['username', 'first_name', 'last_name']
-
-class OrganizationForm(ModelForm):
-    class Meta:
-        model = Organization
-        fields = ['name', 'website', 'address', 'twitter_name',
-                  'hive_member_since', 'mission']
+from .models import Organization, is_user_hive_member, \
+                    is_user_privileged
+from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
+                   ContentChannelFormSet, ChannelFormSetHelper, \
+                   MembershipForm, UserProfileForm, OrganizationForm
 
 def validate_and_save_forms(*forms):
     forms = [form for form in forms if form is not None]
