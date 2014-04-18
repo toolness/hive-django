@@ -31,11 +31,10 @@ def validate_phone_number(value):
             'must be formatted as XXX-XXX-XXXX.' % value
         )
 
-class PhoneNumberField(models.CharField):
-    def __init__(self, *args, **kwargs):
-        super(PhoneNumberField, self).__init__(
-            max_length=PHONE_NUMBER_LEN,
-            validators=[validate_phone_number],
-            *args,
-            **kwargs
-        )
+def PhoneNumberField(*args, **kwargs):
+    return models.CharField(
+        max_length=PHONE_NUMBER_LEN,
+        validators=[validate_phone_number],
+        *args,
+        **kwargs
+    )

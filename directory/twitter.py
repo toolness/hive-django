@@ -16,11 +16,10 @@ def validate_twitter_name(value):
             'A-Z, numbers 0-9) with the exception of underscores.'
         )
 
-class TwitterNameField(models.CharField):
-    def __init__(self, *args, **kwargs):
-        super(TwitterNameField, self).__init__(
-            max_length=MAX_TWITTER_NAME_LEN,
-            validators=[validate_twitter_name],
-            *args,
-            **kwargs
-        )
+def TwitterNameField(*args, **kwargs):
+    return models.CharField(
+        max_length=MAX_TWITTER_NAME_LEN,
+        validators=[validate_twitter_name],
+        *args,
+        **kwargs
+    )
