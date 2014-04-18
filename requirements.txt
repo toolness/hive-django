@@ -5,3 +5,7 @@ psycopg2==2.5.2
 
 # Required for importing data from Google spreadsheets.
 gspread==0.1.0
+
+# Used to deal with dj-static truncating large files on Heroku.
+# For more information, see: http://stackoverflow.com/a/23136455/2422398
+tornado==3.2

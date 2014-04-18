@@ -1,1 +1,1 @@
-web: gunicorn hive.wsgi
+web: gunicorn -k tornado hive.wsgi
