@@ -70,7 +70,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'registration',
     'directory',
-)
+) + EMAIL_BACKEND_INSTALLED_APPS
 
 MIDDLEWARE_CLASSES = (
     'hive.ssl.RedirectToHttpsMiddleware',

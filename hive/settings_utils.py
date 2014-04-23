@@ -16,7 +16,7 @@ def set_default_db(default):
 
 def parse_email_backend_url(url):
     info = urlparse.urlparse(url)
-    s = {}
+    s = {'EMAIL_BACKEND_INSTALLED_APPS': ()}
     if info.scheme == 'console':
         s['EMAIL_BACKEND'] = 'django.core.mail.backends.console.EmailBackend'
     elif info.scheme in ['smtp', 'smtp+tls']:
@@ -29,6 +29,10 @@ def parse_email_backend_url(url):
             s['EMAIL_HOST_USER'] = info.username
         if info.password:
             s['EMAIL_HOST_PASSWORD'] = info.password
+    elif info.scheme == 'mandrill':
+        s['EMAIL_BACKEND'] = 'djrill.mail.backends.djrill.DjrillBackend'
+        s['MANDRILL_API_KEY'] = info.netloc
+        s['EMAIL_BACKEND_INSTALLED_APPS'] = ('djrill',)
     else:
         raise ValueError('unknown scheme for email backend url: %s' % url)
     return s

@@ -50,7 +50,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
   as the database URL.
 * `EMAIL_BACKEND_URL` is a URL representing the email backend to use.
   Examples include `console:`, `smtp://hostname:port`, and
-  `smtp+tls://user:pass@hostname:port`.
+  `smtp+tls://user:pass@hostname:port`. Mandrill can also be used
+  via 'mandrill://your-mandrill-api-key', though this requires the
+  [djrill][] package.
 * `DEFAULT_FROM_EMAIL` is the default email address to use for various
   automated correspondence from the site manager(s), such as password
   resets. Defaults to `webmaster@localhost`.
@@ -61,3 +63,4 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 <!-- Links -->
 
   [twelve-factor]: http://12factor.net/
+  [djrill]: https://github.com/brack3t/Djrill
