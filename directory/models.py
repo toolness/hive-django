@@ -9,9 +9,9 @@ from registration.signals import user_activated
 from .twitter import TwitterNameField
 from .phonenumber import PhoneNumberField
 
-def is_user_hive_member(user, organization=None):
+def is_user_vouched_for(user, organization=None):
     '''
-    Returns whether the given user belongs to a Hive member
+    Returns whether the given user belongs to a Hive-affiliated
     organization. If an organization is supplied, returns
     whether the user belongs to that organization specifically.
     '''
@@ -28,11 +28,11 @@ def is_user_privileged(user):
     information, phone numbers, and so forth.
     '''
 
-    return is_user_hive_member(user) or (user.is_active and user.is_staff)
+    return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
 class Organization(models.Model):
     '''
-    Represents a Hive member organization.
+    Represents a Hive organization.
     '''
 
     created = models.DateTimeField(auto_now_add=True)
@@ -66,7 +66,9 @@ class Organization(models.Model):
     )
     hive_member_since = models.DateField(
         help_text="The date the organization joined the Hive network. "
-                  "Only the month and year will be used."
+                  "Only the month and year will be used.",
+        null=True,
+        blank=True
     )
     mission = models.TextField(
         help_text="The organization's mission and philosophy. Markdown "
@@ -152,7 +154,7 @@ class Expertise(models.Model):
 
 class ContentChannel(models.Model):
     '''
-    Represents a content channel for a Hive member organization.
+    Represents a content channel for a Hive organization.
     '''
 
     FA_ICONS = {
@@ -256,7 +258,7 @@ class Membership(models.Model):
     is_listed = models.BooleanField(
         default=True,
         help_text="Whether the person is listed under their organization in "
-                  "the Hive member directory."
+                  "the Hive directory."
     )
 
 class ImportedUserInfo(models.Model):

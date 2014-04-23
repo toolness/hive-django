@@ -24,7 +24,7 @@
   {{ membership_form|crispy }}
 {% endif %}
 <h2>Expertise</h2>
-<p>We'd like to make it easy for Hive members to connect with other people who have skills and expertise they need. So please use the area below to describe how awesome you are.</p>
+<p>We'd like to make it easy for Hive community members to connect with other people who have skills and expertise they need. So please use the area below to describe how awesome you are.</p>
 {% crispy expertise_formset expertise_formset_helper %}
 <button type="submit" class="btn btn-primary">Update Profile</button>
 <a href="{% url 'password_change' %}" class="btn btn-default">Change Password&hellip;</a>

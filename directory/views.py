@@ -3,7 +3,7 @@ from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import Organization, is_user_hive_member, \
+from .models import Organization, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
@@ -29,7 +29,7 @@ def organization_profile(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
                             is_active=True)
     user = request.user
-    if not (user.is_superuser or is_user_hive_member(user, org)):
+    if not (user.is_superuser or is_user_vouched_for(user, org)):
         return HttpResponseForbidden('Permission denied.')
     if request.method == 'POST':
         form = OrganizationForm(request.POST, instance=org, prefix='org')
@@ -61,7 +61,7 @@ def user_profile(request):
     data = None
 
     if request.method == 'POST': data = request.POST
-    if is_user_hive_member(user):
+    if is_user_vouched_for(user):
         membership_form = MembershipForm(data=data,
                                          instance=user.membership,
                                          prefix='membership')
