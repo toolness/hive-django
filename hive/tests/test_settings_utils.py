@@ -42,6 +42,13 @@ class ParseEmailBackendUrlTests(TestCase):
             'EMAIL_BACKEND_INSTALLED_APPS': ()
         })
 
+    def test_accepts_mandrill(self):
+        self.assertEqual(parse_email_backend_url('mandrill://lol'), {
+            'EMAIL_BACKEND': 'djrill.mail.backends.djrill.DjrillBackend',
+            'MANDRILL_API_KEY': 'lol',
+            'EMAIL_BACKEND_INSTALLED_APPS': ('djrill',)
+        })
+
     def test_accepts_smtp_without_auth(self):
         self.assertEqual(parse_email_backend_url('smtp://foo.org:25'), {
             'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
