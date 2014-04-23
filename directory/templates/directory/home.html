@@ -69,6 +69,15 @@
     </ul>
   {% endif %}
 {% endfor %}
+
+<ul class="pager">
+  {% if orgs.has_previous %}
+  <li><a href="?page={{ orgs.previous_page_number }}">Previous</a></li>
+  {% endif %}
+  {% if orgs.has_next %}
+  <li><a href="?page={{ orgs.next_page_number }}">Next</a></li>
+  {% endif %}
+</ul>
 {% endblock %}
 
 {% block scripts %}

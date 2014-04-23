@@ -2,12 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Organization, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
                    MembershipForm, UserProfileForm, OrganizationForm
+
+ORGS_PER_PAGE = 5
 
 def validate_and_save_forms(*forms):
     forms = [form for form in forms if form is not None]
@@ -17,9 +20,19 @@ def validate_and_save_forms(*forms):
     return True
 
 def home(request):
+    all_orgs = Organization.objects.filter(is_active=True).order_by('name')
+    paginator = Paginator(all_orgs, ORGS_PER_PAGE)
+
+    page = request.GET.get('page')
+    try:
+        orgs = paginator.page(page)
+    except PageNotAnInteger:
+        orgs = paginator.page(1)
+    except EmptyPage:
+        orgs = paginator.page(paginator.num_pages)
+
     return render(request, 'directory/home.html', {
-        'orgs': Organization.objects.filter(is_active=True)
-                  .order_by('name'),
+        'orgs': orgs,
         'show_privileged_info': request.user.is_authenticated()
                                 and is_user_privileged(request.user)
     })
