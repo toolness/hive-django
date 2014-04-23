@@ -122,7 +122,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-CSP_IMG_SRC = ('http://gravatar.com', 'https://gravatar.com')
+CSP_IMG_SRC = ("'self'", 'http://gravatar.com', 'https://gravatar.com')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/

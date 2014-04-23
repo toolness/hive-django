@@ -5,3 +5,11 @@
 code {
   white-space: pre-wrap;
 }
+
+.navbar-brand {
+  background-image: url(../img/hive_logo_square.png);
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+  background-position: 14px 10px;
+  padding-left: 50px;
+}
