@@ -38,7 +38,7 @@
         <div class="media-body">
           <address><strong id="user_{{ membership.user.username }}" data-staticsearchable>{{ membership.user.get_full_name }}</strong>
             {% for skill in membership.user.skills.all %}
-              <span class="label label-primary" title="{{ membership.user.first_name }} has expertise in {{ skill.category }}.">{{ skill.category }}</span>
+              <span class="label label-primary" title="{{ membership.user.first_name }} has expertise in {{ skill.get_category_display }}.">{{ skill.get_category_display }}</span>
             {% endfor %}
             <br>
             {% if membership.title %}{{ membership.title }}<br>{% endif %}
