@@ -36,7 +36,11 @@
       <li class="media">
         <img class="pull-left media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
         <div class="media-body">
-          <address><strong id="user_{{ membership.user.username }}" data-staticsearchable>{{ membership.user.get_full_name }}</strong><br>
+          <address><strong id="user_{{ membership.user.username }}" data-staticsearchable>{{ membership.user.get_full_name }}</strong>
+            {% for skill in membership.user.skills.all %}
+              <span class="label label-primary" title="{{ membership.user.first_name }} has expertise in {{ skill.category }}.">{{ skill.category }}</span>
+            {% endfor %}
+            <br>
             {% if membership.title %}{{ membership.title }}<br>{% endif %}
             {% if membership.phone_number %}
             <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
@@ -44,7 +48,7 @@
             {% if membership.twitter_name %}
             <a href="https://twitter.com/{{membership.twitter_name}}">@{{membership.twitter_name}}</a><br>
             {% endif %}
-          
+
           <a href="mailto:{{ membership.user.email }}">{{ membership.user.email }}</a>
           {% if user.is_superuser and user != membership.user %}
             <a href="#" class="btn btn-default btn-xs" data-submit-form-onclick>
