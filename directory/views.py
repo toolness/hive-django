@@ -38,7 +38,7 @@ def home(request):
     })
 
 @login_required
-def organization_profile(request, organization_slug):
+def organization_edit(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
                             is_active=True)
     user = request.user
@@ -53,14 +53,14 @@ def organization_profile(request, organization_slug):
             channel_formset.save()
             messages.success(request,
                              'The organization profile has been updated.')
-            return redirect('organization_profile', org.slug)
+            return redirect('organization_edit', org.slug)
         else:
             messages.error(request, 'Your submission had some problems.')
     else:
         form = OrganizationForm(instance=org, prefix='org')
         channel_formset = ContentChannelFormSet(instance=org, prefix='chan')
     channel_formset_helper = ChannelFormSetHelper()
-    return render(request, 'directory/organization_profile.html', {
+    return render(request, 'directory/organization_edit.html', {
         'org': org,
         'form': form,
         'channel_formset': channel_formset,
@@ -68,7 +68,7 @@ def organization_profile(request, organization_slug):
     })
 
 @login_required
-def user_profile(request):
+def user_edit(request):
     user = request.user
     membership_form = None
     data = None
@@ -87,11 +87,11 @@ def user_profile(request):
         if validate_and_save_forms(user_profile_form, membership_form,
                                    expertise_formset):
             messages.success(request, 'Your profile has been updated.')
-            return redirect('user_profile')
+            return redirect('user_edit')
         else:
             messages.error(request, 'Your submission had some problems.')
 
-    return render(request, 'directory/user_profile.html', {
+    return render(request, 'directory/user_edit.html', {
         'membership_form': membership_form,
         'user_profile_form': user_profile_form,
         'expertise_formset': expertise_formset,

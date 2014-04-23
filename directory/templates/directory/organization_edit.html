@@ -4,7 +4,7 @@
 {% block title %}Edit Organization{% endblock %}
 
 {% block content %}
-<form method="post" action={% url 'organization_profile' org.slug %}>
+<form method="post" action={% url 'organization_edit' org.slug %}>
 {% csrf_token %}
 
 {{ form|crispy }}

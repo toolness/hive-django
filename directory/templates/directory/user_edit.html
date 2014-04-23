@@ -5,7 +5,7 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
-<form method="post" action="{% url 'user_profile' %}">
+<form method="post" action="{% url 'user_edit' %}">
 {% csrf_token %}
 <h2>Basic Information</h2>
 <div class="media">
@@ -20,7 +20,7 @@
 {% if membership_form %}
   <h2>Membership Information</h3>
   <p>The following information pertains to your membership in 
-    <a href="{% url 'organization_profile' user.membership.organization.slug %}">{{ user.membership.organization.name }}</a>.</p>
+    <a href="{% url 'organization_edit' user.membership.organization.slug %}">{{ user.membership.organization.name }}</a>.</p>
   {{ membership_form|crispy }}
 {% endif %}
 <h2>Expertise</h2>

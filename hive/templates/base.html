@@ -27,7 +27,7 @@
             {% if user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
             {% endif %}
-            <li><a href="{% url 'user_profile' %}">Edit Profile</a></li>
+            <li><a href="{% url 'user_edit' %}">Edit Profile</a></li>
             {% if request.session.user_switched_from %}
             <li><a href="#" data-submit-form-onclick>
               <form method="post" action="{% url 'switch_user_back' %}">
