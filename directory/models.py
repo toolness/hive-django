@@ -96,7 +96,10 @@ class Organization(models.Model):
         return self.name
 
     def membership_directory(self):
-        return self.memberships.filter(is_listed=True, user__is_active=True)
+        return self.memberships.filter(
+            is_listed=True,
+            user__is_active=True
+        ).order_by('user__last_name')
 
     def clean(self):
         if self.max_youth_audience_age < self.min_youth_audience_age:
