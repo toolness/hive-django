@@ -18,7 +18,8 @@ def validate_and_save_forms(*forms):
 
 def home(request):
     return render(request, 'directory/home.html', {
-        'orgs': Organization.objects.filter(is_active=True),
+        'orgs': Organization.objects.filter(is_active=True)
+                  .order_by('name'),
         'show_privileged_info': request.user.is_authenticated()
                                 and is_user_privileged(request.user)
     })
