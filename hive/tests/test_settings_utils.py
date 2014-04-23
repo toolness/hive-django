@@ -38,14 +38,16 @@ class SetDefaultDbTests(TestCase):
 class ParseEmailBackendUrlTests(TestCase):
     def test_accepts_console(self):
         self.assertEqual(parse_email_backend_url('console:'), {
-            'EMAIL_BACKEND': 'django.core.mail.backends.console.EmailBackend'
+            'EMAIL_BACKEND': 'django.core.mail.backends.console.EmailBackend',
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
         })
 
     def test_accepts_smtp_without_auth(self):
         self.assertEqual(parse_email_backend_url('smtp://foo.org:25'), {
             'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
             'EMAIL_HOST': 'foo.org',
-            'EMAIL_PORT': 25
+            'EMAIL_PORT': 25,
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
         })
 
     def test_accepts_smtp_with_auth(self):
@@ -54,7 +56,8 @@ class ParseEmailBackendUrlTests(TestCase):
             'EMAIL_HOST': 'foo.org',
             'EMAIL_PORT': 25,
             'EMAIL_HOST_USER': 'a',
-            'EMAIL_HOST_PASSWORD': 'b'
+            'EMAIL_HOST_PASSWORD': 'b',
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
         })
 
     def test_accepts_smtp_plus_tls(self):
@@ -62,7 +65,8 @@ class ParseEmailBackendUrlTests(TestCase):
             'EMAIL_BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
             'EMAIL_USE_TLS': True,
             'EMAIL_HOST': 'foo.org',
-            'EMAIL_PORT': 25
+            'EMAIL_PORT': 25,
+            'EMAIL_BACKEND_INSTALLED_APPS': ()
         })
 
 class ParseSecureProxySslHeaderTests(TestCase):
