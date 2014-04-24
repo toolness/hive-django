@@ -1,8 +1,11 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, \
+                        HttpResponseBadRequest
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 from .models import Organization, Membership, is_user_vouched_for, \
                     is_user_privileged
@@ -11,6 +14,10 @@ from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    MembershipForm, UserProfileForm, OrganizationForm
 
 ORGS_PER_PAGE = 5
+
+def is_request_privileged(request):
+    return (request.user.is_authenticated() and
+            is_user_privileged(request.user))
 
 def validate_and_save_forms(*forms):
     forms = [form for form in forms if form is not None]
@@ -33,17 +40,43 @@ def home(request):
 
     return render(request, 'directory/home.html', {
         'orgs': orgs,
-        'show_privileged_info': request.user.is_authenticated()
-                                and is_user_privileged(request.user)
+        'show_privileged_info': is_request_privileged(request)
     })
+
+def find_json(request):
+    query = request.GET.get('query')
+    results = []
+    if not query:
+        return HttpResponseBadRequest('query must be non-empty')
+
+    orgs = Organization.objects.filter(name__icontains=query,
+                                       is_active=True)
+    results.extend([
+        {'value': org.name, 'url': org.get_absolute_url()}
+        for org in orgs
+    ])
+
+    if is_request_privileged(request):
+        memberships = Membership.objects.filter(
+            Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query),
+            is_listed=True,
+            user__is_active=True
+        )
+        results.extend([
+            {'value': membership.user.get_full_name(),
+             'url': membership.get_absolute_url()}
+            for membership in memberships
+        ])
+
+    return HttpResponse(json.dumps(results), content_type='application/json')
 
 def organization_detail(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
                             is_active=True)
     return render(request, 'directory/organization_detail.html', {
         'org': org,
-        'show_privileged_info': request.user.is_authenticated()
-                                and is_user_privileged(request.user)
+        'show_privileged_info': is_request_privileged(request)
     })
 
 @login_required
