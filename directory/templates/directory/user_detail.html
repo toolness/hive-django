@@ -6,10 +6,10 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-sm-2">
-    <img src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm&amp;s=200" alt="gravatar for {{ membership.user.email }}" class="user-detail-gravatar">
+  <div class="col-sm-3">
+    <img src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm&amp;s=768" alt="gravatar for {{ membership.user.email }}" class="user-detail-gravatar">
   </div>
-  <div class="col-sm-10">
+  <div class="col-sm-7">
     <h1>{{ membership.user.get_full_name }}</h1>
 
     <p>
