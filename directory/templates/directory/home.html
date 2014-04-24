@@ -10,7 +10,7 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Welcome to the Hive Directory.</h1>
-  <input class="form-control" data-staticsearchbox placeholder="Search for organizations and people here">
+  <input class="form-control" placeholder="Search for organizations and people here">
 </div>
 {% for org in orgs %}
   {% include "directory/organization.html" %}
@@ -28,5 +28,4 @@
 
 {% block scripts %}
   <script src="{% static 'js/typeahead.jquery.js' %}"></script>
-  <script src="{% static 'js/staticsearch.js' %}"></script>
 {% endblock %}
