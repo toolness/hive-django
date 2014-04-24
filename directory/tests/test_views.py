@@ -66,20 +66,20 @@ class OrganizationProfileTests(TestCase):
 
     def test_edit_org_redirects_anonymous_users_to_login(self):
         c = Client()
-        response = c.get('/o/wnyc/edit/', follow=True)
+        response = c.get('/orgs/wnyc/edit/', follow=True)
         self.assertRedirects(response,
-                             '/accounts/login/?next=/o/wnyc/edit/')
+                             '/accounts/login/?next=/orgs/wnyc/edit/')
 
     def test_edit_org_gives_non_org_members_403(self):
         c = Client()
         c.login(username='hivenyc_member', password='lol')
-        response = c.get('/o/wnyc/edit/')
+        response = c.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 403)
 
     def test_edit_org_gives_org_members_200(self):
         c = Client()
         c.login(username='wnyc_member', password='lol')
-        response = c.get('/o/wnyc/edit/')
+        response = c.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 200)
 
 class OrganizationTests(TestCase):
