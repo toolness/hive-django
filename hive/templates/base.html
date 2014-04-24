@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 {% block head %}{% endblock %}
 <title>{% block title %}{{ title }}{% endblock %}</title>
-<body>
+<body class="{% block bodyclass %}hexagon-bg{% endblock %}">
 <nav class="navbar navbar-default" role="navigation">
   <div class="container">
     <div class="navbar-header">

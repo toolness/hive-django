@@ -5,6 +5,12 @@
   src: local("Arvo"), url("//themes.googleusercontent.com/static/fonts/arvo/v6/WJ6D195CfbTRlIs49IbkFw.woff") format("woff");
 }
 
+body.hexagon-bg {
+  background-image: url(../img/hexagon.svg);
+  background-repeat: no-repeat;
+  background-position: 70% 0%;
+}
+
 h1, h2, a.navbar-brand {
   font-family: 'Arvo', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
