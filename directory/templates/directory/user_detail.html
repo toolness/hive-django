@@ -1,13 +1,64 @@
 {% extends "base.html" %}
 
+{% load directory %}
+
 {% block title %}{{ membership.user.get_full_name }}{% endblock %}
 
 {% block content %}
-<h1>{{ membership.user.get_full_name }}</h1>
+<div class="row">
+  <div class="col-sm-2">
+    <img src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm&amp;s=200" alt="gravatar for {{ membership.user.email }}" class="user-detail-gravatar">
+  </div>
+  <div class="col-sm-10">
+    <h1>{{ membership.user.get_full_name }}</h1>
 
-<div>
-  {{ membership.title }}<br>
-  <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
+    <p>
+      {% if membership.title %}{{ membership.title }}<br>{% endif %}
+      <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
+    </p>
+  </div>
 </div>
+
+<br>
+
+<table class="table">
+  {% if membership.phone_number %}
+  <tr>
+    <td><strong>Phone</strong></td>
+    <td><a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a></td>
+  </tr>
+  {% endif %}
+
+  {% if membership.twitter_name %}
+  <tr>
+    <td><strong>Twitter</strong></td>
+    <td><a href="https://twitter.com/{{membership.twitter_name}}">@{{membership.twitter_name}}</a>
+  </tr>
+  {% endif %}
+</table>
+
+{% if membership.user.skills.all %}
+  <h3>Expertise</h3>
+    <table class="table">
+      {% for skill in membership.user.skills.all %}
+      <tr>
+        <td><strong>{{ skill.get_category_display }}</strong></td>
+        <td>{{ skill.details }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+
+{% if user.is_superuser and user != membership.user %}
+  <a href="#" class="btn btn-default" data-submit-form-onclick>
+    <form method="post" action="{% url 'switch_user' membership.user.username %}">
+      {% csrf_token %}
+    </form>
+    Login as this user
+  </a>
+{% endif %}
+{% if user == membership.user %}
+  <a href="{% url 'user_edit' %}" class="btn btn-default">Edit</a>
+{% endif %}
 
 {% endblock %}

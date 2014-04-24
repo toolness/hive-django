@@ -13,6 +13,9 @@
   <div class="media-body">
     <p>This is the Globally Recognized Avatar (gravatar) for <strong>{{ user.email }}</strong>.</p>
     <p>If you don't like it, you can change it at <a href="http://gravatar.com/">gravatar.com</a>.</p>
+    {% if membership_form %}
+    <p>You can also <a href="{{ user.membership.get_absolute_url }}">view your profile</a> as it appears to other Hive members.</p>
+    {% endif %}
   </div>
 </div>
 <br>

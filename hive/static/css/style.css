@@ -18,3 +18,7 @@ code {
   background-position: 14px 10px;
   padding-left: 50px;
 }
+
+img.user-detail-gravatar {
+  width: 100%;
+}
