@@ -26,11 +26,6 @@
       <div class="media-body">
         <address><strong><a class="nondescript-link" href="{{ membership.get_absolute_url }}">{{ membership.user.get_full_name }}</a></strong><br>
           {% if membership.title %}{{ membership.title }}<br>{% endif %}
-          <div>
-          {% for skill in membership.user.skills.all %}
-            <span class="label label-primary" title="{{ membership.user.first_name }} has expertise in {{ skill.get_category_display }}.">{{ skill.get_category_display }}</span>
-          {% endfor %}
-          </div>
           {% if membership.phone_number %}
           <a href="tel:+1-{{membership.phone_number}}">{{membership.phone_number}}</a><br>
           {% endif %}
