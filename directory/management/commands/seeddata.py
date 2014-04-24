@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
         site = Site.objects.get(pk=1)
         site.domain = settings.ALLOWED_HOSTS[0]
-        site.name = "Hive TESTING"
+        site.name = "Development Hive Directory"
         site.save()
 
         self.stdout.write(
