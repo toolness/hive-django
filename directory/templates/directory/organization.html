@@ -7,6 +7,9 @@
       <a href="{{ channel.url }}" title="{{ channel.display_name }}"><i class="fa {{ channel.fa_icon }}"></i></a>
     {% endif %}
   {% endfor %}
+  {% if org.twitter_name %}
+    <a href="http://twitter.com/{{ org.twitter_name }}" title="This organization is @{{ org.twitter_name }} on Twitter."><i class="fa fa-twitter-square"></i></a>
+  {% endif %}
 </p>
 {% if org.hive_member_since %}
 <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
