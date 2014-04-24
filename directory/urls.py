@@ -4,12 +4,12 @@ from . import views
 
 urlpatterns = patterns('',
     url(r'^$', views.home, name='home'),
-    url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/$',
+    url(r'^o/(?P<organization_slug>[A-Za-z0-9_\-]+)/$',
         views.organization_detail, name='organization_detail'),
-    url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/edit/$',
+    url(r'^o/(?P<organization_slug>[A-Za-z0-9_\-]+)/edit/$',
         views.organization_edit, name='organization_edit'),
     # Usernames may contain alphanumeric, _, @, +, . and - characters.
-    url(r'^users/(?P<username>[A-Za-z0-9_@+.\-]+)/$',
+    url(r'^u/(?P<username>[A-Za-z0-9_@+.\-]+)/$',
         views.user_detail, name='user_detail'),
     url(r'^accounts/profile/$', views.user_edit, name='user_edit'),
 )
