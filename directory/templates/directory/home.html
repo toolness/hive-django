@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Welcome to the Hive Directory.</h1>
+  <h1>Welcome to the {{ site.name }}.</h1>
   <input class="form-control" placeholder="Search for organizations and people here" data-find-url="{% url 'find_json' %}" name="find-primary">
 </div>
 {% for org in orgs %}
