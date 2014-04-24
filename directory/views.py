@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-from .models import Organization, is_user_vouched_for, \
+from .models import Organization, Membership, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
@@ -37,6 +37,15 @@ def home(request):
                                 and is_user_privileged(request.user)
     })
 
+def organization_detail(request, organization_slug):
+    org = get_object_or_404(Organization, slug=organization_slug,
+                            is_active=True)
+    return render(request, 'directory/organization_detail.html', {
+        'org': org,
+        'show_privileged_info': request.user.is_authenticated()
+                                and is_user_privileged(request.user)
+    })
+
 @login_required
 def organization_edit(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
@@ -53,7 +62,7 @@ def organization_edit(request, organization_slug):
             channel_formset.save()
             messages.success(request,
                              'The organization profile has been updated.')
-            return redirect('organization_edit', org.slug)
+            return redirect('organization_detail', org.slug)
         else:
             messages.error(request, 'Your submission had some problems.')
     else:
@@ -65,6 +74,14 @@ def organization_edit(request, organization_slug):
         'form': form,
         'channel_formset': channel_formset,
         'channel_formset_helper': channel_formset_helper
+    })
+
+@user_passes_test(is_user_privileged)
+def user_detail(request, username):
+    membership = get_object_or_404(Membership, user__username=username,
+                                   user__is_active=True)
+    return render(request, 'directory/user_detail.html', {
+        'membership': membership
     })
 
 @login_required
