@@ -7,6 +7,10 @@ a.nondescript-link {
   text-decoration: inherit;
 }
 
+a.nondescript-link:hover {
+  text-decoration: underline;
+}
+
 code {
   white-space: pre-wrap;
 }
