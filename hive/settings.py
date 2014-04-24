@@ -124,6 +124,9 @@ USE_TZ = True
 
 CSP_IMG_SRC = ("'self'", 'http://gravatar.com', 'https://gravatar.com')
 
+CSP_FONT_SRC = ("'self'", 'http://themes.googleusercontent.com',
+                'https://themes.googleusercontent.com')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
