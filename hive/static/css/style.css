@@ -15,6 +15,9 @@ h1, h2, a.navbar-brand {
 
 div.jumbotron {
   background-color: #FFDE2E;
+  background-image: url(../img/hexagon.svg);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 div.jumbotron input {
