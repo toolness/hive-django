@@ -13,6 +13,14 @@ h1, h2, a.navbar-brand {
   display: none;
 }
 
+div.jumbotron {
+  background-color: #FFDE2E;
+}
+
+div.jumbotron input {
+  margin-top: 1em;
+}
+
 a {
   color: #FAA336;
 }
