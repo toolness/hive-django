@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -96,6 +97,9 @@ class Organization(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('organization_detail', args=(str(self.slug),))
 
     def membership_directory(self):
         return self.memberships.filter(
@@ -260,6 +264,9 @@ class Membership(models.Model):
         help_text="Whether the person is listed under their organization in "
                   "the Hive directory."
     )
+
+    def get_absolute_url(self):
+        return reverse('user_detail', args=(str(self.user.username),))
 
 class ImportedUserInfo(models.Model):
     '''

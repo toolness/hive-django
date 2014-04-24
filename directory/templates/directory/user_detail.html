@@ -7,7 +7,7 @@
 
 <div>
   {{ membership.title }}<br>
-  <a href="{% url 'organization_detail' organization_slug=membership.organization.slug %}">{{ membership.organization.name }}</a>
+  <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
 </div>
 
 {% endblock %}

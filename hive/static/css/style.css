@@ -2,6 +2,11 @@
   display: none;
 }
 
+a.nondescript-link {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 code {
   white-space: pre-wrap;
 }

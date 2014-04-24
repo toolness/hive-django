@@ -1,6 +1,6 @@
 {% load directory %}
 
-<h2>{{ org.name }}</h2>
+<h2><a href="{{ org.get_absolute_url }}" class="nondescript-link">{{ org.name }}</a></h2>
 <p>
   <a href="{{ org.website }}">{{ org.website|domainname }}</a>
   {% for channel in org.content_channels.all %}
@@ -20,9 +20,11 @@
   <ul class="media-list">
   {% for membership in org.membership_directory %}
     <li class="media">
-      <img class="pull-left media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
+      <a class="pull-left" href="{{ membership.get_absolute_url }}">
+        <img class="media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
+      </a>
       <div class="media-body">
-        <address><strong>{{ membership.user.get_full_name }}</strong><br>
+        <address><strong><a class="nondescript-link" href="{{ membership.get_absolute_url }}">{{ membership.user.get_full_name }}</a></strong><br>
           {% if membership.title %}{{ membership.title }}<br>{% endif %}
           <div>
           {% for skill in membership.user.skills.all %}
