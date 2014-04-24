@@ -1,6 +1,5 @@
 {% load directory %}
 
-<h2><a href="{{ org.get_absolute_url }}" class="nondescript-link">{{ org.name }}</a></h2>
 <p>
   <a href="{{ org.website }}">{{ org.website|domainname }}</a>
   {% for channel in org.content_channels.all %}

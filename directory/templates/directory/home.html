@@ -13,6 +13,7 @@
   <input class="form-control" placeholder="Search for organizations and people here">
 </div>
 {% for org in orgs %}
+  <h2><a href="{{ org.get_absolute_url }}" class="nondescript-link">{{ org.name }}</a></h2>
   {% include "directory/organization.html" %}
 {% endfor %}
 
