@@ -1,5 +1,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" height="628" width="726">
   <!-- http://commons.wikimedia.org/wiki/File:Hexagon.svg -->
-  <polygon points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314" fill="rgba(0, 0, 0, 0.06)" transform="translate(500, -50) rotate(45) scale(0.5)"/>
+  <polygon points="723,314 543,625.769145 183,625.769145 3,314 183,2.230855 543,2.230855 723,314"
+    fill="rgba(0, 0, 0, 0.05)"
+    transform="translate(500, -50) rotate(45) scale(0.5)"/>
 </svg>
