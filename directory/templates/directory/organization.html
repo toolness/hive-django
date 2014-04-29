@@ -14,7 +14,7 @@
 {% if org.hive_member_since %}
 <p><small>Hive member since {{ org.hive_member_since|date:"F Y" }}</small></p>
 {% endif %}
-<p>{{ org.mission|markdown }}</p>
+<div class="rendered-markdown">{{ org.mission|markdown }}</div>
 {% if user.is_superuser or user.membership.organization == org %}
   <p><a href="{% url 'organization_edit' org.slug %}" class="btn btn-sm btn-default">Edit</a></p>
 {% endif %}
