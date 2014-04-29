@@ -7,6 +7,12 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
+ALLOWED_ATTRIBUTES = bleach.ALLOWED_ATTRIBUTES.copy()
+
+ALLOWED_ATTRIBUTES.update(**{
+    'img': ['src', 'alt']
+})
+
 @register.filter(name='markdown')
 def render_markdown(text):
     """
@@ -16,8 +22,11 @@ def render_markdown(text):
     return mark_safe(bleach.clean(
         text=markdown.markdown(text),
         tags=bleach.ALLOWED_TAGS + [
-            'p'
-        ]
+            'p',
+            'pre',
+            'img'
+        ],
+        attributes=ALLOWED_ATTRIBUTES
     ))
 
 @register.filter(name='domainname')

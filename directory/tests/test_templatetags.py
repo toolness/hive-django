@@ -20,6 +20,13 @@ class MarkdownRenderingTests(TestCase):
     def test_accepts_p_tags(self):
         self.assertRendering('hello', '<p>hello</p>')
 
+    def test_accepts_pre_tags(self):
+        self.assertRendering('<pre>hello</pre>', '<pre>hello</pre>')
+
+    def test_accepts_img_tags(self):
+        self.assertRendering('<img src="http://foo/i.png" alt="hi">',
+                             '<p><img src="http://foo/i.png" alt="hi"></p>')
+
     def test_accepts_markdown_emphasis(self):
         self.assertRendering('*hello*', '<p><em>hello</em></p>')
 
