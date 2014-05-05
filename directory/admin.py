@@ -57,7 +57,9 @@ class MembershipUserAdmin(UserAdmin):
 
     def get_formsets(self, request, obj=None):
         for inline in self.get_inline_instances(request, obj):
-            if isinstance(inline, MembershipInline) and obj is None:
+            if (obj is None and
+                (isinstance(inline, MembershipInline) or
+                 isinstance(inline, ImportedUserInfoInline))):
                 continue
             yield inline.get_formset(request, obj)
 
