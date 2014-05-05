@@ -34,6 +34,18 @@ class WnycTestCase(TestCase):
         user.last_name = 'Lehrer'
         user.save()
 
+class WnycAndAmnhTestCase(WnycTestCase):
+    fixtures = WnycTestCase.fixtures + ['amnh.json']
+
+    def login_as_amnh_member(self):
+        self.client.login(username='amnh_member', password='lol')
+
+    def setUp(self):
+        super(WnycAndAmnhTestCase, self).setUp()
+        self.amnh = get_org('amnh')
+        create_user('amnh_member', email='member@amnh.org',
+                    password='lol', organization=self.amnh)
+
 class FindJsonTests(WnycTestCase):
     def query(self, query):
         response = self.client.get('/find.json', {'query': query})
@@ -95,58 +107,36 @@ class AccountProfileTests(WnycTestCase):
         self.assertEqual(User.objects.get(username='non_member').first_name,
                          'Non')
 
-class OrganizationProfileTests(TestCase):
-    fixtures = ['wnyc.json', 'hivenyc.json']
-
-    def setUp(self):
-        super(OrganizationProfileTests, self).setUp()
-        self.wnyc = get_org('wnyc')
-        self.hivenyc = get_org('hivenyc')
-        create_user('non_member', password='lol')
-        create_user('wnyc_member', email='member@wnyc.org', password='lol',
-                    organization=self.wnyc)
-        create_user('hivenyc_member', email='member@hivenyc.org',
-                    password='lol', organization=self.hivenyc)
-
+class OrganizationProfileTests(WnycAndAmnhTestCase):
     def test_edit_org_redirects_anonymous_users_to_login(self):
         response = self.client.get('/orgs/wnyc/edit/', follow=True)
         self.assertRedirects(response,
                              '/accounts/login/?next=/orgs/wnyc/edit/')
 
     def test_edit_org_gives_non_org_members_403(self):
-        self.client.login(username='hivenyc_member', password='lol')
+        self.login_as_amnh_member()
         response = self.client.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 403)
 
     def test_edit_org_gives_org_members_200(self):
-        self.client.login(username='wnyc_member', password='lol')
+        self.login_as_wnyc_member()
         response = self.client.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 200)
 
-class OrganizationTests(TestCase):
-    fixtures = ['wnyc.json']
-
-    def setUp(self):
-        super(OrganizationTests, self).setUp()
-        self.wnyc = get_org('wnyc')
-
+class OrganizationTests(WnycTestCase):
     def test_directory_listing_shows_orgs(self):
         response = self.client.get('/')
         self.assertContains(response, 'Radio Rookies')
 
-    def test_directory_listing_shows_emails_to_hive_members_only(self):
-        create_user('non_member', password='lol')
-        create_user('member', email='member@wnyc.org', password='lol',
-                    organization=self.wnyc)
-
-        c = self.client
-        c.login(username='non_member', password='lol')
-        response = c.get('/')
-        self.assertNotContains(response, 'member@wnyc.org')
-
-        c.login(username='member', password='lol')
-        response = c.get('/')
+    def test_directory_listing_shows_emails_to_members(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/')
         self.assertContains(response, 'member@wnyc.org')
+
+    def test_directory_listing_hides_emails_from_nonmembers(self):
+        self.login_as_non_member()
+        response = self.client.get('/')
+        self.assertNotContains(response, 'member@wnyc.org')
 
 class ActivationTests(TestCase):
     fixtures = ['wnyc.json']
