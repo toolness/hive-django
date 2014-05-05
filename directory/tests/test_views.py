@@ -8,13 +8,6 @@ from ..management.commands.seeddata import create_user
 
 get_org = lambda slug: Organization.objects.get(slug=slug)
 
-class HomePageTests(TestCase):
-    fixtures = ['wnyc.json']
-
-    def test_requesting_empty_page_does_not_explode(self):
-        response = self.client.get('/?page=9999')
-        self.assertEqual(response.status_code, 200)
-
 class WnycTestCase(TestCase):
     fixtures = ['wnyc.json']
 
@@ -77,7 +70,19 @@ class FindJsonTests(WnycTestCase):
             'value': 'Brian Lehrer'
         }])
 
-class AccountProfileTests(WnycTestCase):
+class UserDetailTests(WnycTestCase):
+    def test_nonmembers_are_redirected(self):
+        self.login_as_non_member()
+        response = self.client.get('/users/wnyc_member/', follow=True)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/users/wnyc_member/')
+
+    def test_members_are_shown_email_address(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/users/wnyc_member/')
+        self.assertContains(response, 'member@wnyc.org')
+
+class UserEditTests(WnycTestCase):
     def test_edit_org_redirects_anonymous_users_to_login(self):
         response = self.client.get('/accounts/profile/', follow=True)
         self.assertRedirects(response,
@@ -107,7 +112,18 @@ class AccountProfileTests(WnycTestCase):
         self.assertEqual(User.objects.get(username='non_member').first_name,
                          'Non')
 
-class OrganizationProfileTests(WnycAndAmnhTestCase):
+class OrganizationDetailTests(WnycTestCase):
+    def test_people_are_hidden_from_non_members(self):
+        self.login_as_non_member()
+        response = self.client.get('/orgs/wnyc/')
+        self.assertNotContains(response, 'Lehrer')
+
+    def test_people_are_shown_to_members(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/orgs/wnyc/')
+        self.assertContains(response, 'Lehrer')
+
+class OrganizationEditTests(WnycAndAmnhTestCase):
     def test_edit_org_redirects_anonymous_users_to_login(self):
         response = self.client.get('/orgs/wnyc/edit/', follow=True)
         self.assertRedirects(response,
@@ -123,7 +139,11 @@ class OrganizationProfileTests(WnycAndAmnhTestCase):
         response = self.client.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 200)
 
-class OrganizationTests(WnycTestCase):
+class HomePageTests(WnycTestCase):
+    def test_requesting_empty_page_does_not_explode(self):
+        response = self.client.get('/?page=9999')
+        self.assertEqual(response.status_code, 200)
+
     def test_directory_listing_shows_orgs(self):
         response = self.client.get('/')
         self.assertContains(response, 'Radio Rookies')
