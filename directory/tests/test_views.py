@@ -138,20 +138,46 @@ class OrganizationDetailTests(WnycTestCase):
         self.assertContains(response, 'Lehrer')
 
 class OrganizationEditTests(WnycAndAmnhTestCase):
-    def test_edit_org_redirects_anonymous_users_to_login(self):
+    BASE_FORM = {
+        'chan-TOTAL_FORMS': '3',
+        'chan-INITIAL_FORMS': '0',
+        'chan-MAX_NUM_FORMS': '1000'
+    }
+
+    def test_anonymous_users_are_redirected_to_login(self):
         response = self.client.get('/orgs/wnyc/edit/', follow=True)
         self.assertRedirects(response,
                              '/accounts/login/?next=/orgs/wnyc/edit/')
 
-    def test_edit_org_gives_non_org_members_403(self):
+    def test_non_org_members_are_forbidden(self):
         self.login_as_amnh_member()
         response = self.client.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 403)
 
-    def test_edit_org_gives_org_members_200(self):
+    def test_org_members_can_view_page(self):
         self.login_as_wnyc_member()
         response = self.client.get('/orgs/wnyc/edit/')
         self.assertEqual(response.status_code, 200)
+
+    def test_valid_form_submission_changes_model(self):
+        self.login_as_wnyc_member()
+        data = self.BASE_FORM.copy()
+        data.update({
+            'org-name': 'Awesome WNYC',
+            'org-website': 'http://awesomewnyc.org/'
+        })
+        response = self.client.post('/orgs/wnyc/edit/', data, follow=True)
+        self.assertRedirects(response, '/orgs/wnyc/')
+        self.assertContains(response,
+                            'The organization profile has been updated')
+        self.assertEqual(get_org('wnyc').name, 'Awesome WNYC')
+
+    def test_invalid_form_submission_returns_error_page(self):
+        self.login_as_wnyc_member()
+        data = self.BASE_FORM.copy()
+        response = self.client.post('/orgs/wnyc/edit/', data)
+        self.assertContains(response, 'Your submission had some problems')
+        self.assertContains(response, 'This field is required')
 
 class HomePageTests(WnycTestCase):
     def test_requesting_empty_page_does_not_explode(self):
