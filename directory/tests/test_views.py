@@ -83,6 +83,13 @@ class UserDetailTests(WnycTestCase):
         self.assertContains(response, 'member@wnyc.org')
 
 class UserEditTests(WnycTestCase):
+    BASE_FORM = {
+        'expertise-TOTAL_FORMS': '3',
+        'expertise-INITIAL_FORMS': '0',
+        'expertise-MAX_NUM_FORMS': '1000',
+        'user_profile-username': 'non_member'
+    }
+
     def test_edit_org_redirects_anonymous_users_to_login(self):
         response = self.client.get('/accounts/profile/', follow=True)
         self.assertRedirects(response,
@@ -98,16 +105,23 @@ class UserEditTests(WnycTestCase):
         response = self.client.get('/accounts/profile/')
         self.assertContains(response, 'Membership Information')
 
+    def test_submitting_invalid_form_returns_error_page(self):
+        self.login_as_non_member()
+        data = {'user_profile-first_name': 'WAY TOO LONG' * 1000}
+        data.update(self.BASE_FORM)
+        response = self.client.post('/accounts/profile/', data)
+        self.assertContains(response, 'Your submission had some problems')
+        self.assertContains(response, 'Ensure this value has at most 30 '
+                                      'characters (it has 12000)')
+
     def test_submitting_valid_form_changes_model(self):
         self.login_as_non_member()
-        response = self.client.post('/accounts/profile/', {
-            'expertise-TOTAL_FORMS': '3',
-            'expertise-INITIAL_FORMS': '0',
-            'expertise-MAX_NUM_FORMS': '1000',
-            'user_profile-username': 'non_member',
+        data = {
             'user_profile-first_name': 'Non',
             'user_profile-last_name': 'Member'
-        })
+        }
+        data.update(self.BASE_FORM)
+        response = self.client.post('/accounts/profile/', data)
         self.assertRedirects(response, '/accounts/profile/')
         self.assertEqual(User.objects.get(username='non_member').first_name,
                          'Non')
