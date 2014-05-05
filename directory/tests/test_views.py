@@ -1,3 +1,4 @@
+import json
 from django.test import TestCase
 from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
@@ -14,33 +15,74 @@ class HomePageTests(TestCase):
         response = self.client.get('/?page=9999')
         self.assertEqual(response.status_code, 200)
 
-class AccountProfileTests(TestCase):
+class WnycTestCase(TestCase):
     fixtures = ['wnyc.json']
 
+    def login_as_non_member(self):
+        self.client.login(username='non_member', password='lol')
+
+    def login_as_wnyc_member(self):
+        self.client.login(username='wnyc_member', password='lol')
+
     def setUp(self):
-        super(AccountProfileTests, self).setUp()
+        super(WnycTestCase, self).setUp()
         self.wnyc = get_org('wnyc')
         create_user('non_member', password='lol')
-        create_user('wnyc_member', email='member@wnyc.org', password='lol',
-                    organization=self.wnyc)
+        user = create_user('wnyc_member', email='member@wnyc.org',
+                           password='lol', organization=self.wnyc)
+        user.first_name = 'Brian'
+        user.last_name = 'Lehrer'
+        user.save()
 
+class FindJsonTests(WnycTestCase):
+    def query(self, query):
+        response = self.client.get('/find.json', {'query': query})
+        if response['Content-Type'] == 'application/json':
+            response.json = json.loads(response.content)
+        return response
+
+    def test_empty_queries_fail(self):
+        response = self.query('')
+        self.assertEqual(response.status_code, 400)
+
+    def test_queries_can_return_orgs(self):
+        response = self.query('rookies')
+        self.assertEqual(response.json, [{
+            'url': '/orgs/wnyc/',
+            'value': "WNYC's Radio Rookies"
+        }])
+
+    def test_unprivileged_queries_cannot_return_people(self):
+        self.login_as_non_member()
+        response = self.query('lehrer')
+        self.assertEqual(response.json, [])
+
+    def test_privileged_queries_can_return_people(self):
+        self.login_as_wnyc_member()
+        response = self.query('lehrer')
+        self.assertEqual(response.json, [{
+            'url': '/users/wnyc_member/',
+            'value': 'Brian Lehrer'
+        }])
+
+class AccountProfileTests(WnycTestCase):
     def test_edit_org_redirects_anonymous_users_to_login(self):
         response = self.client.get('/accounts/profile/', follow=True)
         self.assertRedirects(response,
                              '/accounts/login/?next=/accounts/profile/')
 
     def test_profile_hides_membership_form_for_nonmembers(self):
-        self.client.login(username='wnyc_member', password='lol')
-        response = self.client.get('/accounts/profile/')
-        self.assertContains(response, 'Membership Information')
-
-    def test_profile_shows_membership_form_for_members(self):
-        self.client.login(username='non_member', password='lol')
+        self.login_as_non_member()
         response = self.client.get('/accounts/profile/')
         self.assertNotContains(response, 'Membership Information')
 
+    def test_profile_shows_membership_form_for_members(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/accounts/profile/')
+        self.assertContains(response, 'Membership Information')
+
     def test_submitting_valid_form_changes_model(self):
-        self.client.login(username='non_member', password='lol')
+        self.login_as_non_member()
         response = self.client.post('/accounts/profile/', {
             'expertise-TOTAL_FORMS': '3',
             'expertise-INITIAL_FORMS': '0',
