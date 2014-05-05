@@ -12,7 +12,7 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Welcome to the {{ site.name }}.</h1>
-  <input class="form-control" placeholder="Search for organizations and people here" data-find-url="{% url 'find_json' %}" name="find-primary">
+  <input class="form-control" placeholder="Search for organizations {% if show_privileged_info %}and people {% endif %}here" data-find-url="{% url 'find_json' %}" name="find-primary">
 </div>
 {% for org in orgs %}
   <h2><a href="{{ org.get_absolute_url }}" class="nondescript-link">{{ org.name }}</a></h2>
