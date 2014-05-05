@@ -1,0 +1,11 @@
+/* Hide silly "Imported User Info: #1" from the admin UI. */
+
+.inline-related.dynamic-importeduserinfo > h3 {
+  display: none;
+}
+
+/* Hide silly "Membership: #1" from the admin UI. */
+
+.inline-related.dynamic-membership > h3 {
+  display: none;
+}

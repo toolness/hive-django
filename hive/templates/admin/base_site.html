@@ -1,7 +1,12 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
+{% load static from staticfiles %}
 
 {% block title %}{{ title }} | {{ site.name }} {% trans 'administration' %}{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'css/admin-style.css' %}">
+{% endblock %}
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'home' %}">{{ site.name }}</a> {% trans 'administration' %}</h1>
