@@ -1,4 +1,5 @@
 import os
+import sys
 import urlparse
 
 def set_default_env(**kwargs):
@@ -40,3 +41,7 @@ def parse_email_backend_url(url):
 def parse_secure_proxy_ssl_header(field):
     name, value = field.split(':')
     return ('HTTP_%s' % name.upper().replace('-', '_'), value.strip())
+
+def is_running_test_suite():
+    return (os.path.basename(sys.argv[0]) == 'manage.py' and 
+            len(sys.argv) > 1 and sys.argv[1] == 'test')

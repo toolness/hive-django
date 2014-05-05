@@ -16,7 +16,8 @@ import dj_database_url
 
 from .settings_utils import set_default_env, set_default_db, \
                             parse_email_backend_url, \
-                            parse_secure_proxy_ssl_header
+                            parse_secure_proxy_ssl_header, \
+                            is_running_test_suite
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 path = lambda *parts: os.path.join(BASE_DIR, *parts)
@@ -171,3 +172,8 @@ LOGGING = {
         }
     }
 }
+
+if is_running_test_suite():
+    PASSWORD_HASHERS = (
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    )
