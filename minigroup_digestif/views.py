@@ -44,7 +44,6 @@ def send(request):
         except binascii.Error:
             pass
 
-    response = HttpResponse()
-    response.status_code = 401
+    response = HttpResponse(status=401, reason='Unauthorized')
     response['WWW-Authenticate'] = 'Basic realm="minigroup_digestif"'
     return response
