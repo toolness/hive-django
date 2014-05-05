@@ -4,13 +4,27 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login
 from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
+from directory.models import Membership
 
 def send_digest(request):
     html = request.POST.get('html')
     if not html:
         return HttpResponse(status=400, reason='Bad Request')
-    
-    return HttpResponse('thanks')
+    memberships = Membership.objects.filter(
+        user__is_active=True,
+        receives_minigroup_digest=True
+    ).exclude(user__email='')
+    msg = EmailMultiAlternatives(
+        subject="Your Minigroup digest for today",
+        body="You must have an HTML email client to view this digest.",
+        to=[membership.user.email for membership in memberships],
+    )
+    msg.attach_alternative(html, "text/html")
+    msg.tags = ["minigroup_digestif"]
+    msg.send()
+    return HttpResponse('Digest sent.')
 
 @csrf_exempt
 @require_POST

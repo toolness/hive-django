@@ -1,5 +1,9 @@
+from django.core import mail
 from django.test import TestCase, Client
 from django.test.utils import override_settings
+from django.contrib.auth.models import User
+
+from directory.models import Membership
 
 def userpass(string):
     return 'Basic %s' % (string.encode('base64'))
@@ -49,9 +53,30 @@ class EnabledEndpointTests(BaseTestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_valid_userpass_with_html_returns_200(self):
+        # This user doesn't subscribe to the digest.
+        user = User(username='joe', email='joe@example.com')
+        user.save()
+
+        # This user subscribes to the digest, but has no email.
+        user = User(username='ann')
+        user.save()
+        user.membership.receives_minigroup_digest = True
+        user.membership.save()
+
+        # This user subscribes to the digest.
+        user = User(username='bob', email='bob@example.com')
+        user.save()
+        user.membership.receives_minigroup_digest = True
+        user.membership.save()
+
         response = self.client.post(
             '/minigroup_digestif/send',
             {'html': '<p>hello!</p>'},
             HTTP_AUTHORIZATION=userpass('user:pass')
         )
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 1)
+
+        msg = mail.outbox[0]
+        self.assertEqual(msg.to, ['bob@example.com'])
+        self.assertEqual(msg.alternatives, [(u'<p>hello!</p>', 'text/html')])
