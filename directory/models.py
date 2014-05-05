@@ -268,6 +268,9 @@ class Membership(models.Model):
     def get_absolute_url(self):
         return reverse('user_detail', args=(str(self.user.username),))
 
+    def __unicode__(self):
+        return u'Membership for %s' % self.user.username
+
 class ImportedUserInfo(models.Model):
     '''
     Represents book-keeping about users who were imported from another
