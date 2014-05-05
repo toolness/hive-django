@@ -286,6 +286,9 @@ class ImportedUserInfo(models.Model):
                   "informing them of their new account."
     )
 
+    def __unicode__(self):
+        return u'Imported user info for %s' % self.user.username
+
 @receiver(post_save, sender=User)
 def create_membership_for_user(sender, raw, instance, **kwargs):
     if raw: return
