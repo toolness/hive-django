@@ -7,6 +7,13 @@ from ..management.commands.seeddata import create_user
 
 get_org = lambda slug: Organization.objects.get(slug=slug)
 
+class HomePageTests(TestCase):
+    fixtures = ['wnyc.json']
+
+    def test_requesting_empty_page_does_not_explode(self):
+        response = self.client.get('/?page=9999')
+        self.assertEqual(response.status_code, 200)
+
 class AccountProfileTests(TestCase):
     fixtures = ['wnyc.json']
 
