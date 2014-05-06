@@ -40,7 +40,10 @@ if 'SECURE_PROXY_SSL_HEADER' in os.environ:
     )
 
 if 'DEFAULT_FROM_EMAIL' in os.environ:
-    DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+    DEFAULT_FROM_EMAIL = SERVER_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
+
+if 'ADMIN_EMAIL' in os.environ:
+    ADMINS = (('Administrator', os.environ['ADMIN_EMAIL']),)
 
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -165,11 +168,16 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'stream': sys.stdout
-        }
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': False,
+        },
     },
     'loggers': {
         'django.request': {
-            'handlers': ['console'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR'
         }
     }

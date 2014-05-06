@@ -56,6 +56,8 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `DEFAULT_FROM_EMAIL` is the default email address to use for various
   automated correspondence from the site manager(s), such as password
   resets. Defaults to `webmaster@localhost`.
+* `ADMIN_EMAIL` is the email address to send error reports to. If
+  undefined, error reports will not be emailed.
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
