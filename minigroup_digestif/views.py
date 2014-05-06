@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMessage
 
 from directory.models import Membership
 
@@ -16,13 +16,17 @@ def send_digest(request):
         user__is_active=True,
         receives_minigroup_digest=True
     ).exclude(user__email='')
-    msg = EmailMultiAlternatives(
+    msg = EmailMessage(
         subject="Your Minigroup digest for today",
-        body="You must have an HTML email client to view this digest.",
-        to=[membership.user.email for membership in memberships],
+        body=html,
+        bcc=[membership.user.email for membership in memberships],
     )
-    msg.attach_alternative(html, "text/html")
+    msg.content_subtype = "html"
+
+    # If we're using a Mandrill backend, this will set the tags for
+    # the outbound email; otherwise it probably won't do anything.
     msg.tags = ["minigroup_digestif"]
+
     msg.send()
     return HttpResponse('Digest sent.')
 

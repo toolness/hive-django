@@ -78,5 +78,7 @@ class EnabledEndpointTests(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         msg = mail.outbox[0]
-        self.assertEqual(msg.to, ['bob@example.com'])
-        self.assertEqual(msg.alternatives, [(u'<p>hello!</p>', 'text/html')])
+        self.assertEqual(msg.to, [])
+        self.assertEqual(msg.bcc, ['bob@example.com'])
+        self.assertEqual(msg.body, u'<p>hello!</p>')
+        self.assertEqual(msg.content_subtype, 'html')
