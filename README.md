@@ -58,6 +58,9 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
   resets. Defaults to `webmaster@localhost`.
 * `ADMIN_EMAIL` is the email address to send error reports to. If
   undefined, error reports will not be emailed.
+* `MINIGROUP_DIGESTIF_USERPASS` is a string of the form `username:password`
+  that enables the sending of Minigroup digests from external jobs. For
+  more information, see [minigroup_digestif/README.md][].
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
@@ -66,3 +69,4 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 
   [twelve-factor]: http://12factor.net/
   [djrill]: https://github.com/brack3t/Djrill
+  [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
