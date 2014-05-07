@@ -71,6 +71,13 @@ def find_json(request):
 
     return HttpResponse(json.dumps(results), content_type='application/json')
 
+@user_passes_test(is_user_privileged)
+def activity(request):
+    memberships = Membership.objects.all().order_by('-modified')[:10]
+    return render(request, 'directory/activity.html', {
+        'memberships': memberships
+    })
+
 def organization_detail(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
                             is_active=True)

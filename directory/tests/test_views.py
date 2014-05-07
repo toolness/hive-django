@@ -82,6 +82,18 @@ class UserDetailTests(WnycTestCase):
         response = self.client.get('/users/wnyc_member/')
         self.assertContains(response, 'member@wnyc.org')
 
+class ActivityTests(WnycTestCase):
+    def test_allows_members_to_view(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/activity/')
+        self.assertEquals(response.status_code, 200)
+
+    def test_redirects_nonmembers_to_login(self):
+        self.login_as_non_member()
+        response = self.client.get('/activity/', follow=True)
+        self.assertRedirects(response,
+                             '/accounts/login/?next=/activity/')
+
 class UserEditTests(WnycTestCase):
     BASE_FORM = {
         'expertise-TOTAL_FORMS': '3',
