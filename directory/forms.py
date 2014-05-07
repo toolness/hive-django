@@ -57,4 +57,4 @@ class OrganizationForm(ModelForm):
     class Meta:
         model = Organization
         fields = ['name', 'website', 'address', 'twitter_name',
-                  'hive_member_since', 'mission']
+                  'mission']
