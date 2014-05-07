@@ -10,6 +10,7 @@ from directory.models import Membership
 
 def send_digest(request):
     html = request.POST.get('html')
+    subject = request.POST.get('subject', "Your Minigroup digest for today")
     if not html:
         return HttpResponse(status=400, reason='Bad Request')
     memberships = Membership.objects.filter(
@@ -17,7 +18,7 @@ def send_digest(request):
         receives_minigroup_digest=True
     ).exclude(user__email='')
     msg = EmailMessage(
-        subject="Your Minigroup digest for today",
+        subject=subject,
         body=html,
         bcc=[membership.user.email for membership in memberships],
     )
