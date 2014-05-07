@@ -39,16 +39,51 @@ class WnycAndAmnhTestCase(WnycTestCase):
         create_user('amnh_member', email='member@amnh.org',
                     password='lol', organization=self.amnh)
 
+class SearchTests(WnycTestCase):
+    def query(self, query, ignore_last_result=True):
+        return self.client.get('/search/', {'query': query})
+
+    def test_empty_queries_fail(self):
+        response = self.query('')
+        self.assertEqual(response.status_code, 400)
+
+    def test_queries_can_return_no_results(self):
+        response = self.query('asdf')
+        self.assertContains(response, "no results matched your query")
+
+    def test_queries_can_return_orgs(self):
+        response = self.query('rookies')
+        self.assertContains(response, "Radio Rookies")
+
+    def test_unprivileged_queries_cannot_return_people(self):
+        self.login_as_non_member()
+        response = self.query('lehrer')
+        self.assertNotContains(response, 'Brian Lehrer')
+
+    def test_privileged_queries_can_return_people(self):
+        self.login_as_wnyc_member()
+        response = self.query('lehrer')
+        self.assertContains(response, 'Brian Lehrer')
+
 class FindJsonTests(WnycTestCase):
-    def query(self, query):
+    def query(self, query, ignore_last_result=True):
         response = self.client.get('/find.json', {'query': query})
         if response['Content-Type'] == 'application/json':
             response.json = json.loads(response.content)
+            if ignore_last_result:
+                response.json = response.json[:-1]
         return response
 
     def test_empty_queries_fail(self):
         response = self.query('')
         self.assertEqual(response.status_code, 400)
+
+    def test_last_result_is_to_search(self):
+        response = self.query('blarg u', ignore_last_result=False)
+        self.assertEqual(response.json, [{
+            'url': '/search/?query=blarg+u',
+            'value': 'Search the website for "blarg u"'
+        }])        
 
     def test_queries_can_return_orgs(self):
         response = self.query('rookies')

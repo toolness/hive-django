@@ -5,6 +5,7 @@ from . import views
 urlpatterns = patterns('',
     url(r'^$', views.home, name='home'),
     url(r'^find.json$', views.find_json, name='find_json'),
+    url(r'^search/$', views.search, name='search'),
     url(r'^activity/$', views.activity, name='activity'),
     url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/$',
         views.organization_detail, name='organization_detail'),

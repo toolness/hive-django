@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Search Results For "{{query}}"</h1>
+
+{% if no_results %}
+Sorry, no results matched your query.
+{% endif %}
+
+{% if orgs %}
+<h2>Organizations</h2>
+
+<ul>
+{% for org in orgs %}
+  <li><a href="{{ org.get_absolute_url }}">{{ org.name }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if memberships %}
+<h2>People</h2>
+
+<ul>
+{% for membership in memberships %}
+  <li>
+    <a href="{{ membership.get_absolute_url }}">{{ membership.user.get_full_name }}</a><br>
+    <small>
+    {% if membership.title %}{{ membership.title }}<br>{% endif %}
+    <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
+    </small>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}

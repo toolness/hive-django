@@ -5,6 +5,8 @@ from django.http import HttpResponse, HttpResponseForbidden, \
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
 from django.db.models import Q
 
 from .models import Organization, Membership, is_user_vouched_for, \
@@ -43,6 +45,33 @@ def home(request):
         'show_privileged_info': is_request_privileged(request)
     })
 
+def search(request):
+    query = request.GET.get('query')
+    if not query:
+        return HttpResponseBadRequest('query must be non-empty')
+    orgs = Organization.objects.filter(
+        Q(name__icontains=query) |
+        Q(mission__icontains=query),
+        is_active=True
+    )
+    memberships = None
+    if is_request_privileged(request):
+        memberships = Membership.objects.filter(
+            Q(user__first_name__icontains=query) |
+            Q(user__last_name__icontains=query) |
+            Q(title__icontains=query) |
+            Q(bio__icontains=query),
+            is_listed=True,
+            user__is_active=True
+        )
+
+    return render(request, 'directory/search.html', {
+        'query': query,
+        'no_results': not orgs and not memberships,
+        'orgs': orgs,
+        'memberships': memberships
+    })
+
 def find_json(request):
     query = request.GET.get('query')
     results = []
@@ -68,6 +97,13 @@ def find_json(request):
              'url': membership.get_absolute_url()}
             for membership in memberships
         ])
+
+    results.append({
+        'value': 'Search the website for "%s"' % query,
+        'url': '%s?%s' % (reverse('search'), urlencode({
+            'query': query
+        }))
+    })
 
     return HttpResponse(json.dumps(results), content_type='application/json')
 
