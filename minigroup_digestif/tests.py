@@ -52,6 +52,7 @@ class EnabledEndpointTests(BaseTestCase):
         )
         self.assertEqual(response.status_code, 400)
 
+    @override_settings(ORIGIN='http://example.org')
     def test_valid_userpass_with_html_returns_200(self):
         # This user doesn't subscribe to the digest.
         user = User(username='joe', email='joe@example.com')
@@ -80,5 +81,12 @@ class EnabledEndpointTests(BaseTestCase):
         msg = mail.outbox[0]
         self.assertEqual(msg.to, [])
         self.assertEqual(msg.bcc, ['bob@example.com'])
-        self.assertEqual(msg.body, u'<p>hello!</p>')
+        self.assertEqual(
+            msg.body,
+            u'<p>hello!</p>'
+            '<p><small>To unsubscribe from this digest, '
+            'please visit your '
+            '<a href="http://example.org/accounts/profile/">'
+            'account settings</a>.</small></p>'
+        )
         self.assertEqual(msg.content_subtype, 'html')
