@@ -21,6 +21,11 @@
 
 <br>
 
+{% if membership.bio %}
+<h3>Bio</h3>
+<div class="rendered-markdown">{{ membership.bio|markdown }}</div>
+{% endif %}
+
 <table class="table">
   <tr>
     <td><strong>Email</strong></td>

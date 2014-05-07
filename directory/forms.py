@@ -31,7 +31,7 @@ class ChannelFormSetHelper(FormHelper):
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
-        fields = ['title', 'twitter_name', 'phone_number', 'is_listed',
+        fields = ['title', 'bio', 'twitter_name', 'phone_number', 'is_listed',
                   'receives_minigroup_digest']
         labels = {
             'receives_minigroup_digest': 'Send me a daily digest of all '
@@ -42,6 +42,8 @@ class MembershipForm(ModelForm):
         help_texts = {
             'is_listed': '',
             'receives_minigroup_digest': '',
+            'bio': 'Your mini-biography. Markdown and basic HTML tags '
+                   'are allowed.',
             'twitter_name': 'Your twitter name, e.g. "leahatplay".',
             'phone_number': 'Your phone number, e.g. 123-456-7890.',
             'title': 'Your title at your organization, e.g. '
