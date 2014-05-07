@@ -246,6 +246,11 @@ class Membership(models.Model):
         max_length=100,
         blank=True
     )
+    bio = models.TextField(
+        help_text="The person's biography. Markdown "
+                  "and basic HTML tags are allowed.",
+        blank=True,
+    )
     twitter_name = TwitterNameField(
         help_text="The twitter account for the person.",
         blank=True,
