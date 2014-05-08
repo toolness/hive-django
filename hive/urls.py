@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
@@ -11,6 +12,10 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('hive.account_urls')),
-    url(r'^minigroup_digestif/', include('minigroup_digestif.urls')),
     url(r'', include('directory.urls')),
 )
+
+if 'minigroup_digestif' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^minigroup_digestif/', include('minigroup_digestif.urls')),
+    )

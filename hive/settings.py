@@ -75,8 +75,10 @@ INSTALLED_APPS = (
     'crispy_forms',
     'registration',
     'directory',
-    'minigroup_digestif',
 ) + EMAIL_BACKEND_INSTALLED_APPS
+
+if MINIGROUP_DIGESTIF_USERPASS or is_running_test_suite():
+    INSTALLED_APPS += ('minigroup_digestif',)
 
 MIDDLEWARE_CLASSES = (
     'hive.ssl.RedirectToHttpsMiddleware',

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.models import User
@@ -31,8 +32,10 @@ class ChannelFormSetHelper(FormHelper):
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
-        fields = ['title', 'bio', 'twitter_name', 'phone_number', 'is_listed',
-                  'receives_minigroup_digest']
+        fields = ['title', 'bio', 'twitter_name', 'phone_number',
+                  'is_listed']
+        if 'minigroup_digestif' in settings.INSTALLED_APPS:
+            fields.append('receives_minigroup_digest')
         labels = {
             'receives_minigroup_digest': 'Send me a daily digest of all '
                                          'activity on the Hive minigroup.',

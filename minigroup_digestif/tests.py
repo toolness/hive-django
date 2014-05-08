@@ -8,19 +8,12 @@ from directory.models import Membership
 def userpass(string):
     return 'Basic %s' % (string.encode('base64'))
 
-class BaseTestCase(TestCase):
+@override_settings(MINIGROUP_DIGESTIF_USERPASS='user:pass')
+class EndpointTests(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.client = Client(enforce_csrf_checks=True)
 
-@override_settings(MINIGROUP_DIGESTIF_USERPASS='')
-class DisabledEndpointTests(BaseTestCase):
-    def test_return_not_implemented_if_unconfigured(self):        
-        response = self.client.post('/minigroup_digestif/send')
-        self.assertEqual(response.status_code, 501)
-
-@override_settings(MINIGROUP_DIGESTIF_USERPASS='user:pass')
-class EnabledEndpointTests(BaseTestCase):
     def test_no_authorization_header_returns_401(self):
         response = self.client.post('/minigroup_digestif/send')
         self.assertEqual(response.status_code, 401)

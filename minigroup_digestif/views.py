@@ -38,9 +38,6 @@ def send_digest(request):
 @csrf_exempt
 @require_POST
 def send(request):
-    if (not hasattr(settings, 'MINIGROUP_DIGESTIF_USERPASS') or
-        not settings.MINIGROUP_DIGESTIF_USERPASS):
-        return HttpResponse(status=501, reason='Not Implemented')
     if request.META.has_key('HTTP_AUTHORIZATION'):
         try:
             authmeth, auth = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
