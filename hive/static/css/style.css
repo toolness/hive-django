@@ -15,6 +15,10 @@ h1, h2, a.navbar-brand {
   font-family: 'Arvo', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.container.primary-content {
+  margin-bottom: 1em;
+}
+
 .asteriskField {
   display: none;
 }
