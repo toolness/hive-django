@@ -17,6 +17,11 @@ class WnycTestCase(TestCase):
     def login_as_wnyc_member(self):
         self.client.login(username='wnyc_member', password='lol')
 
+    def assertNonMembersAreDenied(self, url):
+        self.login_as_non_member()
+        response = self.client.get(url, follow=True)
+        self.assertRedirects(response, '/accounts/login/?next=' + url)
+
     def setUp(self):
         super(WnycTestCase, self).setUp()
         self.wnyc = get_org('wnyc')
@@ -108,10 +113,7 @@ class FindJsonTests(WnycTestCase):
 
 class UserDetailTests(WnycTestCase):
     def test_nonmembers_are_redirected(self):
-        self.login_as_non_member()
-        response = self.client.get('/users/wnyc_member/', follow=True)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/users/wnyc_member/')
+        self.assertNonMembersAreDenied('/users/wnyc_member/')
 
     def test_members_are_shown_email_address(self):
         self.login_as_wnyc_member()
@@ -125,10 +127,7 @@ class ActivityTests(WnycTestCase):
         self.assertEquals(response.status_code, 200)
 
     def test_redirects_nonmembers_to_login(self):
-        self.login_as_non_member()
-        response = self.client.get('/activity/', follow=True)
-        self.assertRedirects(response,
-                             '/accounts/login/?next=/activity/')
+        self.assertNonMembersAreDenied('/activity/')
 
 class UserEditTests(WnycTestCase):
     BASE_FORM = {
