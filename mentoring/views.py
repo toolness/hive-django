@@ -11,7 +11,6 @@ def category_mentors(request, category):
         'skills': skills
     })
 
-@user_passes_test(is_user_privileged)
 def index(request):
     categories = []
     for slug, name in Expertise.CATEGORY_CHOICES:

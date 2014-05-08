@@ -23,5 +23,4 @@ class MentoringTests(WnycTestCase):
         self.assertContains(response, 'I am awesome')
 
     def test_nonmembers_are_denied(self):
-        self.assertNonMembersAreDenied('/mentoring/')
         self.assertNonMembersAreDenied('/mentoring/other/')
