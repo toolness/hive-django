@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Mentors for {{ category }}</h1>
+
+{% if skills %}
+  <ul>
+  {% for expertise in skills %}
+    <li>
+      <p>
+        <a href="{{ expertise.user.get_absolute_url }}">{{ expertise.user.get_full_name }}</a><br>
+        <small>
+        {% if expertise.user.membership.title %}{{ expertise.user.membership.title }}<br>{% endif %}
+        <a href="{{ expertise.user.membership.organization.get_absolute_url }}">{{ expertise.user.membership.organization.name }}</a>
+        </small>
+      </p>
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Unfortunately, there are currently no mentors for {{ category }}.</p>
+{% endif %}
+
+<ul class="pager">
+  <li class="previous"><a href="{% url 'mentoring.views.index' %}">&larr; Back</a></li>
+</ul>
+
+{% endblock %}

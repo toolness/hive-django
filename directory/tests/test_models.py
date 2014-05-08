@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
-from ..models import Organization, ContentChannel
+from ..models import Organization, ContentChannel, Expertise
 from ..management.commands.seeddata import create_user
 
 class MembershipTests(TestCase):
@@ -12,6 +12,21 @@ class MembershipTests(TestCase):
         self.assertTrue(user.membership)
         self.assertTrue(user.membership.is_listed)
         self.assertFalse(user.membership.organization)
+
+class ExpertiseTests(TestCase):
+    fixtures = ['wnyc.json']
+
+    def test_manager_of_vouched_users_works(self):
+        wnyc = Organization.objects.get(slug='wnyc')
+        foo = create_user('foo', organization=wnyc)
+        bar = create_user('bar')
+        expertise = Expertise(category='other', user=foo)
+        expertise.save()
+        Expertise(category='other', user=bar).save()
+        skills = Expertise.objects.of_vouched_users()
+
+        self.assertEqual(len(skills), 1)
+        self.assertEqual(skills[0], expertise)
 
 class OrganizationTests(TestCase):
     fixtures = ['wnyc.json']

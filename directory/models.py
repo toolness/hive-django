@@ -113,6 +113,14 @@ class Organization(models.Model):
                                   "be greater than maximum youth audience "
                                   "age.")
 
+class ExpertiseManager(models.Manager):
+    def of_vouched_users(self):
+        return self.filter(
+            user__is_active=True,
+            user__membership__organization__isnull=False,
+            user__membership__is_listed=True
+        )
+
 class Expertise(models.Model):
     '''
     Represents an expertise that a user has.
@@ -155,6 +163,8 @@ class Expertise(models.Model):
         User,
         related_name='skills'
     )
+
+    objects = ExpertiseManager()
 
 class ContentChannel(models.Model):
     '''
