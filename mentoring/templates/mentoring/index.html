@@ -3,6 +3,16 @@
 {% block content %}
 <h1>Mentoring</h1>
 
+<p>Individuals in the Hive network have access to a variety of mentoring opportunities. Choose a category below to find yourself a mentor!</p>
+
+{% if user.is_authenticated %}
+<p>To add yourself as a mentor in any of the areas below, visit your
+  <a href="{% url 'user_edit' %}">profile</a> and fill out the
+  <strong>Expertise</strong> section.</p>
+{% endif %}
+
+<h2>Categories</h2>
+
 <ul class="list-unstyled">
 {% for category in categories %}
   <li>

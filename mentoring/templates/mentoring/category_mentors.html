@@ -3,6 +3,13 @@
 {% block content %}
 <h1>Mentors for {{ category }}</h1>
 
+{% if user.is_authenticated %}
+<p>Want to mentor in this area? Just visit your
+  <a href="{% url 'user_edit' %}">profile</a>, go to the
+  <strong>Expertise</strong> section, and add a
+  <em>{{ category }}</em> expertise.</p>
+{% endif %}
+
 {% if skills %}
   <ul>
   {% for expertise in skills %}
