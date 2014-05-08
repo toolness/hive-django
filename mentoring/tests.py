@@ -15,11 +15,12 @@ class MentoringTests(WnycTestCase):
         self.assertContains(response, '1 mentor')
         self.assertContains(response, '0 mentors')
 
-    def test_category_page_lists_mentors(self):
+    def test_category_page_lists_mentors_and_details(self):
         self.login_as_wnyc_member()
         response = self.client.get('/mentoring/other/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Brian Lehrer')
+        self.assertContains(response, 'I am awesome')
 
     def test_nonmembers_are_denied(self):
         self.assertNonMembersAreDenied('/mentoring/')

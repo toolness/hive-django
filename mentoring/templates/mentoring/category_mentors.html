@@ -9,6 +9,9 @@
     <li>
       <p>
         <a href="{{ expertise.user.get_absolute_url }}">{{ expertise.user.get_full_name }}</a><br>
+        {% if expertise.details %}
+        <em>&ldquo;{{expertise.details}}&rdquo;</em><br>
+        {% endif %}
         <small>
         {% if expertise.user.membership.title %}{{ expertise.user.membership.title }}<br>{% endif %}
         <a href="{{ expertise.user.membership.organization.get_absolute_url }}">{{ expertise.user.membership.organization.name }}</a>
