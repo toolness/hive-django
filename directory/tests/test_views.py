@@ -20,12 +20,13 @@ class WnycTestCase(TestCase):
     def setUp(self):
         super(WnycTestCase, self).setUp()
         self.wnyc = get_org('wnyc')
-        create_user('non_member', password='lol')
+        self.non_member = create_user('non_member', password='lol')
         user = create_user('wnyc_member', email='member@wnyc.org',
                            password='lol', organization=self.wnyc)
         user.first_name = 'Brian'
         user.last_name = 'Lehrer'
         user.save()
+        self.wnyc_member = user
 
 class WnycAndAmnhTestCase(WnycTestCase):
     fixtures = WnycTestCase.fixtures + ['amnh.json']
