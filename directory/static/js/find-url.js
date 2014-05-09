@@ -15,6 +15,12 @@ $(function() {
       }
     }).on('typeahead:selected typeahead:autocompleted', function(e, sugg) {
       window.location = sugg.url;
+    }).on('keypress', function(e) {
+      // http://code.tutsplus.com/tutorials/enhancing-the-search-form-with-typeaheadjs--wp-30844
+      if (e.which == 13) {
+        $(this).parents("form").submit();
+        return false;
+      }
     }).typeahead('val', '');
   });
 });
