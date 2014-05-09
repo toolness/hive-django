@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load directory %}
 
 {% block content %}
 <h1>Search Results For "{{query}}"</h1>
@@ -20,14 +21,19 @@ Sorry, no results matched your query.
 {% if memberships %}
 <h2>People</h2>
 
-<ul>
+<ul class="media-list">
 {% for membership in memberships %}
-  <li>
-    <a href="{{ membership.get_absolute_url }}">{{ membership.user.get_full_name }}</a><br>
-    <small>
-    {% if membership.title %}{{ membership.title }}<br>{% endif %}
-    <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
-    </small>
+  <li class="media">
+    <a class="pull-left" href="{{ membership.get_absolute_url }}">
+      <img class="media-object" src="//gravatar.com/avatar/{{ membership.user.email|emailhash }}?d=mm" alt="gravatar for {{ membership.user.email }}">
+    </a>
+    <div class="media-body">
+      <a href="{{ membership.get_absolute_url }}">{{ membership.user.get_full_name }}</a><br>
+      <small>
+      {% if membership.title %}{{ membership.title }}<br>{% endif %}
+      <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
+      </small>
+    </div>
   </li>
 {% endfor %}
 </ul>

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load directory %}
 
 {% block content %}
 <h1>Mentors for {{ category }}</h1>
@@ -11,10 +12,13 @@
 {% endif %}
 
 {% if skills %}
-  <ul>
+  <ul class="media-list">
   {% for expertise in skills %}
-    <li>
-      <p>
+    <li class="media">
+      <a class="pull-left" href="{{ expertise.user.get_absolute_url }}">
+        <img class="media-object" src="//gravatar.com/avatar/{{ expertise.user.email|emailhash }}?d=mm" alt="gravatar for {{ expertise.user.email }}">
+      </a>
+      <div class="media-body">
         <a href="{{ expertise.user.get_absolute_url }}">{{ expertise.user.get_full_name }}</a><br>
         {% if expertise.details %}
         <em>&ldquo;{{expertise.details}}&rdquo;</em><br>
@@ -23,7 +27,7 @@
         {% if expertise.user.membership.title %}{{ expertise.user.membership.title }}<br>{% endif %}
         <a href="{{ expertise.user.membership.organization.get_absolute_url }}">{{ expertise.user.membership.organization.name }}</a>
         </small>
-      </p>
+      </div>
     </li>
   {% endfor %}
   </ul>
