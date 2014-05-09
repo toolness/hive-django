@@ -2,7 +2,9 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from registration.signals import user_activated
@@ -321,3 +323,14 @@ def auto_register_user_with_organization(sender, user, request, **kwargs):
     org = orgs[0]
     user.membership.organization = org
     user.membership.save()
+
+@receiver(user_logged_in)
+def tell_user_to_update_their_profile(sender, user, request, **kwargs):
+    if not is_user_vouched_for(user): return
+    if not user.membership.bio:
+        messages.info(request,
+                      'You don\'t have a bio! You should write one '
+                      'so community members can learn more about you. '
+                      'Just visit your user profile by accessing the '
+                      'user menu at the top-right corner of this page.',
+                      fail_silently=True)
