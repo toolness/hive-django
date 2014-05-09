@@ -43,6 +43,22 @@ class OrganizationTests(TestCase):
             wnyc.full_clean
         )
 
+class ContentChannelManagerTests(WnycTestCase):
+    def assertCats(self, channels, cats):
+        self.assertEqual([channel.category for channel in channels], cats)
+
+    def test_unique_with_icons_excludes_other_category(self):
+        ContentChannel(category='other', url='http://wnyc.org/',
+                       organization=self.wnyc).save()
+        self.assertCats(self.wnyc.content_channels.unique_with_icons(),
+                        ['facebook'])
+
+    def test_unique_with_icons(self):
+        ContentChannel(category='facebook', url='http://facebook.com/a',
+                       organization=self.wnyc).save()
+        self.assertCats(self.wnyc.content_channels.unique_with_icons(),
+                        ['facebook'])
+
 class ContentChannelTests(TestCase):
     def test_fa_icon_returns_empty_string_if_none_available(self):
         c = ContentChannel(category='other')

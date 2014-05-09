@@ -2,10 +2,8 @@
 
 <p>
   <a href="{{ org.website }}">{{ org.website|domainname }}</a>
-  {% for channel in org.content_channels.all %}
-    {% if channel.category != 'other' %}
-      <a href="{{ channel.url }}" title="{{ channel.display_name }}"><i class="fa {{ channel.fa_icon }}"></i></a>
-    {% endif %}
+  {% for channel in org.content_channels.unique_with_icons %}
+    <a href="{{ channel.url }}" title="{{ channel.display_name }}"><i class="fa {{ channel.fa_icon }}"></i></a>
   {% endfor %}
   {% if org.twitter_name %}
     <a href="http://twitter.com/{{ org.twitter_name }}" title="This organization is @{{ org.twitter_name }} on Twitter."><i class="fa fa-twitter-square"></i></a>

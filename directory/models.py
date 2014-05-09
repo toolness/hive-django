@@ -168,6 +168,17 @@ class Expertise(models.Model):
 
     objects = ExpertiseManager()
 
+class ContentChannelManager(models.Manager):
+    use_for_related_fields = True
+
+    def unique_with_icons(self):
+        categories = []
+        channels = self.all().exclude(category='other')
+        for channel in channels.order_by('modified'):
+            if channel.category in categories: continue
+            categories.append(channel.category)
+            yield channel
+
 class ContentChannel(models.Model):
     '''
     Represents a content channel for a Hive organization.
@@ -242,6 +253,8 @@ class ContentChannel(models.Model):
             return self.name
 
         return display_name
+
+    objects = ContentChannelManager()
 
 class Membership(models.Model):
     '''
