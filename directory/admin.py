@@ -34,6 +34,15 @@ class ImportedUserInfoInline(admin.StackedInline):
 class MembershipUserAdmin(UserAdmin):
     inlines = (ImportedUserInfoInline, MembershipInline,)
     actions = UserAdmin.actions + ['email_imported_users']
+    list_display = ('username', 'email', 'first_name', 'last_name',
+                    'is_staff', 'organization')
+
+    def organization(self, obj):
+        if obj.membership.organization:
+            return obj.membership.organization.name
+        return ''
+
+    organization.admin_order_field = 'membership__organization__name'
 
     def email_imported_users(self, request, queryset):
         for user in queryset:
