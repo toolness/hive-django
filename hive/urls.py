@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('hive.account_urls')),
     url(r'^mentoring/', include('mentoring.urls')),
+    url(r'^faq/', 'django.contrib.flatpages.views.flatpage',
+        {'url': '/faq/'}, name='faq'),
     url(r'', include('directory.urls')),
 )
 

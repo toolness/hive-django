@@ -68,8 +68,17 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `HIVE_CITY` is the name of the city to which this Hive network
   belongs. It's used for display purposes only.
 
+## Flatpages
+
+Some pages on the site are [flatpages][]. You'll want to create
+flatpage records for the following URLs via the Django admin
+interface, or else they will result in 404s:
+
+* `/faq/` is the Frequently Asked Questions page.
+
 <!-- Links -->
 
   [twelve-factor]: http://12factor.net/
   [djrill]: https://github.com/brack3t/Djrill
   [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
+  [flatpages]: https://docs.djangoproject.com/en/1.6/ref/contrib/flatpages/
