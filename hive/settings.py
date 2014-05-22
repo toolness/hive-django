@@ -45,6 +45,7 @@ if 'DEFAULT_FROM_EMAIL' in os.environ:
 if 'ADMIN_EMAIL' in os.environ:
     ADMINS = (('Administrator', os.environ['ADMIN_EMAIL']),)
 
+HIVE_CITY = os.environ.get('HIVE_CITY', 'HIVE_CITY')
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
@@ -104,6 +105,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "hive.context_processors.origin",
     "hive.context_processors.site",
+    "hive.context_processors.hive_city",
 )
 
 ROOT_URLCONF = 'hive.urls'
