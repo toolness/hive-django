@@ -11,7 +11,8 @@ ExpertiseFormSet = inlineformset_factory(
     User, Expertise,
     fields = ['category', 'details'],
     help_texts = {'category': '', 'details': ''},
-    labels = {'category': 'Category', 'details': 'Additional notes'}
+    labels = {'category': 'Category', 'details': 'Additional notes'},
+    extra = 1
 )
 
 class ExpertiseFormSetHelper(FormHelper):

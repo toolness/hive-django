@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% load directory %}
+{% load static from staticfiles %}
 
 {% block title %}User Profile{% endblock %}
 
@@ -32,4 +33,8 @@
 <button type="submit" class="btn btn-primary">Update Profile</button>
 <a href="{% url 'password_change' %}" class="btn btn-default">Change Password&hellip;</a>
 </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static 'js/table-inline-dynamic-formset.js' %}"></script>
 {% endblock %}
