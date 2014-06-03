@@ -67,6 +67,11 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
 * `HIVE_CITY` is the name of the city to which this Hive network
   belongs. It's used for display purposes only.
+* `GA_TRACKING_ID` is the Google Analytics Tracking ID for your app.
+  Optional.
+* `GA_HOSTNAME` is the hostname of your app for Google Analytics tracking.
+  It's usually the top-level domain of your app. If `GA_TRACKING_ID` is
+  defined, this must be defined too.
 
 ## Flatpages
 

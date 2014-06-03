@@ -74,5 +74,10 @@
 <script src="{% static 'admin/js/jquery.js' %}"></script>
 <script src="{% static 'js/bootstrap.js' %}"></script>
 <script src="{% static 'js/submit-form-onclick.js' %}"></script>
+{% if GA_TRACKING_ID %}
+<script src="{% static 'js/ga.js' %}"
+        data-tracking-id="{{ GA_TRACKING_ID }}"
+        data-hostname="{{ GA_HOSTNAME }}"></script>
+{% endif %}
 {% block scripts %}{% endblock %}
 </body>

@@ -45,6 +45,11 @@ if 'DEFAULT_FROM_EMAIL' in os.environ:
 if 'ADMIN_EMAIL' in os.environ:
     ADMINS = (('Administrator', os.environ['ADMIN_EMAIL']),)
 
+GA_TRACKING_ID = os.environ.get('GA_TRACKING_ID')
+
+if GA_TRACKING_ID:
+    GA_HOSTNAME = os.environ['GA_HOSTNAME']
+
 HIVE_CITY = os.environ.get('HIVE_CITY', 'HIVE_CITY')
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -109,6 +114,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "hive.context_processors.hive_city",
 )
 
+if GA_TRACKING_ID:
+    TEMPLATE_CONTEXT_PROCESSORS += ('hive.context_processors.ga',)
+
 ROOT_URLCONF = 'hive.urls'
 
 WSGI_APPLICATION = 'hive.wsgi.application'
@@ -135,6 +143,12 @@ USE_L10N = True
 USE_TZ = True
 
 CSP_IMG_SRC = ('*')
+
+CSP_SCRIPT_SRC = ("'self'",)
+
+if GA_TRACKING_ID:
+    CSP_SCRIPT_SRC += ('http://www.google-analytics.com',
+                       'https://www.google-analytics.com')
 
 CSP_FONT_SRC = ("'self'", 'http://themes.googleusercontent.com',
                 'https://themes.googleusercontent.com')

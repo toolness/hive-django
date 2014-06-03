@@ -2,6 +2,12 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 
+def ga(request=None):
+    return {
+        'GA_TRACKING_ID': settings.GA_TRACKING_ID,
+        'GA_HOSTNAME': settings.GA_HOSTNAME
+    }
+
 def origin(request=None):
     return {'ORIGIN': settings.ORIGIN}
 
