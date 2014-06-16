@@ -16,6 +16,12 @@
       {% if membership.title %}{{ membership.title }}<br>{% endif %}
       <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
     </p>
+
+    <ul class="list-inline">
+      {% for role in membership.roles.all %}
+      <li><span class="label label-default">{{ role.name }}</span></li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 

@@ -279,6 +279,23 @@ class ContentChannel(models.Model):
 
     objects = ContentChannelManager()
 
+class MembershipRole(models.Model):
+    '''
+    Represents a role for a person in the Hive organization, e.g.
+    "funding liason", "activity representative", etc.
+    '''
+
+    name = models.CharField(
+        help_text="The name of the role.",
+        max_length=50
+    )
+    description = models.TextField(
+        help_text="Description of the role."
+    )
+
+    def __unicode__(self):
+        return self.name
+
 class Membership(models.Model):
     '''
     Represents a person who is a member of an organization.
@@ -289,6 +306,7 @@ class Membership(models.Model):
     user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True,
                                      related_name='memberships')
+    roles = models.ManyToManyField(MembershipRole)
     title = models.CharField(
         help_text="The person's title at their organization.",
         max_length=100,

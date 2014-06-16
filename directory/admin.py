@@ -13,8 +13,8 @@ class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 admin.site.register(models.Organization, OrganizationAdmin)
-
 admin.site.register(models.OrganizationMembershipType)
+admin.site.register(models.MembershipRole)
 
 class MembershipInline(admin.StackedInline):
     verbose_name_plural = 'Organizational Membership'
