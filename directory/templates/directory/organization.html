@@ -17,7 +17,12 @@
 {% endif %}
 <div class="rendered-markdown">{{ org.mission|markdown }}</div>
 {% if user.is_superuser or user.membership.organization == org %}
-  <p><a href="{% url 'organization_edit' org.slug %}" class="btn btn-sm btn-default">Edit</a></p>
+  <p>
+    <a href="{% url 'organization_edit' org.slug %}" class="btn btn-sm btn-default">Edit</a>
+    {% if user.is_superuser %}
+      <a href="{% url 'admin:directory_organization_change' org.id %}" class="btn btn-sm btn-default">View in Admin Interface</a>
+    {% endif %}
+  </p>
 {% endif %}
 {% if show_privileged_info %}
   <ul class="media-list">
