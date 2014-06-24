@@ -170,7 +170,7 @@ TEMPLATE_DIRS = (
     path('hive', 'templates'),
 )
 
-SITE_ID = 1
+SITE_ID = int(os.environ.get('SITE_ID', '1'))
 
 LOGIN_URL = 'login'
 

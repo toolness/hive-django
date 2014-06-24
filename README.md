@@ -72,6 +72,8 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `GA_HOSTNAME` is the hostname of your app for Google Analytics tracking.
   It's usually the top-level domain of your app. If `GA_TRACKING_ID` is
   defined, this must be defined too.
+* `SITE_ID` is the site id of the current site as used by Django's
+  [sites][] framework. Defaults to `1`.
 
 ## Flatpages
 
@@ -87,3 +89,4 @@ interface, or else they will result in 404s:
   [djrill]: https://github.com/brack3t/Djrill
   [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
   [flatpages]: https://docs.djangoproject.com/en/1.6/ref/contrib/flatpages/
+  [sites]: https://docs.djangoproject.com/en/1.5/ref/contrib/sites/
