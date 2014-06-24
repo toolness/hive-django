@@ -23,7 +23,8 @@ ContentChannelFormSet = inlineformset_factory(
     Organization, ContentChannel,
     fields = ['category', 'name', 'url'],
     help_texts = {'category': '', 'name': '', 'url': ''},
-    labels = {'url': 'URL', 'name': 'Name (if other)'}
+    labels = {'url': 'URL', 'name': 'Name (if other)'},
+    extra = 1
 )
 
 class ChannelFormSetHelper(FormHelper):
