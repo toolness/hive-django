@@ -17,7 +17,6 @@ class OrganizationAdmin(admin.ModelAdmin):
 admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.OrganizationMembershipType)
 admin.site.register(models.MembershipRole)
-admin.site.register(models.City)
 
 class MembershipInline(admin.StackedInline):
     verbose_name_plural = 'Organizational Membership'
@@ -86,6 +85,7 @@ class CityInline(admin.StackedInline):
     can_delete = False
 
 class CitySiteAdmin(SiteAdmin):
+    list_display = SiteAdmin.list_display + ('city',)
     inlines = (CityInline,)
 
 admin.site.unregister(Site)
