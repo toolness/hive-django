@@ -2,4 +2,11 @@
 
 {% block title %}{{ flatpage.title }}{% endblock %}
 
-{% block content %}{{ flatpage.content }}{% endblock %}
+{% block content %}
+{{ flatpage.content }}
+{% if user.is_superuser %}
+  <br>
+  <br>
+  <a href="{% url 'admin:flatpages_flatpage_change' flatpage.id %}" class="btn btn-default">View in Admin Interface</a>
+{% endif %}
+{% endblock %}
