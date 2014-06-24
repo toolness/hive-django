@@ -11,7 +11,8 @@
     "twitter_name": "hivelearningnyc", 
     "address": "Somewhere, New York, NY",
     "slug": "hivenyc",
-    "name": "Hive NYC"
+    "name": "Hive NYC",
+    "city": 1
   }
 }
 ]

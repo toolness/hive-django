@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.sites.models import Site
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
@@ -33,6 +34,30 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
+class City(models.Model):
+    '''
+    Represents a city that a Hive network exists in.
+    '''
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    site = models.OneToOneField(Site)
+    name = models.CharField(
+        help_text="The full name of the city (e.g., New York City).",
+        max_length=100
+    )
+    short_name = models.CharField(
+        help_text="The short/abbreviated name of the city (e.g., NYC).",
+        max_length=20,
+        blank=True
+    )
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'cities'
+
 class OrganizationMembershipType(models.Model):
     '''
     Represents a type of organization membership. This can be
@@ -58,6 +83,10 @@ class Organization(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    city = models.ForeignKey(
+        City,
+        help_text="The city to which the organization belongs."
+    )
     name = models.CharField(
         help_text="The full name of the organization.",
         max_length=100
