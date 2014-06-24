@@ -73,7 +73,7 @@
   </a>
 {% endif %}
 {% if user.is_superuser %}
-  <a href="{% url 'admin:auth_user_change' user.id %}" class="btn btn-default">View in Admin Interface</a>
+  <a href="{% url 'admin:auth_user_change' membership.user.id %}" class="btn btn-default">View in Admin Interface</a>
 {% endif %}
 {% if user == membership.user %}
   <a href="{% url 'user_edit' %}" class="btn btn-default">Edit</a>
