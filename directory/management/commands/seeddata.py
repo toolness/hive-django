@@ -59,7 +59,7 @@ class Command(BaseCommand):
         hivenyc.save()
 
         site = Site.objects.get(pk=1)
-        site.domain = settings.ALLOWED_HOSTS[0]
+        site.domain = settings.ALLOWED_HOSTS[0] + ':8000'
         site.name = "Development Hive Directory"
         site.save()
 
