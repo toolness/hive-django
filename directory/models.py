@@ -33,6 +33,24 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
+class OrganizationMembershipType(models.Model):
+    '''
+    Represents a type of organization membership. This can be
+    anything specific to a particular Hive, e.g. "partner", "affiliate",
+    "community", or something else.
+    '''
+
+    name = models.CharField(
+        help_text="The name of the organization membership type.",
+        max_length=50
+    )
+    description = models.TextField(
+        help_text="Description of the organization membership type."
+    )
+
+    def __unicode__(self):
+        return self.name
+
 class Organization(models.Model):
     '''
     Represents a Hive organization.
@@ -95,6 +113,11 @@ class Organization(models.Model):
                   "as active. Unselect this instead of deleting "
                   "organizations.",
         default=True
+    )
+    membership_type = models.ForeignKey(
+        OrganizationMembershipType,
+        related_name='orgs',
+        blank=True, null=True
     )
 
     def __unicode__(self):
@@ -256,6 +279,23 @@ class ContentChannel(models.Model):
 
     objects = ContentChannelManager()
 
+class MembershipRole(models.Model):
+    '''
+    Represents a role for a person in the Hive organization, e.g.
+    "funding liason", "activity representative", etc.
+    '''
+
+    name = models.CharField(
+        help_text="The name of the role.",
+        max_length=50
+    )
+    description = models.TextField(
+        help_text="Description of the role."
+    )
+
+    def __unicode__(self):
+        return self.name
+
 class Membership(models.Model):
     '''
     Represents a person who is a member of an organization.
@@ -266,6 +306,7 @@ class Membership(models.Model):
     user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True,
                                      related_name='memberships')
+    roles = models.ManyToManyField(MembershipRole)
     title = models.CharField(
         help_text="The person's title at their organization.",
         max_length=100,
