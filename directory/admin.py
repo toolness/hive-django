@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.sites.admin import SiteAdmin
 
 from . import models
 from .management.commands.emailimportedusers import send_email
@@ -77,3 +79,14 @@ class MembershipUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, MembershipUserAdmin)
+
+class CityInline(admin.StackedInline):
+    verbose_name_plural = 'Site\'s City'
+    model = models.City
+    can_delete = False
+
+class CitySiteAdmin(SiteAdmin):
+    inlines = (CityInline,)
+
+admin.site.unregister(Site)
+admin.site.register(Site, CitySiteAdmin)
