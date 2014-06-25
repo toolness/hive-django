@@ -12,9 +12,11 @@ def city_scoped(f):
         if city is None:
             # We weren't passed a city in the URL, so our request's
             # site must be associated w/ a specific city.
+            assert(not settings.MULTI_CITY)
             city = get_current_site(request).city
         else:
             # We were explicitly passed a city in the URL.
+            assert(settings.MULTI_CITY)
             city = get_object_or_404(City, slug=city)
         return f(request, city=city, **kwargs)
     return wrapped
