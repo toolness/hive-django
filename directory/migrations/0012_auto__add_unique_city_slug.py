@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
+        # Adding unique constraint on 'City', fields ['slug']
+        db.create_unique(u'directory_city', ['slug'])
 
-        orm.City(name="New York City", short_name="NYC",
-                 site=orm['sites.site'].objects.get(pk=1)).save()
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        # Removing unique constraint on 'City', fields ['slug']
+        db.delete_unique(u'directory_city', ['slug'])
+
 
     models = {
         u'auth.group': {
@@ -62,7 +61,8 @@ class Migration(DataMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['sites.Site']", 'unique': 'True'})
+            'site': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['sites.Site']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'})
         },
         u'directory.contentchannel': {
             'Meta': {'object_name': 'ContentChannel'},
@@ -115,6 +115,7 @@ class Migration(DataMigration):
         u'directory.organization': {
             'Meta': {'object_name': 'Organization'},
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'city': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['directory.City']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email_domain': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
             'hive_member_since': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
@@ -145,4 +146,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['directory']
-    symmetrical = True

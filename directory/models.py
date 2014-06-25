@@ -51,6 +51,12 @@ class City(models.Model):
         max_length=20,
         blank=True
     )
+    slug = models.SlugField(
+        help_text="A short identifier for the city, used in "
+                  "URLs and such. Only letters, numbers, underscores, and "
+                  "hyphens are allowed.",
+        unique=True
+    )
 
     def __unicode__(self):
         return self.name

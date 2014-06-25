@@ -14,10 +14,13 @@ class OrganizationAdmin(admin.ModelAdmin):
     inlines = (ContentChannelInline,)
     prepopulated_fields = {"slug": ("name",)}
 
+class CityAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+
 admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.OrganizationMembershipType)
 admin.site.register(models.MembershipRole)
-admin.site.register(models.City)
+admin.site.register(models.City, CityAdmin)
 
 class MembershipInline(admin.StackedInline):
     verbose_name_plural = 'Organizational Membership'

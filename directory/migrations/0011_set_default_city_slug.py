@@ -3,6 +3,7 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import DataMigration
 from django.db import models
+from django.utils.text import slugify
 
 class Migration(DataMigration):
 
@@ -11,9 +12,10 @@ class Migration(DataMigration):
         # Note: Don't use "from appname.models import ModelName". 
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-
-        orm.City(name="New York City", short_name="NYC",
-                 site=orm['sites.site'].objects.get(pk=1)).save()
+        for city in orm.City.objects.all():
+            if not city.slug:
+                city.slug = slugify(city.short_name or city.name)
+                city.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
@@ -62,7 +64,8 @@ class Migration(DataMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
-            'site': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['sites.Site']", 'unique': 'True'})
+            'site': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['sites.Site']", 'unique': 'True', 'null': 'True', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'blank': 'True'})
         },
         u'directory.contentchannel': {
             'Meta': {'object_name': 'ContentChannel'},
@@ -115,6 +118,7 @@ class Migration(DataMigration):
         u'directory.organization': {
             'Meta': {'object_name': 'Organization'},
             'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
+            'city': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['directory.City']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email_domain': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
             'hive_member_since': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
