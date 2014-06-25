@@ -41,7 +41,7 @@ class City(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    site = models.OneToOneField(Site)
+    site = models.OneToOneField(Site, null=True, blank=True)
     name = models.CharField(
         help_text="The full name of the city (e.g., New York City).",
         max_length=100
