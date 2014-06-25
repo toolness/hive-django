@@ -34,6 +34,17 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
+class CityManager(models.Manager):
+    def get_current(self):
+        '''
+        Returns the current city for the current site, or None otherwise.
+        '''
+
+        try:
+            return Site.objects.get_current().city
+        except City.DoesNotExist:
+            return None
+
 class City(models.Model):
     '''
     Represents a city that a Hive network exists in.
@@ -57,6 +68,8 @@ class City(models.Model):
                   "hyphens are allowed.",
         unique=True
     )
+
+    objects = CityManager()
 
     def __unicode__(self):
         return self.name
