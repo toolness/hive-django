@@ -87,7 +87,7 @@ class FindJsonTests(WnycTestCase):
     def test_last_result_is_to_search(self):
         response = self.query('blarg u', ignore_last_result=False)
         self.assertEqual(response.json, [{
-            'url': '/search/?query=blarg+u',
+            'url': 'search/?query=blarg+u',
             'value': 'Search the website for "blarg u"'
         }])        
 

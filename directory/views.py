@@ -133,7 +133,7 @@ def find_json(request, city=None):
 
     results.append({
         'value': 'Search the website for "%s"' % query,
-        'url': '%s?%s' % ('search', urlencode({
+        'url': '%s?%s' % ('search/', urlencode({
             'query': query
         }))
     })
