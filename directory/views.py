@@ -31,7 +31,7 @@ def validate_and_save_forms(*forms):
 
 def multi_city_home(request):
     return render(request, 'directory/multi_city_home.html', {
-        'cities': City.objects.all()
+        'cities': City.objects.all().order_by('name')
     })
 
 @city_scoped

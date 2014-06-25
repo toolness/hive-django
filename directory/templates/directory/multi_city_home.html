@@ -4,9 +4,13 @@
 {% block title %}{{ site.name }}{% endblock %}
 
 {% block content %}
-<ul>
+<h1>Welcome to the {{ site.name }}.</h1>
+
+<p>Please choose a Hive city to explore.</p>
+
+<ul class="list-unstyled">
   {% for city in cities %}
-  <li><a href="{% url 'city_home' city=city.slug %}">{{ city.name }}</a></li>
+  <li><h2><a href="{% url 'city_home' city=city.slug %}">{{ city.name }}</a></h2></li>
   {% endfor %}
 </ul>
 {% endblock %}
