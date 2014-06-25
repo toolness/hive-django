@@ -2,7 +2,8 @@
 {% load directory %}
 
 {% block content %}
-<h1>Search Results For "{{query}}"</h1>
+<h1>Search Results For "{{query}}"
+  {% if MULTI_CITY %}in {{ city.name }}{% endif %}</h1>
 
 {% if no_results %}
 Sorry, no results matched your query.

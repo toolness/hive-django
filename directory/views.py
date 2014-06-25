@@ -81,6 +81,7 @@ def search(request, city):
 
     return render(request, 'directory/search.html', {
         'query': query,
+        'city': city,
         'no_results': not orgs and not memberships,
         'orgs': orgs,
         'memberships': memberships
