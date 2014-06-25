@@ -12,7 +12,13 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Welcome to the {{ site.name }}.</h1>
+  <h1>Welcome to the 
+    {% if MULTI_CITY %}
+      directory for Hive {{ city.name }}.
+    {% else %}
+      {{ site.name }}.
+    {% endif %}
+  </h1>
   <form method="get" action="{% city_url 'search' %}">
     <input class="form-control" placeholder="Search for organizations {% if show_privileged_info %}and people {% endif %}here" data-find-url="{% city_url 'find_json' %}" name="query">
   </form>

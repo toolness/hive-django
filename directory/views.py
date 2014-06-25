@@ -52,6 +52,7 @@ def home(request, city):
 
     return render(request, 'directory/home.html', {
         'orgs': orgs,
+        'city': city,
         'show_privileged_info': is_request_privileged(request)
     })
 
