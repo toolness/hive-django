@@ -71,6 +71,10 @@ class City(models.Model):
 
     objects = CityManager()
 
+    @property
+    def shortest_name(self):
+        return self.short_name or self.name
+
     def __unicode__(self):
         return self.name
 

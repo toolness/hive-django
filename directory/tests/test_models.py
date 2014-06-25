@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 
 from .test_views import WnycTestCase
-from ..models import Organization, ContentChannel, Expertise
+from ..models import Organization, ContentChannel, Expertise, City
 from ..management.commands.seeddata import create_user
 
 class MembershipTests(TestCase):
@@ -79,3 +79,12 @@ class ContentChannelTests(TestCase):
     def test_display_name_is_name_when_category_is_other(self):
         c = ContentChannel(category='other', name='Foo')
         self.assertEqual(c.display_name, 'Foo')
+
+class CityTests(TestCase):
+    def test_shortest_name_uses_short_name_if_available(self):
+        self.assertEqual(City(name='New York City',
+                              short_name='NYC').shortest_name, 'NYC')
+
+    def test_shortest_name_falls_back_to_name(self):
+        self.assertEqual(City(name='Chicago').shortest_name, 'Chicago')
+        
