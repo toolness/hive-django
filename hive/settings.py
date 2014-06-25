@@ -51,6 +51,7 @@ if GA_TRACKING_ID:
     GA_HOSTNAME = os.environ['GA_HOSTNAME']
 
 HIVE_CITY = os.environ.get('HIVE_CITY', 'HIVE_CITY')
+MULTI_CITY = 'MULTI_CITY' in os.environ
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ

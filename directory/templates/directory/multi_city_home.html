@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load directory %}
+
+{% block title %}{{ site.name }}{% endblock %}
+
+{% block content %}
+<ul>
+  {% for city in cities %}
+  <li><a href="{% url 'city_home' city=city.slug %}">{{ city.name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}
