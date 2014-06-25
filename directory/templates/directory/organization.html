@@ -12,7 +12,7 @@
 {% if org.hive_member_since %}
 <p><small>
   {% if org.membership_type %}{{ org.membership_type.name }}{% endif %}
-  Hive member since {{ org.hive_member_since|date:"F Y" }}
+  Hive {{ org.city.shortest_name }} member since {{ org.hive_member_since|date:"F Y" }}
 </small></p>
 {% endif %}
 <div class="rendered-markdown">{{ org.mission|markdown }}</div>
