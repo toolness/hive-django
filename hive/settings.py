@@ -50,7 +50,6 @@ GA_TRACKING_ID = os.environ.get('GA_TRACKING_ID')
 if GA_TRACKING_ID:
     GA_HOSTNAME = os.environ['GA_HOSTNAME']
 
-HIVE_CITY = os.environ.get('HIVE_CITY', 'HIVE_CITY')
 MULTI_CITY = 'MULTI_CITY' in os.environ
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
@@ -112,7 +111,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "hive.context_processors.origin",
     "hive.context_processors.site",
-    "hive.context_processors.hive_city",
 )
 
 if GA_TRACKING_ID:
