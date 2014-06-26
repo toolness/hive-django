@@ -12,6 +12,7 @@ class ContentChannelInline(admin.TabularInline):
 
 class OrganizationAdmin(admin.ModelAdmin):
     inlines = (ContentChannelInline,)
+    list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
 class CityAdmin(admin.ModelAdmin):
@@ -42,6 +43,7 @@ class ImportedUserInfoInline(admin.StackedInline):
 class MembershipUserAdmin(UserAdmin):
     inlines = (ImportedUserInfoInline, MembershipInline,)
     actions = UserAdmin.actions + ['email_imported_users']
+    list_filter = UserAdmin.list_filter + ('membership__organization__city',)
     list_display = ('username', 'email', 'first_name', 'last_name',
                     'is_staff', 'organization')
 
