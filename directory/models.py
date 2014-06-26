@@ -95,6 +95,10 @@ class OrganizationMembershipType(models.Model):
     description = models.TextField(
         help_text="Description of the organization membership type."
     )
+    city = models.ForeignKey(
+        City,
+        help_text="The Hive city that the membership type pertains to."
+    )
 
     def __unicode__(self):
         return self.name
@@ -343,6 +347,10 @@ class MembershipRole(models.Model):
     )
     description = models.TextField(
         help_text="Description of the role."
+    )
+    city = models.ForeignKey(
+        City,
+        help_text="The Hive city that the role pertains to."
     )
 
     def __unicode__(self):
