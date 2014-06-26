@@ -15,13 +15,25 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
+admin.site.register(models.Organization, OrganizationAdmin)
+
 class CityAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
-admin.site.register(models.Organization, OrganizationAdmin)
-admin.site.register(models.OrganizationMembershipType)
-admin.site.register(models.MembershipRole)
 admin.site.register(models.City, CityAdmin)
+
+class OrganizationMembershipTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city')
+    list_filter = ('city',)
+
+admin.site.register(models.OrganizationMembershipType,
+                    OrganizationMembershipTypeAdmin)
+
+class MembershipRoleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city')
+    list_filter = ('city',)
+
+admin.site.register(models.MembershipRole, MembershipRoleAdmin)
 
 class MembershipInline(admin.StackedInline):
     verbose_name_plural = 'Organizational Membership'
