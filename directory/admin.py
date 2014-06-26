@@ -1,3 +1,4 @@
+from django.forms import ModelForm
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
@@ -10,7 +11,16 @@ from .management.commands.emailimportedusers import send_email
 class ContentChannelInline(admin.TabularInline):
     model = models.ContentChannel
 
+class OrganizationForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(OrganizationForm, self).__init__(*args, **kwargs)
+        qs = models.OrganizationMembershipType.objects.filter(
+            city=self.instance.city
+        )
+        self.fields['membership_type'].queryset = qs
+
 class OrganizationAdmin(admin.ModelAdmin):
+    form = OrganizationForm
     inlines = (ContentChannelInline,)
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
@@ -35,7 +45,19 @@ class MembershipRoleAdmin(admin.ModelAdmin):
 
 admin.site.register(models.MembershipRole, MembershipRoleAdmin)
 
+class MembershipForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(MembershipForm, self).__init__(*args, **kwargs)
+        if self.instance.organization is None:
+            qs = models.MembershipRole.objects.none()
+        else:
+            qs = models.MembershipRole.objects.filter(
+                city=self.instance.organization.city
+            )
+        self.fields['roles'].queryset = qs
+
 class MembershipInline(admin.StackedInline):
+    form = MembershipForm
     verbose_name_plural = 'Organizational Membership'
     model = models.Membership
     can_delete = False
