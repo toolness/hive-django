@@ -22,6 +22,7 @@ class OrganizationForm(ModelForm):
 class OrganizationAdmin(admin.ModelAdmin):
     form = OrganizationForm
     inlines = (ContentChannelInline,)
+    list_display = ('name', 'city')
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
