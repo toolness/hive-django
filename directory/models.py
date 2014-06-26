@@ -306,7 +306,7 @@ class Membership(models.Model):
     user = models.OneToOneField(User)
     organization = models.ForeignKey(Organization, blank=True, null=True,
                                      related_name='memberships')
-    roles = models.ManyToManyField(MembershipRole)
+    roles = models.ManyToManyField(MembershipRole, blank=True)
     title = models.CharField(
         help_text="The person's title at their organization.",
         max_length=100,
