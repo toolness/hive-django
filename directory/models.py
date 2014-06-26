@@ -80,6 +80,7 @@ class City(models.Model):
 
     class Meta:
         verbose_name_plural = 'cities'
+        ordering = ['name']
 
 class OrganizationMembershipType(models.Model):
     '''
@@ -102,6 +103,9 @@ class OrganizationMembershipType(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Organization(models.Model):
     '''
@@ -193,6 +197,9 @@ class Organization(models.Model):
             raise ValidationError("Minimum youth audience age may not "
                                   "be greater than maximum youth audience "
                                   "age.")
+
+    class Meta:
+        ordering = ['name']
 
 class ExpertiseManager(models.Manager):
     def of_vouched_users(self):
@@ -355,6 +362,9 @@ class MembershipRole(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Membership(models.Model):
     '''
