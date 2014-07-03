@@ -91,4 +91,5 @@ interface, or else they will result in 404s:
   [twelve-factor]: http://12factor.net/
   [djrill]: https://github.com/brack3t/Djrill
   [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
+  [discourse_sso/README.md]: https://github.com/toolness/hive-django/tree/master/discourse_sso#readme
   [flatpages]: https://docs.djangoproject.com/en/1.6/ref/contrib/flatpages/
