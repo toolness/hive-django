@@ -72,6 +72,11 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `GA_HOSTNAME` is the hostname of your app for Google Analytics tracking.
   It's usually the top-level domain of your app. If `GA_TRACKING_ID` is
   defined, this must be defined too.
+* `DISCOURSE_SSO_SECRET` is the SSO secret for Discourse single sign-on.
+  For more information, see [discourse_sso/README.md][]. If empty or
+  undefined, Discourse SSO functionality will be disabled.
+* `DISCOURSE_SSO_ORIGIN` is the origin of your Discourse site. If
+  `DISCOURSE_SSO_SECRET` is set, this must also be set.
 
 ## Flatpages
 
