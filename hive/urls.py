@@ -22,3 +22,8 @@ if 'minigroup_digestif' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^minigroup_digestif/', include('minigroup_digestif.urls')),
     )
+
+if 'discourse_sso' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^discourse_sso/', include('discourse_sso.urls'))
+    )
