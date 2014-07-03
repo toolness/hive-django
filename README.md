@@ -74,6 +74,11 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
   defined, this must be defined too.
 * `SITE_ID` is the site id of the current site as used by Django's
   [sites][] framework. Defaults to `1`.
+* `DISCOURSE_SSO_SECRET` is the SSO secret for Discourse single sign-on.
+  For more information, see [discourse_sso/README.md][]. If empty or
+  undefined, Discourse SSO functionality will be disabled.
+* `DISCOURSE_SSO_ORIGIN` is the origin of your Discourse site. If
+  `DISCOURSE_SSO_SECRET` is set, this must also be set.
 
 ## Flatpages
 
@@ -88,5 +93,6 @@ interface, or else they will result in 404s:
   [twelve-factor]: http://12factor.net/
   [djrill]: https://github.com/brack3t/Djrill
   [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
+  [discourse_sso/README.md]: https://github.com/toolness/hive-django/tree/master/discourse_sso#readme
   [flatpages]: https://docs.djangoproject.com/en/1.6/ref/contrib/flatpages/
   [sites]: https://docs.djangoproject.com/en/1.5/ref/contrib/sites/

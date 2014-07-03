@@ -55,6 +55,8 @@ MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
 PORT = int(os.environ['PORT'])
+DISCOURSE_SSO_SECRET = os.environ.get('DISCOURSE_SSO_SECRET')
+DISCOURSE_SSO_ORIGIN = os.environ.get('DISCOURSE_SSO_ORIGIN')
 
 if DEBUG: set_default_env(ORIGIN='http://localhost:%d' % PORT)
 
@@ -87,6 +89,9 @@ INSTALLED_APPS = (
 
 if MINIGROUP_DIGESTIF_USERPASS or is_running_test_suite():
     INSTALLED_APPS += ('minigroup_digestif',)
+
+if DISCOURSE_SSO_SECRET or is_running_test_suite():
+    INSTALLED_APPS += ('discourse_sso',)
 
 MIDDLEWARE_CLASSES = (
     'hive.ssl.RedirectToHttpsMiddleware',
