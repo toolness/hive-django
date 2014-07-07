@@ -14,7 +14,7 @@
     <p>
       {% if membership.title %}{{ membership.title }}<br>{% endif %}
       <a href="{{ membership.organization.get_absolute_url }}">{{ membership.organization.name }}</a>
-      {% if MULTI_CITY %}({{ membership.organization.city.shortest_name }}){% endif %}
+      {% if membership.organization.city.should_be_mentioned %}({{ membership.organization.city.shortest_name }}){% endif %}
     </p>
 
     <ul class="list-inline">

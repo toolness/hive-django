@@ -3,7 +3,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import Site, get_current_site
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
@@ -34,6 +34,19 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
+def get_current_city(request=None, site=None):
+    '''
+    Returns the City for the current Site. If the current Site is
+    multi-city, then None is returned.
+    '''
+
+    if site is None:
+        site = get_current_site(request)
+    try:
+        return site.city
+    except City.DoesNotExist:
+        return None
+
 class City(models.Model):
     '''
     Represents a city that a Hive network exists in.
@@ -61,6 +74,24 @@ class City(models.Model):
     @property
     def shortest_name(self):
         return self.short_name or self.name
+
+    def should_be_mentioned(self, request=None, site=None):
+        '''
+        Given the current Site context, returns whether or not the city 
+        should be mentioned by name.
+
+        If the current Site is multi-city, then we always want to
+        mention the name of a city, as it's never assumed to be a 
+        particular default.
+
+        Otherwise, we only want to mention the name of a city if it's
+        different from the one that the current Site is associated with.
+        '''
+
+        current_city = get_current_city(request, site)
+        if current_city is None:
+            return True
+        return current_city != self
 
     def __unicode__(self):
         return self.name

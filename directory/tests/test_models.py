@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 
 from .test_views import WnycTestCase
 from ..models import Organization, ContentChannel, Expertise, City
@@ -87,4 +88,17 @@ class CityTests(TestCase):
 
     def test_shortest_name_falls_back_to_name(self):
         self.assertEqual(City(name='Chicago').shortest_name, 'Chicago')
-        
+
+class CityShouldBeMentionedTests(TestCase):
+    def test_always_returns_true_when_multi_city(self):
+        site = Site(name='All Cities', domain='allcities.com')
+        city = City.objects.get(pk=1)
+        self.assertTrue(city.should_be_mentioned(site=site))
+
+    def test_returns_false_when_city_is_same_as_site(self):
+        city = City.objects.get(pk=1)
+        self.assertFalse(city.should_be_mentioned())
+
+    def test_returns_true_when_city_is_different_from_site(self):
+        city = City()
+        self.assertTrue(city.should_be_mentioned())

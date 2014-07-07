@@ -13,7 +13,7 @@
 {% block content %}
 <div class="jumbotron">
   <h1>Welcome to the 
-    {% if MULTI_CITY %}
+    {% if city.should_be_mentioned %}
       directory for Hive {{ city.name }}.
     {% else %}
       {{ site.name }}.

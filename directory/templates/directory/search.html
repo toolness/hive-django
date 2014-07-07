@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>Search Results For "{{query}}"
-  {% if MULTI_CITY %}in {{ city.name }}{% endif %}</h1>
+  {% if city.should_be_mentioned %}in {{ city.name }}{% endif %}</h1>
 
 {% if no_results %}
 Sorry, no results matched your query.
