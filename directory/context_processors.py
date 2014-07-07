@@ -1,4 +1,4 @@
-from django.conf import settings
+from multi_city import is_multi_city
 
-def multi_city(request=None):
-    return {'MULTI_CITY': settings.MULTI_CITY}
+def multi_city(request):
+    return {'MULTI_CITY': is_multi_city(request)}

@@ -65,8 +65,6 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
-* `MULTI_CITY` is a boolean value that indicates whether the site
-  should contain multiple directories for all cities.
 * `GA_TRACKING_ID` is the Google Analytics Tracking ID for your app.
   Optional.
 * `GA_HOSTNAME` is the hostname of your app for Google Analytics tracking.

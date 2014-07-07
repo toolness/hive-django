@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 
+from .multi_city import is_multi_city
 from . import views
 
 city_scoped_directory_patterns = patterns('',
@@ -10,7 +11,7 @@ city_scoped_directory_patterns = patterns('',
     url(r'^activity/$', views.activity, name='city_activity'),
 )
 
-if settings.MULTI_CITY:
+if is_multi_city():
     urlpatterns = patterns('',
         url(r'^$', views.multi_city_home, name='home'),
         url(r'^(?P<city>[A-Za-z0-9_\-]+)/',
