@@ -54,7 +54,13 @@ class City(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    site = models.OneToOneField(Site, null=True, blank=True)
+    site = models.OneToOneField(
+        Site,
+        help_text="The site associated with this city. If blank, this "
+                  "city's directory will only be accessible on multi-city "
+                  "sites.",
+        null=True, blank=True
+    )
     name = models.CharField(
         help_text="The full name of the city (e.g., New York City).",
         max_length=100
