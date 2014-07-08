@@ -15,7 +15,6 @@ urlpatterns = patterns('',
     url(r'^mentoring/', include('mentoring.urls')),
     url(r'^faq/', 'django.contrib.flatpages.views.flatpage',
         {'url': '/faq/'}, name='faq'),
-    url(r'', include('directory.urls')),
 )
 
 if 'minigroup_digestif' in settings.INSTALLED_APPS:
@@ -27,3 +26,7 @@ if 'discourse_sso' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
         url(r'^discourse_sso/', include('discourse_sso.urls'))
     )
+
+urlpatterns += patterns('',
+    url(r'', include('directory.urls')),
+)

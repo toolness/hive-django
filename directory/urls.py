@@ -4,25 +4,16 @@ from django.conf.urls import patterns, include, url
 from .multi_city import is_multi_city
 from . import views
 
-city_scoped_directory_patterns = patterns('',
-    url(r'^$', views.home, name='city_home'),
-    url(r'^find.json$', views.find_json, name='city_find_json'),
-    url(r'^search/$', views.search, name='city_search'),
-    url(r'^activity/$', views.activity, name='city_activity'),
-)
-
-if is_multi_city():
-    urlpatterns = patterns('',
-        url(r'^$', views.multi_city_home, name='home'),
-        url(r'^(?P<city>[A-Za-z0-9_\-]+)/',
-            include(city_scoped_directory_patterns))
-    )
-else:
-    urlpatterns = city_scoped_directory_patterns + patterns('',
-        url(r'^$', views.home, name='home'),        
+def city_scoped_directory_patterns(prefix='city'):
+    return patterns('',
+        url(r'^$', views.city_home, name=prefix + '_home'),
+        url(r'^find.json$', views.city_find_json, name=prefix + '_find_json'),
+        url(r'^search/$', views.city_search, name=prefix + '_search'),
+        url(r'^activity/$', views.city_activity, name=prefix + '_activity'),
     )
 
-urlpatterns += patterns('',
+urlpatterns = patterns('',
+    url(r'^$', views.home, name='home'),
     url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/$',
         views.organization_detail, name='organization_detail'),
     url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/edit/$',
@@ -36,4 +27,11 @@ urlpatterns += patterns('',
         views.user_detail, name='user_detail'),
 
     url(r'^accounts/profile/$', views.user_edit, name='user_edit'),
+)
+
+urlpatterns += city_scoped_directory_patterns()
+
+urlpatterns += patterns('',
+    url(r'^(?P<city>[A-Za-z0-9_\-]+)/',
+        include(city_scoped_directory_patterns(prefix='multi_city')))
 )

@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.db.models import Q
 
-from .multi_city import city_scoped, city_reverse
+from .multi_city import city_scoped, city_reverse, is_multi_city
 from .models import Organization, Membership, City, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
@@ -29,13 +29,15 @@ def validate_and_save_forms(*forms):
     for form in forms: form.save()
     return True
 
-def multi_city_home(request):
-    return render(request, 'directory/multi_city_home.html', {
-        'cities': City.objects.all().order_by('name')
-    })
+def home(request):
+    if is_multi_city(request):
+        return render(request, 'directory/multi_city_home.html', {
+            'cities': City.objects.all().order_by('name')
+        })
+    return city_home(request)
 
 @city_scoped
-def home(request, city):
+def city_home(request, city):
     all_orgs = Organization.objects.filter(
         is_active=True,
         city=city
@@ -57,7 +59,7 @@ def home(request, city):
     })
 
 @city_scoped
-def search(request, city):
+def city_search(request, city):
     query = request.GET.get('query')
     if not query:
         return HttpResponseBadRequest('query must be non-empty')
@@ -88,7 +90,7 @@ def search(request, city):
     })
 
 @city_scoped
-def find_json(request, city):
+def city_find_json(request, city):
     query = request.GET.get('query')
     results = []
     if not query:
@@ -126,7 +128,7 @@ def find_json(request, city):
 
 @city_scoped
 @user_passes_test(is_user_privileged)
-def activity(request, city):
+def city_activity(request, city):
     memberships = Membership.objects.filter(
         organization__city=city
     ).order_by('-modified')[:10]

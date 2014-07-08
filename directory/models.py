@@ -448,6 +448,12 @@ class ImportedUserInfo(models.Model):
     def __unicode__(self):
         return u'Imported user info for %s' % self.user.username
 
+@receiver(post_save, sender=City)
+def clear_site_cache_when_city_changes(**kwargs):
+    # It's possible that the site may be associated with a different
+    # city now, so clear the site cache.
+    Site.objects.clear_cache()
+
 @receiver(post_save, sender=User)
 def create_membership_for_user(sender, raw, instance, **kwargs):
     if raw: return
