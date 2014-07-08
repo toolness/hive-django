@@ -3,6 +3,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from registration.models import RegistrationProfile
 
+from .test_multi_city import using_multi_city_site
 from ..models import Organization
 from ..management.commands.seeddata import create_user
 
@@ -230,6 +231,12 @@ class HomePageTests(WnycTestCase):
     def test_requesting_empty_page_does_not_explode(self):
         response = self.client.get('/?page=9999')
         self.assertEqual(response.status_code, 200)
+
+    @using_multi_city_site
+    def test_multi_city_homepage_shows_cities(self):
+        response = self.client.get('/')
+        self.assertContains(response, 'New York City')
+        self.assertNotContains(response, 'Radio Rookies')
 
     def test_directory_listing_shows_orgs(self):
         response = self.client.get('/')
