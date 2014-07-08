@@ -10,7 +10,7 @@
 
 <ul class="list-unstyled">
   {% for city in cities %}
-  <li><h2><a href="{% url 'multi_city_home' city=city.slug %}">{{ city.name }}</a></h2></li>
+  <li><h2><a href="{% url 'explicit_city_home' city=city.slug %}">{{ city.name }}</a></h2></li>
   {% endfor %}
 </ul>
 {% endblock %}

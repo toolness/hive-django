@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 
 from .models import City, get_current_city
 
-MULTI_CITY_SITE_VIEWNAME_PREFIX = 'multi_city_'
-SINGLE_CITY_SITE_VIEWNAME_PREFIX = 'city_'
+MULTI_CITY_SITE_VIEWNAME_PREFIX = 'explicit_city_'
+SINGLE_CITY_SITE_VIEWNAME_PREFIX = 'implicit_city_'
 
 def city_scoped(f):
     @wraps(f)
