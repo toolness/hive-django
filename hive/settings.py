@@ -210,3 +210,4 @@ if is_running_test_suite():
     PASSWORD_HASHERS = (
         'django.contrib.auth.hashers.MD5PasswordHasher',
     )
+    SITE_ID = 1
