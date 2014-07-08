@@ -8,16 +8,26 @@ from django.contrib.sites.admin import SiteAdmin
 from . import models
 from .management.commands.emailimportedusers import send_email
 
+def can_edit_multiple_cities(request):
+    '''
+    Returns whether the user of the given request can edit multiple
+    cities. If not, they are restricted to editing information relevant
+    only to the city their organization is part of.
+    '''
+
+    return request.user.has_perm('directory.change_city')
+
 class ContentChannelInline(admin.TabularInline):
     model = models.ContentChannel
 
 class OrganizationForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrganizationForm, self).__init__(*args, **kwargs)
-        qs = models.OrganizationMembershipType.objects.filter(
-            city=self.instance.city
-        )
-        self.fields['membership_type'].queryset = qs
+        if 'membership_type' in self.fields:
+            qs = models.OrganizationMembershipType.objects.filter(
+                city=self.instance.city
+            )
+            self.fields['membership_type'].queryset = qs
 
 class OrganizationAdmin(admin.ModelAdmin):
     form = OrganizationForm
@@ -25,6 +35,40 @@ class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', 'city')
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
+
+    def has_change_permission(self, request, obj=None):
+        if obj is None:
+            return True
+        if can_edit_multiple_cities(request):
+            return True
+        membership = request.user.membership
+        if not membership.organization:
+            return False
+        return membership.organization.city == obj.city
+
+    def get_queryset(self, request):
+        qs = super(OrganizationAdmin, self).get_queryset(request)
+        if can_edit_multiple_cities(request):
+            return qs
+        return qs.filter(city=request.user.membership.organization.city)
+
+    def get_form(self, request, obj=None, **kwargs):
+        self.readonly_fields = []
+        self.exclude = []
+        if obj is None:
+            self.exclude.extend(['membership_type', 'is_active'])
+        if not can_edit_multiple_cities(request):
+            if obj is None:
+                self.exclude.append('city')
+            else:
+                self.readonly_fields.append('city')
+        return super(OrganizationAdmin, self).get_form(request, obj,
+                                                       **kwargs)
+
+    def save_model(request, obj, form, change):
+        if not can_edit_multiple_cities(request):
+            obj.city = request.user.membership.organization.city
+        obj.save()
 
 admin.site.register(models.Organization, OrganizationAdmin)
 
