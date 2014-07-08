@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static from staticfiles %}
+{% load directory %}
 
 {% block head %}
   <link rel="stylesheet" href="{% static 'css/typeaheadjs.css' %}">
@@ -11,9 +12,15 @@
 
 {% block content %}
 <div class="jumbotron">
-  <h1>Welcome to the {{ site.name }}.</h1>
-  <form method="get" action="{% url 'search' %}">
-    <input class="form-control" placeholder="Search for organizations {% if show_privileged_info %}and people {% endif %}here" data-find-url="{% url 'find_json' %}" name="query">
+  <h1>Welcome to the 
+    {% if city.should_be_mentioned %}
+      directory for Hive {{ city.name }}.
+    {% else %}
+      {{ site.name }}.
+    {% endif %}
+  </h1>
+  <form method="get" action="{% city_url 'search' %}">
+    <input class="form-control" placeholder="Search for organizations {% if show_privileged_info %}and people {% endif %}here" data-find-url="{% city_url 'find_json' %}" name="query">
   </form>
 </div>
 {% for org in orgs %}

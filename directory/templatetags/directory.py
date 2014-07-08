@@ -5,6 +5,8 @@ import bleach
 from django import template
 from django.utils.safestring import mark_safe
 
+from ..multi_city import city_reverse
+
 register = template.Library()
 
 ALLOWED_ATTRIBUTES = bleach.ALLOWED_ATTRIBUTES.copy()
@@ -12,6 +14,21 @@ ALLOWED_ATTRIBUTES = bleach.ALLOWED_ATTRIBUTES.copy()
 ALLOWED_ATTRIBUTES.update(**{
     'img': ['src', 'alt']
 })
+
+@register.simple_tag(takes_context=True)
+def city_url(context, viewname):
+    """
+    Like the ``url`` template tag, but specifically for any view
+    name beginning with ``city_``. This is required because depending
+    on the configuration of the site, city URLs may need to contain
+    the name of a city in them, which this template tag does for you.
+    """
+
+    request = context.get('request')
+    if request is None:
+        raise Exception('django.core.context_processors.request must '
+                        'be installed.')
+    return city_reverse(request, viewname)
 
 @register.filter(name='markdown')
 def render_markdown(text):

@@ -14,9 +14,6 @@ def origin(request=None):
 def site(request=None):
     return {'site': Site.objects.get_current()}
 
-def hive_city(request=None):
-    return {'HIVE_CITY': settings.HIVE_CITY}
-
 def monkeypatch_registration_email_contexts():
     import registration.models
 

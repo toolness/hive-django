@@ -1,0 +1,30 @@
+[
+{
+  "pk": 2, 
+  "model": "directory.city", 
+  "fields": {
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",
+    "name": "Chicago",
+    "short_name": "",
+    "slug": "chicago"
+  }
+},
+{
+  "pk": 4, 
+  "model": "directory.organization", 
+  "fields": {
+    "created": "2001-01-01T13:20:30+03:00",
+    "modified": "2001-01-01T13:20:30+03:00",    
+    "website": "http://www.architecture.org/", 
+    "hive_member_since": "2014-02-19", 
+    "mission": "The city is our museum.", 
+    "twitter_name": "chiarchitecture", 
+    "address": "224 South Michigan Avenue, Chicago, Illinois, 60604", 
+    "slug": "caf",
+    "email_domain": "architecture.org",
+    "name": "Chicago Architecture Foundation",
+    "city": 2
+  }
+}
+]

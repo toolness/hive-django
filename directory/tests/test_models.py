@@ -1,9 +1,11 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 
 from .test_views import WnycTestCase
-from ..models import Organization, ContentChannel, Expertise
+from .test_multi_city import using_multi_city_site
+from ..models import Organization, ContentChannel, Expertise, City
 from ..management.commands.seeddata import create_user
 
 class MembershipTests(TestCase):
@@ -79,3 +81,25 @@ class ContentChannelTests(TestCase):
     def test_display_name_is_name_when_category_is_other(self):
         c = ContentChannel(category='other', name='Foo')
         self.assertEqual(c.display_name, 'Foo')
+
+class CityTests(TestCase):
+    def test_shortest_name_uses_short_name_if_available(self):
+        self.assertEqual(City(name='New York City',
+                              short_name='NYC').shortest_name, 'NYC')
+
+    def test_shortest_name_falls_back_to_name(self):
+        self.assertEqual(City(name='Chicago').shortest_name, 'Chicago')
+
+class CityShouldBeMentionedTests(TestCase):
+    @using_multi_city_site
+    def test_always_returns_true_when_multi_city(self):
+        city = City.objects.get(pk=1)
+        self.assertTrue(city.should_be_mentioned())
+
+    def test_returns_false_when_city_is_same_as_site(self):
+        city = City.objects.get(pk=1)
+        self.assertFalse(city.should_be_mentioned())
+
+    def test_returns_true_when_city_is_different_from_site(self):
+        city = City()
+        self.assertTrue(city.should_be_mentioned())

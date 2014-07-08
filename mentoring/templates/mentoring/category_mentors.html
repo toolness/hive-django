@@ -26,6 +26,7 @@
         <small>
         {% if expertise.user.membership.title %}{{ expertise.user.membership.title }}<br>{% endif %}
         <a href="{{ expertise.user.membership.organization.get_absolute_url }}">{{ expertise.user.membership.organization.name }}</a>
+        ({{ expertise.user.membership.organization.city.shortest_name }})
         </small>
       </div>
     </li>

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load directory %}
+
+{% block title %}{{ site.name }}{% endblock %}
+
+{% block content %}
+<h1>Welcome to the {{ site.name }}.</h1>
+
+<p>Please choose a Hive city to explore.</p>
+
+<ul class="list-unstyled">
+  {% for city in cities %}
+  <li><h2><a href="{% url 'explicit_city_home' city=city.slug %}">{{ city.name }}</a></h2></li>
+  {% endfor %}
+</ul>
+{% endblock %}

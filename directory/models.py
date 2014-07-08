@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.contrib import messages
+from django.contrib.sites.models import Site, get_current_site
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
@@ -33,6 +34,76 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
+def get_current_city(request=None):
+    '''
+    Returns the City for the current Site. If the current Site is
+    multi-city, then None is returned.
+    '''
+
+    try:
+        return get_current_site(request).city
+    except City.DoesNotExist:
+        return None
+
+class City(models.Model):
+    '''
+    Represents a city that a Hive network exists in.
+    '''
+
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+    site = models.OneToOneField(
+        Site,
+        help_text="The site associated with this city. If blank, this "
+                  "city's directory will only be accessible on multi-city "
+                  "sites.",
+        null=True, blank=True
+    )
+    name = models.CharField(
+        help_text="The full name of the city (e.g., New York City).",
+        max_length=100
+    )
+    short_name = models.CharField(
+        help_text="The short/abbreviated name of the city (e.g., NYC).",
+        max_length=20,
+        blank=True
+    )
+    slug = models.SlugField(
+        help_text="A short identifier for the city, used in "
+                  "URLs and such. Only letters, numbers, underscores, and "
+                  "hyphens are allowed.",
+        unique=True
+    )
+
+    @property
+    def shortest_name(self):
+        return self.short_name or self.name
+
+    def should_be_mentioned(self, request=None):
+        '''
+        Given the current Site context, returns whether or not the city 
+        should be mentioned by name.
+
+        If the current Site is multi-city, then we always want to
+        mention the name of a city, as it's never assumed to be a 
+        particular default.
+
+        Otherwise, we only want to mention the name of a city if it's
+        different from the one that the current Site is associated with.
+        '''
+
+        current_city = get_current_city(request)
+        if current_city is None:
+            return True
+        return current_city != self
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'cities'
+        ordering = ['name']
+
 class OrganizationMembershipType(models.Model):
     '''
     Represents a type of organization membership. This can be
@@ -47,9 +118,16 @@ class OrganizationMembershipType(models.Model):
     description = models.TextField(
         help_text="Description of the organization membership type."
     )
+    city = models.ForeignKey(
+        City,
+        help_text="The Hive city that the membership type pertains to."
+    )
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Organization(models.Model):
     '''
@@ -58,6 +136,10 @@ class Organization(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    city = models.ForeignKey(
+        City,
+        help_text="The city to which the organization belongs."
+    )
     name = models.CharField(
         help_text="The full name of the organization.",
         max_length=100
@@ -137,6 +219,9 @@ class Organization(models.Model):
             raise ValidationError("Minimum youth audience age may not "
                                   "be greater than maximum youth audience "
                                   "age.")
+
+    class Meta:
+        ordering = ['name']
 
 class ExpertiseManager(models.Manager):
     def of_vouched_users(self):
@@ -292,9 +377,16 @@ class MembershipRole(models.Model):
     description = models.TextField(
         help_text="Description of the role."
     )
+    city = models.ForeignKey(
+        City,
+        help_text="The Hive city that the role pertains to."
+    )
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 class Membership(models.Model):
     '''
@@ -359,6 +451,12 @@ class ImportedUserInfo(models.Model):
 
     def __unicode__(self):
         return u'Imported user info for %s' % self.user.username
+
+@receiver(post_save, sender=City)
+def clear_site_cache_when_city_changes(**kwargs):
+    # It's possible that the site may be associated with a different
+    # city now, so clear the site cache.
+    Site.objects.clear_cache()
 
 @receiver(post_save, sender=User)
 def create_membership_for_user(sender, raw, instance, **kwargs):

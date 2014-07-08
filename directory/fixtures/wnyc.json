@@ -12,7 +12,8 @@
     "address": "74 Trinity Pl, New York, NY 10006", 
     "slug": "wnyc",
     "email_domain": "wnyc.org",
-    "name": "WNYC's Radio Rookies"
+    "name": "WNYC's Radio Rookies",
+    "city": 1
   }
 },
 {

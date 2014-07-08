@@ -9,7 +9,8 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.db.models import Q
 
-from .models import Organization, Membership, is_user_vouched_for, \
+from .multi_city import city_scoped, city_reverse, is_multi_city
+from .models import Organization, Membership, City, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
@@ -29,7 +30,18 @@ def validate_and_save_forms(*forms):
     return True
 
 def home(request):
-    all_orgs = Organization.objects.filter(is_active=True).order_by('name')
+    if is_multi_city(request):
+        return render(request, 'directory/multi_city_home.html', {
+            'cities': City.objects.all().order_by('name')
+        })
+    return city_home(request)
+
+@city_scoped
+def city_home(request, city):
+    all_orgs = Organization.objects.filter(
+        is_active=True,
+        city=city
+    ).order_by('name')
     paginator = Paginator(all_orgs, ORGS_PER_PAGE)
 
     page = request.GET.get('page')
@@ -42,17 +54,20 @@ def home(request):
 
     return render(request, 'directory/home.html', {
         'orgs': orgs,
+        'city': city,
         'show_privileged_info': is_request_privileged(request)
     })
 
-def search(request):
+@city_scoped
+def city_search(request, city):
     query = request.GET.get('query')
     if not query:
         return HttpResponseBadRequest('query must be non-empty')
     orgs = Organization.objects.filter(
         Q(name__icontains=query) |
         Q(mission__icontains=query),
-        is_active=True
+        is_active=True,
+        city=city
     )
     memberships = None
     if is_request_privileged(request):
@@ -62,24 +77,27 @@ def search(request):
             Q(title__icontains=query) |
             Q(bio__icontains=query),
             is_listed=True,
-            user__is_active=True
+            user__is_active=True,
+            organization__city=city
         )
 
     return render(request, 'directory/search.html', {
         'query': query,
+        'city': city,
         'no_results': not orgs and not memberships,
         'orgs': orgs,
         'memberships': memberships
     })
 
-def find_json(request):
+@city_scoped
+def city_find_json(request, city):
     query = request.GET.get('query')
     results = []
     if not query:
         return HttpResponseBadRequest('query must be non-empty')
 
     orgs = Organization.objects.filter(name__icontains=query,
-                                       is_active=True)
+                                       is_active=True, city=city)
     results.extend([
         {'value': org.name, 'url': org.get_absolute_url()}
         for org in orgs
@@ -90,7 +108,8 @@ def find_json(request):
             Q(user__first_name__icontains=query) |
             Q(user__last_name__icontains=query),
             is_listed=True,
-            user__is_active=True
+            user__is_active=True,
+            organization__city=city
         )
         results.extend([
             {'value': membership.user.get_full_name(),
@@ -100,16 +119,19 @@ def find_json(request):
 
     results.append({
         'value': 'Search the website for "%s"' % query,
-        'url': '%s?%s' % (reverse('search'), urlencode({
+        'url': '%s?%s' % (city_reverse(request, 'search'), urlencode({
             'query': query
         }))
     })
 
     return HttpResponse(json.dumps(results), content_type='application/json')
 
+@city_scoped
 @user_passes_test(is_user_privileged)
-def activity(request):
-    memberships = Membership.objects.all().order_by('-modified')[:10]
+def city_activity(request, city):
+    memberships = Membership.objects.filter(
+        organization__city=city
+    ).order_by('-modified')[:10]
     return render(request, 'directory/activity.html', {
         'memberships': memberships
     })

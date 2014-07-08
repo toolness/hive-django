@@ -1,6 +1,9 @@
+from django.forms import ModelForm
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.sites.admin import SiteAdmin
 
 from . import models
 from .management.commands.emailimportedusers import send_email
@@ -8,15 +11,54 @@ from .management.commands.emailimportedusers import send_email
 class ContentChannelInline(admin.TabularInline):
     model = models.ContentChannel
 
+class OrganizationForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(OrganizationForm, self).__init__(*args, **kwargs)
+        qs = models.OrganizationMembershipType.objects.filter(
+            city=self.instance.city
+        )
+        self.fields['membership_type'].queryset = qs
+
 class OrganizationAdmin(admin.ModelAdmin):
+    form = OrganizationForm
     inlines = (ContentChannelInline,)
+    list_display = ('name', 'city')
+    list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
 admin.site.register(models.Organization, OrganizationAdmin)
-admin.site.register(models.OrganizationMembershipType)
-admin.site.register(models.MembershipRole)
+
+class CityAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
+
+admin.site.register(models.City, CityAdmin)
+
+class OrganizationMembershipTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city')
+    list_filter = ('city',)
+
+admin.site.register(models.OrganizationMembershipType,
+                    OrganizationMembershipTypeAdmin)
+
+class MembershipRoleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city')
+    list_filter = ('city',)
+
+admin.site.register(models.MembershipRole, MembershipRoleAdmin)
+
+class MembershipForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(MembershipForm, self).__init__(*args, **kwargs)
+        if self.instance.organization is None:
+            qs = models.MembershipRole.objects.none()
+        else:
+            qs = models.MembershipRole.objects.filter(
+                city=self.instance.organization.city
+            )
+        self.fields['roles'].queryset = qs
 
 class MembershipInline(admin.StackedInline):
+    form = MembershipForm
     verbose_name_plural = 'Organizational Membership'
     model = models.Membership
     can_delete = False
@@ -36,6 +78,7 @@ class ImportedUserInfoInline(admin.StackedInline):
 class MembershipUserAdmin(UserAdmin):
     inlines = (ImportedUserInfoInline, MembershipInline,)
     actions = UserAdmin.actions + ['email_imported_users']
+    list_filter = UserAdmin.list_filter + ('membership__organization__city',)
     list_display = ('username', 'email', 'first_name', 'last_name',
                     'is_staff', 'organization')
 
@@ -76,3 +119,10 @@ class MembershipUserAdmin(UserAdmin):
 
 admin.site.unregister(User)
 admin.site.register(User, MembershipUserAdmin)
+
+class CitySiteAdmin(SiteAdmin):
+    change_form_template = 'directory/admin_site_change_form.html'
+    list_display = SiteAdmin.list_display + ('city',)
+
+admin.site.unregister(Site)
+admin.site.register(Site, CitySiteAdmin)

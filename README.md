@@ -65,13 +65,13 @@ variables are given default values: `SECRET_KEY`, `PORT`, `ORIGIN`,
 * `SECURE_PROXY_SSL_HEADER` is an optional HTTP request header field name
   and value indicating that the request is actually secure. For example,
   Heroku deployments should set this to `X-Forwarded-Proto: https`.
-* `HIVE_CITY` is the name of the city to which this Hive network
-  belongs. It's used for display purposes only.
 * `GA_TRACKING_ID` is the Google Analytics Tracking ID for your app.
   Optional.
 * `GA_HOSTNAME` is the hostname of your app for Google Analytics tracking.
   It's usually the top-level domain of your app. If `GA_TRACKING_ID` is
   defined, this must be defined too.
+* `SITE_ID` is the site id of the current site as used by Django's
+  [sites][] framework. Defaults to `1`.
 * `DISCOURSE_SSO_SECRET` is the SSO secret for Discourse single sign-on.
   For more information, see [discourse_sso/README.md][]. If empty or
   undefined, Discourse SSO functionality will be disabled.
@@ -86,6 +86,36 @@ interface, or else they will result in 404s:
 
 * `/faq/` is the Frequently Asked Questions page.
 
+## Multi-City Directories
+
+By default, this project is set up to serve a directory for one Hive city.
+However, it can also be configured using Django's [sites][] framework
+to serve multiple directories for different cities.
+
+To enable this functionality, you'll need to use the Django admin interface
+to associate a city with your desired site. If no city is associated with
+a site, then that site will serve a multi-city directory, allowing users
+to explore the Hive ecosystem at large.
+
+To illustrate, here's an example of two sites, each powered by the same
+Django installation:
+
+* **directory.hivenyc.org** offers a local-context, single-city directory
+  for Hive NYC members. Its homepage looks like this:
+
+  <img src="https://cloud.githubusercontent.com/assets/124687/3404900/8ca4c208-fd76-11e3-9c72-8ef5e37cdd5c.png" width="320">
+
+* **directory.hivelearningnetworks.org** offers a global-context,
+  multi-city directory for Hive members around the world, and for cities
+  that don't have the resources to set up their own local-context directory
+  site. Its homepage looks like this:
+
+  <img src="https://cloud.githubusercontent.com/assets/124687/3404905/90aaebc0-fd76-11e3-8b08-2d4d82466a3a.png" width="320">
+
+Clicking on the "New York City" link in the second screen-shot will take
+the user to a page at `/nyc/` that looks similar (but not *identical*) to
+the first screen-shot.
+
 <!-- Links -->
 
   [twelve-factor]: http://12factor.net/
@@ -93,3 +123,4 @@ interface, or else they will result in 404s:
   [minigroup_digestif/README.md]: https://github.com/toolness/hive-django/tree/master/minigroup_digestif#readme
   [discourse_sso/README.md]: https://github.com/toolness/hive-django/tree/master/discourse_sso#readme
   [flatpages]: https://docs.djangoproject.com/en/1.6/ref/contrib/flatpages/
+  [sites]: https://docs.djangoproject.com/en/1.5/ref/contrib/sites/

@@ -50,7 +50,6 @@ GA_TRACKING_ID = os.environ.get('GA_TRACKING_ID')
 if GA_TRACKING_ID:
     GA_HOSTNAME = os.environ['GA_HOSTNAME']
 
-HIVE_CITY = os.environ.get('HIVE_CITY', 'HIVE_CITY')
 MINIGROUP_DIGESTIF_USERPASS = os.environ.get('MINIGROUP_DIGESTIF_USERPASS')
 SECRET_KEY = os.environ['SECRET_KEY']
 DEBUG = TEMPLATE_DEBUG = 'DEBUG' in os.environ
@@ -116,7 +115,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "hive.context_processors.origin",
     "hive.context_processors.site",
-    "hive.context_processors.hive_city",
 )
 
 if GA_TRACKING_ID:
@@ -175,7 +173,7 @@ TEMPLATE_DIRS = (
     path('hive', 'templates'),
 )
 
-SITE_ID = 1
+SITE_ID = int(os.environ.get('SITE_ID', '1'))
 
 LOGIN_URL = 'login'
 
@@ -212,3 +210,4 @@ if is_running_test_suite():
     PASSWORD_HASHERS = (
         'django.contrib.auth.hashers.MD5PasswordHasher',
     )
+    SITE_ID = 1
