@@ -6,6 +6,9 @@ from django.core.urlresolvers import reverse
 
 from .models import City, get_current_city
 
+MULTI_CITY_SITE_VIEWNAME_PREFIX = 'multi_city_'
+SINGLE_CITY_SITE_VIEWNAME_PREFIX = 'city_'
+
 def city_scoped(f):
     @wraps(f)
     def wrapped(request, city=None, **kwargs):
@@ -26,10 +29,14 @@ def city_scoped(f):
         return f(request, city=city, **kwargs)
     return wrapped
 
+def viewname_prefix(is_multi_city_site):
+    if is_multi_city_site: return MULTI_CITY_SITE_VIEWNAME_PREFIX
+    return SINGLE_CITY_SITE_VIEWNAME_PREFIX
+
 def city_reverse(request, viewname):
     if not is_multi_city(request):
-        return reverse('city_%s' % viewname)
-    return reverse('multi_city_%s' % viewname, kwargs={
+        return reverse(SINGLE_CITY_SITE_VIEWNAME_PREFIX + viewname)
+    return reverse(MULTI_CITY_SITE_VIEWNAME_PREFIX + viewname, kwargs={
         'city': request.resolver_match.kwargs['city']
     })
 
