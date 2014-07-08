@@ -121,6 +121,7 @@ admin.site.unregister(User)
 admin.site.register(User, MembershipUserAdmin)
 
 class CitySiteAdmin(SiteAdmin):
+    change_form_template = 'directory/admin_site_change_form.html'
     list_display = SiteAdmin.list_display + ('city',)
 
 admin.site.unregister(Site)
