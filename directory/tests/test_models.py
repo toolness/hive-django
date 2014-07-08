@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 
 from .test_views import WnycTestCase
+from .test_multi_city import using_multi_city_site
 from ..models import Organization, ContentChannel, Expertise, City
 from ..management.commands.seeddata import create_user
 
@@ -90,10 +91,10 @@ class CityTests(TestCase):
         self.assertEqual(City(name='Chicago').shortest_name, 'Chicago')
 
 class CityShouldBeMentionedTests(TestCase):
+    @using_multi_city_site
     def test_always_returns_true_when_multi_city(self):
-        site = Site(name='All Cities', domain='allcities.com')
         city = City.objects.get(pk=1)
-        self.assertTrue(city.should_be_mentioned(site=site))
+        self.assertTrue(city.should_be_mentioned())
 
     def test_returns_false_when_city_is_same_as_site(self):
         city = City.objects.get(pk=1)

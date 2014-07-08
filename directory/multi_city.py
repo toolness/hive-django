@@ -40,5 +40,5 @@ def city_reverse(request, viewname):
         'city': request.resolver_match.kwargs['city']
     })
 
-def is_multi_city(request=None, site=None):
-    return get_current_city(request, site) is None
+def is_multi_city(request=None):
+    return get_current_city(request) is None

@@ -34,16 +34,14 @@ def is_user_privileged(user):
 
     return is_user_vouched_for(user) or (user.is_active and user.is_staff)
 
-def get_current_city(request=None, site=None):
+def get_current_city(request=None):
     '''
     Returns the City for the current Site. If the current Site is
     multi-city, then None is returned.
     '''
 
-    if site is None:
-        site = get_current_site(request)
     try:
-        return site.city
+        return get_current_site(request).city
     except City.DoesNotExist:
         return None
 
@@ -81,7 +79,7 @@ class City(models.Model):
     def shortest_name(self):
         return self.short_name or self.name
 
-    def should_be_mentioned(self, request=None, site=None):
+    def should_be_mentioned(self, request=None):
         '''
         Given the current Site context, returns whether or not the city 
         should be mentioned by name.
@@ -94,7 +92,7 @@ class City(models.Model):
         different from the one that the current Site is associated with.
         '''
 
-        current_city = get_current_city(request, site)
+        current_city = get_current_city(request)
         if current_city is None:
             return True
         return current_city != self
