@@ -5,16 +5,27 @@ from django.contrib.sites.models import Site
 
 from .test_views import WnycTestCase
 from .test_multi_city import using_multi_city_site
-from ..models import Organization, ContentChannel, Expertise, City
+from ..models import Organization, ContentChannel, Expertise, City, \
+                     Membership
 from ..management.commands.seeddata import create_user
 
 class MembershipTests(TestCase):
+    fixtures = ['wnyc.json']
+
     def test_user_membership_is_created_on_save(self):
         user = User(username='foo')
         user.save()
         self.assertTrue(user.membership)
         self.assertTrue(user.membership.is_listed)
         self.assertFalse(user.membership.organization)
+
+    def test_city_is_none_when_org_is_none(self):
+        m = Membership()
+        self.assertEqual(m.city, None)
+
+    def test_city_is_org_city(self):
+        m = Membership(organization=Organization.objects.get(slug='wnyc'))
+        self.assertEqual(m.city.short_name, 'NYC')
 
 class ExpertiseTests(WnycTestCase):
     def test_manager_of_vouched_users_works(self):

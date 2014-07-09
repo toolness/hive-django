@@ -428,6 +428,11 @@ class Membership(models.Model):
                   "the Hive directory."
     )
 
+    @property
+    def city(self):
+        if self.organization is None: return None
+        return self.organization.city
+
     def get_absolute_url(self):
         return reverse('user_detail', args=(str(self.user.username),))
 
