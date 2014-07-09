@@ -1,6 +1,19 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
 
+CITY_EDITOR_PERMS = (
+    'add_organization',
+    'change_organization',
+    'add_user',
+    'change_user',
+    'change_membership',
+)
+
+MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
+    'add_city',
+    'change_city',
+)
+
 class Command(BaseCommand):
     help = '''\
     Initializes some helpful initial permission groups.
@@ -20,22 +33,8 @@ class Command(BaseCommand):
         group.save()
 
     def handle(self, *args, **kwargs):
-        self.set_perms('City Editors', [
-            'add_organization',
-            'change_organization',
-            'add_user',
-            'change_user',
-            'change_membership',
-        ])
-        self.set_perms('Multi-City Editors', [
-            'add_organization',
-            'change_organization',
-            'add_user',
-            'change_user',
-            'change_membership',
-            'add_city',
-            'change_city'
-        ])
+        self.set_perms('City Editors', CITY_EDITOR_PERMS)
+        self.set_perms('Multi-City Editors', MULTI_CITY_EDITOR_PERMS)
         self.stdout.write("Done.")
         self.stdout.write("Please do not manually change these "
                           "groups; they may be updated in the future.")
