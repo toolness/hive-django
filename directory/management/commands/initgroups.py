@@ -23,10 +23,16 @@ class Command(BaseCommand):
         self.set_perms('City Editors', [
             'add_organization',
             'change_organization',
+            'add_user',
+            'change_user',
+            'change_membership',
         ])
         self.set_perms('Multi-City Editors', [
             'add_organization',
             'change_organization',
+            'add_user',
+            'change_user',
+            'change_membership',
             'add_city',
             'change_city'
         ])

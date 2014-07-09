@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.sites.admin import SiteAdmin
+from django.db.models import Q
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 from . import models
 from .management.commands.emailimportedusers import send_email
@@ -107,6 +109,16 @@ class MembershipInline(admin.StackedInline):
     model = models.Membership
     can_delete = False
 
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if (not can_edit_multiple_cities(request) and
+            db_field.name == 'organization'):
+            kwargs['queryset'] = models.Organization.objects.filter(
+                city=request.user.membership.organization.city
+            )
+        return super(MembershipInline, self).formfield_for_foreignkey(
+            db_field, request, **kwargs
+        )
+
 class ImportedUserInfoInline(admin.StackedInline):
     verbose_name_plural = 'Imported User Information'
     model = models.ImportedUserInfo
@@ -125,6 +137,12 @@ class MembershipUserAdmin(UserAdmin):
     list_filter = UserAdmin.list_filter + ('membership__organization__city',)
     list_display = ('username', 'email', 'first_name', 'last_name',
                     'is_staff', 'organization')
+    editor_fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
 
     def organization(self, obj):
         if obj.membership.organization:
@@ -160,6 +178,36 @@ class MembershipUserAdmin(UserAdmin):
                  isinstance(inline, ImportedUserInfoInline))):
                 continue
             yield inline.get_formset(request, obj)
+
+    def get_queryset(self, request):
+        qs = super(MembershipUserAdmin, self).get_queryset(request)
+        if can_edit_multiple_cities(request):
+            return qs
+        city = request.user.membership.organization.city
+        return qs.filter(
+            Q(membership__organization=None) |
+            Q(membership__organization__city=city)
+        )
+
+    def has_change_permission(self, request, obj=None):
+        # TODO: This shares lots of code w/ OrganizationAdmin's same method.
+        if obj is None:
+            return True
+        if can_edit_multiple_cities(request):
+            return True
+        membership = request.user.membership
+        if not membership.organization:
+            return False
+
+        if not obj.membership:
+            return True
+        city = obj.membership.organization.city
+        return request.user.membership.organization.city == city
+
+    def get_fieldsets(self, request, obj=None):
+        if obj is not None and not request.user.is_superuser:
+            return self.editor_fieldsets
+        return super(MembershipUserAdmin, self).get_fieldsets(request, obj)
 
 admin.site.unregister(User)
 admin.site.register(User, MembershipUserAdmin)
