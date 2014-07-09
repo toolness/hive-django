@@ -31,12 +31,14 @@ class OrganizationForm(ModelForm):
             )
             self.fields['membership_type'].queryset = qs
 
-class OrganizationAdmin(admin.ModelAdmin):
-    form = OrganizationForm
-    inlines = (ContentChannelInline,)
-    list_display = ('name', 'city')
-    list_filter = ('city',)
-    prepopulated_fields = {"slug": ("name",)}
+class CityScopedAdmin(admin.ModelAdmin):
+    '''
+    For models with a 'city' field, this admin ensures that City Editors
+    only have the ability to edit models related to their city.
+    '''
+
+    # Additional fields to exclude from the 'add' form.
+    exclude_from_add = []
 
     def has_change_permission(self, request, obj=None):
         if obj is None:
@@ -46,7 +48,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         return request.user.membership.city == obj.city
 
     def get_queryset(self, request):
-        qs = super(OrganizationAdmin, self).get_queryset(request)
+        qs = super(CityScopedAdmin, self).get_queryset(request)
         if can_edit_multiple_cities(request):
             return qs
         return qs.filter(city=request.user.membership.city)
@@ -55,19 +57,28 @@ class OrganizationAdmin(admin.ModelAdmin):
         self.readonly_fields = []
         self.exclude = []
         if obj is None:
-            self.exclude.extend(['membership_type', 'is_active'])
+            self.exclude.extend(self.exclude_from_add)
         if not can_edit_multiple_cities(request):
             if obj is None:
                 self.exclude.append('city')
             else:
                 self.readonly_fields.append('city')
-        return super(OrganizationAdmin, self).get_form(request, obj,
-                                                       **kwargs)
+        return super(CityScopedAdmin, self).get_form(request, obj,
+                                                     **kwargs)
 
-    def save_model(request, obj, form, change):
+    def save_model(self, request, obj, form, change):
         if not can_edit_multiple_cities(request):
             obj.city = request.user.membership.city
         obj.save()
+
+class OrganizationAdmin(CityScopedAdmin):
+    form = OrganizationForm
+    inlines = (ContentChannelInline,)
+    list_display = ('name', 'city')
+    list_filter = ('city',)
+    prepopulated_fields = {"slug": ("name",)}
+
+    exclude_from_add = ['membership_type', 'is_active']
 
 admin.site.register(models.Organization, OrganizationAdmin)
 
@@ -76,14 +87,14 @@ class CityAdmin(admin.ModelAdmin):
 
 admin.site.register(models.City, CityAdmin)
 
-class OrganizationMembershipTypeAdmin(admin.ModelAdmin):
+class OrganizationMembershipTypeAdmin(CityScopedAdmin):
     list_display = ('name', 'city')
     list_filter = ('city',)
 
 admin.site.register(models.OrganizationMembershipType,
                     OrganizationMembershipTypeAdmin)
 
-class MembershipRoleAdmin(admin.ModelAdmin):
+class MembershipRoleAdmin(CityScopedAdmin):
     list_display = ('name', 'city')
     list_filter = ('city',)
 
