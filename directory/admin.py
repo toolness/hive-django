@@ -43,16 +43,13 @@ class OrganizationAdmin(admin.ModelAdmin):
             return True
         if can_edit_multiple_cities(request):
             return True
-        membership = request.user.membership
-        if not membership.organization:
-            return False
-        return membership.organization.city == obj.city
+        return request.user.membership.city == obj.city
 
     def get_queryset(self, request):
         qs = super(OrganizationAdmin, self).get_queryset(request)
         if can_edit_multiple_cities(request):
             return qs
-        return qs.filter(city=request.user.membership.organization.city)
+        return qs.filter(city=request.user.membership.city)
 
     def get_form(self, request, obj=None, **kwargs):
         self.readonly_fields = []
@@ -69,7 +66,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     def save_model(request, obj, form, change):
         if not can_edit_multiple_cities(request):
-            obj.city = request.user.membership.organization.city
+            obj.city = request.user.membership.city
         obj.save()
 
 admin.site.register(models.Organization, OrganizationAdmin)
@@ -95,13 +92,9 @@ admin.site.register(models.MembershipRole, MembershipRoleAdmin)
 class MembershipForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(MembershipForm, self).__init__(*args, **kwargs)
-        if self.instance.organization is None:
-            qs = models.MembershipRole.objects.none()
-        else:
-            qs = models.MembershipRole.objects.filter(
-                city=self.instance.organization.city
-            )
-        self.fields['roles'].queryset = qs
+        self.fields['roles'].queryset = models.MembershipRole.objects.filter(
+            city=self.instance.city
+        )
 
 class MembershipInline(admin.StackedInline):
     form = MembershipForm
@@ -113,7 +106,7 @@ class MembershipInline(admin.StackedInline):
         if (not can_edit_multiple_cities(request) and
             db_field.name == 'organization'):
             kwargs['queryset'] = models.Organization.objects.filter(
-                city=request.user.membership.organization.city
+                city=request.user.membership.city
             )
         return super(MembershipInline, self).formfield_for_foreignkey(
             db_field, request, **kwargs
@@ -183,26 +176,19 @@ class MembershipUserAdmin(UserAdmin):
         qs = super(MembershipUserAdmin, self).get_queryset(request)
         if can_edit_multiple_cities(request):
             return qs
-        city = request.user.membership.organization.city
         return qs.filter(
             Q(membership__organization=None) |
-            Q(membership__organization__city=city)
+            Q(membership__organization__city=request.user.membership.city)
         )
 
     def has_change_permission(self, request, obj=None):
-        # TODO: This shares lots of code w/ OrganizationAdmin's same method.
         if obj is None:
             return True
         if can_edit_multiple_cities(request):
             return True
-        membership = request.user.membership
-        if not membership.organization:
-            return False
-
-        if not obj.membership:
+        if not obj.membership.city:
             return True
-        city = obj.membership.organization.city
-        return request.user.membership.organization.city == city
+        return request.user.membership.city == obj.membership.city
 
     def get_fieldsets(self, request, obj=None):
         if obj is not None and not request.user.is_superuser:
