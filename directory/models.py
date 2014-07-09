@@ -199,7 +199,8 @@ class Organization(models.Model):
     membership_type = models.ForeignKey(
         OrganizationMembershipType,
         related_name='orgs',
-        blank=True, null=True
+        blank=True, null=True,
+        on_delete=models.SET_NULL
     )
 
     def __unicode__(self):

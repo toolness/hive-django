@@ -47,6 +47,8 @@ class CityScopedAdmin(admin.ModelAdmin):
             return True
         return request.user.membership.city == obj.city
 
+    has_delete_permission = has_change_permission
+
     def get_queryset(self, request):
         qs = super(CityScopedAdmin, self).get_queryset(request)
         if can_edit_multiple_cities(request):

@@ -9,8 +9,10 @@ CITY_EDITOR_PERMS = (
     'change_membership',
     'add_membershiprole',
     'change_membershiprole',
+    'delete_membershiprole',
     'add_organizationmembershiptype',
     'change_organizationmembershiptype',
+    'delete_organizationmembershiptype',
 )
 
 MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
