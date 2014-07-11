@@ -2,8 +2,10 @@ from django.forms import ModelForm
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.contrib.flatpages.models import FlatPage
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.sites.admin import SiteAdmin
+from django.contrib.flatpages.admin import FlatPageAdmin
 from django.db.models import Q
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -217,3 +219,27 @@ class CitySiteAdmin(SiteAdmin):
 
 admin.site.unregister(Site)
 admin.site.register(Site, CitySiteAdmin)
+
+class CityScopedFlatPageAdmin(FlatPageAdmin):
+    city_editor_fieldsets = (
+        (None, {'fields': ('url', 'title', 'content')}),
+    )
+
+    def get_fieldsets(self, request, obj=None):
+        if obj is not None and not can_edit_multiple_cities(request):
+            return self.city_editor_fieldsets
+        return super(self.__class__, self).get_fieldsets(request, obj)
+
+    def has_change_permission(self, request, obj=None):
+        if obj is None:
+            return True
+        return obj in self.get_queryset(request)
+
+    def get_queryset(self, request):
+        qs = super(CityScopedFlatPageAdmin, self).get_queryset(request)
+        if can_edit_multiple_cities(request):
+            return qs
+        return qs.filter(sites__city=request.user.membership.city)
+
+admin.site.unregister(FlatPage)
+admin.site.register(FlatPage, CityScopedFlatPageAdmin)
