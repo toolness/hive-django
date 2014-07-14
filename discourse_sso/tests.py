@@ -32,7 +32,7 @@ class EndpointTests(WnycTestCase):
         query_dict = dict(urlparse.parse_qsl(loc.query))
         self.assertEqual(unpack_and_verify_payload(query_dict), {
             'email': 'member@wnyc.org',
-            'external_id': '2',
+            'external_id': str(self.wnyc_member.id),
             'name': 'Brian Lehrer (WNYC\'s Radio Rookies)',
             'nonce': '1',
             'username': 'wnyc_member'
