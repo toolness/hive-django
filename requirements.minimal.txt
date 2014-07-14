@@ -1,4 +1,4 @@
-Django==1.6.2
+Django==1.6.5
 dj-static==0.0.5
 django-csp==2.0.3
 gunicorn==18.0
