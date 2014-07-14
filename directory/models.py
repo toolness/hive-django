@@ -199,7 +199,8 @@ class Organization(models.Model):
     membership_type = models.ForeignKey(
         OrganizationMembershipType,
         related_name='orgs',
-        blank=True, null=True
+        blank=True, null=True,
+        on_delete=models.SET_NULL
     )
 
     def __unicode__(self):
@@ -427,6 +428,11 @@ class Membership(models.Model):
         help_text="Whether the person is listed under their organization in "
                   "the Hive directory."
     )
+
+    @property
+    def city(self):
+        if self.organization is None: return None
+        return self.organization.city
 
     def get_absolute_url(self):
         return reverse('user_detail', args=(str(self.user.username),))
