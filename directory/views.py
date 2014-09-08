@@ -14,7 +14,8 @@ from .models import Organization, Membership, City, is_user_vouched_for, \
                     is_user_privileged
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
-                   MembershipForm, UserProfileForm, OrganizationForm
+                   MembershipForm, UserProfileForm, OrganizationForm, \
+                   UserApplicationForm
 
 ORGS_PER_PAGE = 5
 
@@ -180,6 +181,24 @@ def user_detail(request, username):
                                    user__is_active=True)
     return render(request, 'directory/user_detail.html', {
         'membership': membership
+    })
+
+@login_required
+def user_apply(request):
+    if request.method == 'POST':
+        form = UserApplicationForm(data=request.POST)
+        if form.is_valid():
+            form.save(request.user)
+            request.session['submitted_application'] = True
+            messages.success(request,
+                             'Thanks! Your application has been submitted, '
+                             'and you will hear from a Hive staff member '
+                             'shortly.')
+            return redirect('home')
+    else:
+        form = UserApplicationForm()
+    return render(request, 'directory/user_apply.html', {
+        'form': form
     })
 
 @login_required

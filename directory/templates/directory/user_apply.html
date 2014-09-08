@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Apply For Membership{% endblock %}
+
+{% block content %}
+<h2>Apply For Membership</h2>
+
+{% if user.membership.organization %}
+<p>You are already a member of {{ user.membership.organization.name }}
+  and don't need to apply for anything.</p>
+{% else %}
+<p>To access most of the functionality of this site, you need to
+  be a Hive member. Please fill out the form below to apply.</p>
+
+<form method="post" action="{% url 'user_apply' %}">
+  {% csrf_token %}  
+  {{ form|crispy }}
+
+  <button type="submit" class="btn btn-primary">Submit Application</button>
+</form>
+{% endif %}
+
+{% endblock %}

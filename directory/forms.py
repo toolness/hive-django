@@ -1,10 +1,11 @@
 from django.conf import settings
-from django.forms import ModelForm
+from django import forms
 from django.forms.models import inlineformset_factory
 from django.contrib.auth.models import User
+from django.template import loader
 from crispy_forms.helper import FormHelper
 
-from .models import Organization, Membership, \
+from .models import Organization, Membership, City, \
                     ContentChannel, Expertise
 
 ExpertiseFormSet = inlineformset_factory(
@@ -31,7 +32,7 @@ class ChannelFormSetHelper(FormHelper):
     form_tag = False
     template = 'directory/table_inline_formset.html'
 
-class MembershipForm(ModelForm):
+class MembershipForm(forms.ModelForm):
     class Meta:
         model = Membership
         fields = ['title', 'bio', 'twitter_name', 'phone_number',
@@ -55,12 +56,49 @@ class MembershipForm(ModelForm):
                      '"Executive Director of Awesome".',
         }
 
-class UserProfileForm(ModelForm):
+class UserApplicationForm(forms.Form):
+    city = forms.ModelChoiceField(
+        label='Hive city',
+        queryset=City.objects.all()
+    )
+    info = forms.CharField(
+        label=('Please provide a bit of information on who you are, '
+               'and what organization (if any) you belong to.'),
+        widget=forms.Textarea,
+        max_length=500
+    )
+
+    def save(self, user,
+             from_email=None,
+             subject_template_name='directory/user_apply_subject.txt',
+             email_template_name='directory/user_apply_email.html'):
+        # A lot of this is just taken from Django auth's PasswordResetForm.
+        from django.core.mail import send_mail
+        city = self.cleaned_data['city']
+        c = {
+            'ORIGIN': settings.ORIGIN,
+            'city': city,
+            'user': user,
+            'info': self.cleaned_data['info']
+        }
+        recipients = [staff.email for staff in User.objects.filter(
+            membership__organization__city=city,
+            is_staff=True
+        )]
+        if not recipients:
+            recipients.extend(settings.ADMINS)
+        subject = loader.render_to_string(subject_template_name, c)
+        # Email subject *must not* contain newlines
+        subject = ''.join(subject.splitlines())
+        email = loader.render_to_string(email_template_name, c)
+        send_mail(subject, email, from_email, recipients)
+
+class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name']
 
-class OrganizationForm(ModelForm):
+class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         fields = ['name', 'website', 'address', 'twitter_name',

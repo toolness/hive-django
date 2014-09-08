@@ -1,0 +1,20 @@
+{% autoescape off %}
+Hi!
+
+{{ user.get_full_name }} has just applied to join Hive {{ city.name }}.
+
+Here is what the user had to say:
+
+{{ info }}
+
+To vouch for this user, visit the following URL and associate them with
+an organization:
+
+{{ ORIGIN }}{% url 'admin:auth_user_change' user.id %}
+
+You may also want to email the user at {{ user.email }} to let them
+know that they've been vouched for.
+
+- Your Friendly Hive Admin Robot
+
+{% endautoescape %}

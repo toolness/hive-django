@@ -11,6 +11,7 @@
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
+{% include "directory/user_apply_alert.html" %}
 <div class="jumbotron">
   <h1>Welcome to the 
     {% if city.should_be_mentioned %}

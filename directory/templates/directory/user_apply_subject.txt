@@ -1,0 +1,1 @@
+{{ user.username }} has applied to join Hive {{ city.shortest_name }}!
