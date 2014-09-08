@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 
 from .multi_city import viewname_prefix
-from . import views
+from . import views, api
 
 def city_scoped_directory_patterns(is_multi_city_site):
     prefix = viewname_prefix(is_multi_city_site)
@@ -28,6 +28,7 @@ urlpatterns = patterns('',
         views.user_detail, name='user_detail'),
 
     url(r'^accounts/profile/$', views.user_edit, name='user_edit'),
+    url(r'^api/v1/cities/(?P<city>[A-Za-z0-9_\-]+)/members$', api.members),
 )
 
 urlpatterns += city_scoped_directory_patterns(is_multi_city_site=False)
