@@ -11,7 +11,7 @@ from django.db.models import Q
 
 from .multi_city import city_scoped, city_reverse, is_multi_city
 from .models import Organization, Membership, City, is_user_vouched_for, \
-                    is_user_privileged
+                    is_user_privileged, get_current_city
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
                    MembershipForm, UserProfileForm, OrganizationForm, \
@@ -198,7 +198,8 @@ def user_apply(request):
         else:
             messages.error(request, 'Your application had some problems.')
     else:
-        form = UserApplicationForm()
+        city = get_current_city()
+        form = UserApplicationForm(initial={'city': city and city.id})
     return render(request, 'directory/user_apply.html', {
         'form': form
     })
