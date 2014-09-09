@@ -86,7 +86,10 @@ class UserApplicationForm(forms.Form):
             is_staff=True
         )]
         if not recipients:
-            recipients.extend(settings.ADMINS)
+            recipients = [su.email for su in User.objects.filter(
+                is_superuser=True
+            )]
+            c['recipient_is_superuser'] = True
         subject = loader.render_to_string(subject_template_name, c)
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())

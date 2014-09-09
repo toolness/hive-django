@@ -195,6 +195,8 @@ def user_apply(request):
                              'and you will hear from a Hive staff member '
                              'shortly.')
             return redirect('home')
+        else:
+            messages.error(request, 'Your application had some problems.')
     else:
         form = UserApplicationForm()
     return render(request, 'directory/user_apply.html', {

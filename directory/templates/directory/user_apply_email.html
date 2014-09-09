@@ -2,7 +2,9 @@
 Hi!
 
 {{ user.get_full_name }} has just applied to join Hive {{ city.name }}.
-
+{% if recipient_is_superuser %}
+You are being sent this email because there are no Hive staff members for {{ city.name }}.
+{% endif %}
 Here is what the user had to say:
 
 {{ info }}
