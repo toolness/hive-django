@@ -266,6 +266,15 @@ class ActivationTests(TestCase):
         self.assertEqual(user.is_active, True)
         return user
 
+    def test_user_org_is_blank_if_email_matches_multiple_orgs(self):
+        Organization(name='WNYC Radio Grizzled Veterans',
+                     city=Organization.objects.get(slug='wnyc').city,
+                     email_domain='wnyc.org').save()
+
+        user = self.activate_user('somebody', password='lol',
+                                  email='somebody@wnyc.org')
+        self.assertEqual(user.membership.organization, None)
+
     def test_user_org_is_blank_on_activation_if_email_does_not_match(self):
         user = self.activate_user('somebody', password='lol',
                                   email='somebody@example.org')
