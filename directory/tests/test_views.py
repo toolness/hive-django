@@ -282,6 +282,7 @@ class UserApplyTests(WnycTestCase):
     FILL_NAME_TEXT = 'Please fill out your name'
     APPLY_TEXT = 'apply for membership'
     APP_REJECTED_TEXT = 'Your application had some problems.'
+    APP_REJECTED_FIELD_TEXT = 'This field is required.'
     APP_SENT_TEXT = 'Your application has been submitted'
     NO_STAFF_TEXT = 'because there are no Hive staff members for'
 
@@ -319,6 +320,7 @@ class UserApplyTests(WnycTestCase):
         self.login_as_non_member()
         response = self.client.post('/accounts/apply/', {})
         self.assertContains(response, self.APP_REJECTED_TEXT)
+        self.assertContains(response, self.APP_REJECTED_FIELD_TEXT)
         self.assertNotContains(response, self.APP_SENT_TEXT)
 
     def apply(self):
@@ -332,6 +334,7 @@ class UserApplyTests(WnycTestCase):
         response = self.client.post('/accounts/apply/', data, follow=True)
         self.assertRedirects(response, '/')
         self.assertNotContains(response, self.APP_REJECTED_TEXT)
+        self.assertNotContains(response, self.APP_REJECTED_FIELD_TEXT)
         self.assertContains(response, self.APP_SENT_TEXT)
 
         for email in mail.outbox:
