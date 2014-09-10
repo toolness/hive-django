@@ -1,0 +1,11 @@
+{% if user.is_authenticated and not user.membership.organization %}
+{% if not request.session.submitted_application %}
+  <div class="alert alert-warning">
+    {% if not user.get_full_name %}
+      Please fill out your name and other details in your <a href="{% url 'user_edit' %}">user profile</a>.
+    {% else %}
+      You aren't currently a vouched user, which means your access to this site is very limited. If you're already part of the Hive community, please <a href="{% url 'user_apply' %}">apply for full access</a>.
+    {% endif %}
+  </div>
+{% endif %}
+{% endif %}

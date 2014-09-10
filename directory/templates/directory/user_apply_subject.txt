@@ -1,0 +1,1 @@
+{{ user.username }} (Hive {{ city.shortest_name }}) has applied for full access to the Hive directory!

@@ -28,6 +28,7 @@ urlpatterns = patterns('',
         views.user_detail, name='user_detail'),
 
     url(r'^accounts/profile/$', views.user_edit, name='user_edit'),
+    url(r'^accounts/apply/$', views.user_apply, name='user_apply'),
     url(r'^api/v1/cities/(?P<city>[A-Za-z0-9_\-]+)/members$', api.members),
 )
 

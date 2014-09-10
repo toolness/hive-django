@@ -1,6 +1,7 @@
 import json
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core import mail
 from registration.models import RegistrationProfile
 
 from .test_multi_city import using_multi_city_site
@@ -265,6 +266,15 @@ class ActivationTests(TestCase):
         self.assertEqual(user.is_active, True)
         return user
 
+    def test_user_org_is_blank_if_email_matches_multiple_orgs(self):
+        Organization(name='WNYC Radio Grizzled Veterans',
+                     city=Organization.objects.get(slug='wnyc').city,
+                     email_domain='wnyc.org').save()
+
+        user = self.activate_user('somebody', password='lol',
+                                  email='somebody@wnyc.org')
+        self.assertEqual(user.membership.organization, None)
+
     def test_user_org_is_blank_on_activation_if_email_does_not_match(self):
         user = self.activate_user('somebody', password='lol',
                                   email='somebody@example.org')
@@ -274,3 +284,90 @@ class ActivationTests(TestCase):
         user = self.activate_user('somebody', password='lol',
                                   email='somebody@wnyc.org')
         self.assertEqual(user.membership.organization.slug, 'wnyc')
+
+class UserApplyTests(WnycTestCase):
+    ALREADY_MEMBER_TEXT = 'You are already a member'
+    NOT_ALREADY_MEMBER_TEXT = 'please fill out the form below'
+    FILL_NAME_TEXT = 'Please fill out your name'
+    APPLY_TEXT = 'apply for full access'
+    APP_REJECTED_TEXT = 'Your submission had some problems.'
+    APP_REJECTED_FIELD_TEXT = 'This field is required.'
+    APP_SENT_TEXT = 'Your request has been submitted'
+    NO_STAFF_TEXT = 'because there are no Hive staff members for'
+
+    def test_members_are_not_sent_to_application(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/')
+        self.assertNotContains(response, self.FILL_NAME_TEXT)
+        self.assertNotContains(response, self.APPLY_TEXT)
+
+    def test_nonmembers_are_sent_to_application(self):
+        self.login_as_non_member()
+        response = self.client.get('/')
+        self.assertContains(response, self.FILL_NAME_TEXT)
+        self.assertNotContains(response, self.APPLY_TEXT)
+
+        self.non_member.first_name = 'Bob'
+        self.non_member.save()
+        response = self.client.get('/')
+        self.assertNotContains(response, self.FILL_NAME_TEXT)
+        self.assertContains(response, self.APPLY_TEXT)
+
+    def test_members_cannot_apply(self):
+        self.login_as_wnyc_member()
+        response = self.client.get('/accounts/apply/')
+        self.assertContains(response, self.ALREADY_MEMBER_TEXT)
+        self.assertNotContains(response, self.NOT_ALREADY_MEMBER_TEXT)
+
+    def test_nonmembers_can_apply(self):
+        self.login_as_non_member()
+        response = self.client.get('/accounts/apply/')
+        self.assertContains(response, self.NOT_ALREADY_MEMBER_TEXT)
+        self.assertNotContains(response, self.ALREADY_MEMBER_TEXT)
+
+    def test_incomplete_applications_are_rejected(self):
+        self.login_as_non_member()
+        response = self.client.post('/accounts/apply/', {})
+        self.assertContains(response, self.APP_REJECTED_TEXT)
+        self.assertContains(response, self.APP_REJECTED_FIELD_TEXT)
+        self.assertNotContains(response, self.APP_SENT_TEXT)
+
+    def apply(self):
+        self.login_as_non_member()
+        self.non_member.first_name = 'Bob'
+        self.non_member.last_name = 'Jones'
+        self.non_member.email = 'bob@example.org'
+        self.non_member.save()
+
+        data = {'city': str(self.wnyc.city.id), 'info': 'sup'}
+        response = self.client.post('/accounts/apply/', data, follow=True)
+        self.assertRedirects(response, '/')
+        self.assertNotContains(response, self.APP_REJECTED_TEXT)
+        self.assertNotContains(response, self.APP_REJECTED_FIELD_TEXT)
+        self.assertContains(response, self.APP_SENT_TEXT)
+
+        for email in mail.outbox:
+            self.assertEqual(email.subject,
+                             'non_member (Hive NYC) has applied for full '
+                             'access to the Hive directory!')
+            for regexp in [r'Bob Jones', r'bob@example\.org']:
+                self.assertRegexpMatches(email.body, regexp)
+
+    def test_applying_with_no_city_staff_sends_email_to_superusers(self):
+        create_user('root', email='root@example.org', is_superuser=True)
+
+        self.apply()
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['root@example.org'])
+        self.assertRegexpMatches(mail.outbox[0].body, self.NO_STAFF_TEXT)
+
+    def test_applying_sends_email_to_selected_city_staff(self):
+        self.wnyc_member.is_staff = True
+        self.wnyc_member.save()
+
+        self.apply()
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ['member@wnyc.org'])
+        self.assertNotRegexpMatches(mail.outbox[0].body, self.NO_STAFF_TEXT)

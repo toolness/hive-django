@@ -1,0 +1,24 @@
+{% autoescape off %}
+Hi!
+
+{{ user.get_full_name }} has just applied for full access to the Hive directory, claiming they are part of Hive {{ city.name }}.
+{% if recipient_is_superuser %}
+You are being sent this email because there are no Hive staff members for {{ city.name }}.
+{% endif %}
+Here is what the user had to say:
+
+"""
+{{ info }}
+"""
+
+To vouch for this user, visit the following URL and associate them with
+an organization:
+
+{{ ORIGIN }}{% url 'admin:auth_user_change' user.id %}
+
+You may also want to email the user at {{ user.email }} to let them
+know that they have full access.
+
+- Your Friendly Hive Admin Robot
+
+{% endautoescape %}
