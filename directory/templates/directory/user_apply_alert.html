@@ -1,4 +1,4 @@
-{% if not user.membership.organization %}
+{% if user.is_authenticated and not user.membership.organization %}
 {% if not request.session.submitted_application %}
   <div class="alert alert-warning">
     {% if not user.get_full_name %}
