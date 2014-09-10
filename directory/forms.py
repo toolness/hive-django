@@ -58,12 +58,14 @@ class MembershipForm(forms.ModelForm):
 
 class UserApplicationForm(forms.Form):
     city = forms.ModelChoiceField(
-        label='Hive city',
+        label='Which Hive city are you part of?',
         queryset=City.objects.all()
     )
     info = forms.CharField(
         label=('Please provide a bit of information on who you are, '
-               'and what organization (if any) you belong to.'),
+               'and what organization (if any) you belong to. Also '
+               'include your phone number in case we need to verify '
+               'your identity.'),
         widget=forms.Textarea,
         max_length=500
     )

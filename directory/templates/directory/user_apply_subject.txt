@@ -1,1 +1,1 @@
-{{ user.username }} has applied to join Hive {{ city.shortest_name }}!
+{{ user.username }} (Hive {{ city.shortest_name }}) has applied for full access to the Hive directory!

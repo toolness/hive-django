@@ -4,7 +4,7 @@
     {% if not user.get_full_name %}
       Please fill out your name and other details in your <a href="{% url 'user_edit' %}">user profile</a>.
     {% else %}
-      You aren't currently a Hive member. If you haven't already, please <a href="{% url 'user_apply' %}">apply for membership</a> so you can have full access to this site.
+      You aren't currently a vouched user, which means your access to this site is very limited. If you're already part of the Hive community, please <a href="{% url 'user_apply' %}">apply for full access</a>.
     {% endif %}
   </div>
 {% endif %}

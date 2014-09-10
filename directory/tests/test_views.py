@@ -287,12 +287,12 @@ class ActivationTests(TestCase):
 
 class UserApplyTests(WnycTestCase):
     ALREADY_MEMBER_TEXT = 'You are already a member'
-    NOT_ALREADY_MEMBER_TEXT = 'Please fill out the form below'
+    NOT_ALREADY_MEMBER_TEXT = 'please fill out the form below'
     FILL_NAME_TEXT = 'Please fill out your name'
-    APPLY_TEXT = 'apply for membership'
-    APP_REJECTED_TEXT = 'Your application had some problems.'
+    APPLY_TEXT = 'apply for full access'
+    APP_REJECTED_TEXT = 'Your submission had some problems.'
     APP_REJECTED_FIELD_TEXT = 'This field is required.'
-    APP_SENT_TEXT = 'Your application has been submitted'
+    APP_SENT_TEXT = 'Your request has been submitted'
     NO_STAFF_TEXT = 'because there are no Hive staff members for'
 
     def test_members_are_not_sent_to_application(self):
@@ -348,7 +348,8 @@ class UserApplyTests(WnycTestCase):
 
         for email in mail.outbox:
             self.assertEqual(email.subject,
-                             'non_member has applied to join Hive NYC!')
+                             'non_member (Hive NYC) has applied for full '
+                             'access to the Hive directory!')
             for regexp in [r'Bob Jones', r'bob@example\.org']:
                 self.assertRegexpMatches(email.body, regexp)
 

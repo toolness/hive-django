@@ -191,12 +191,12 @@ def user_apply(request):
             form.save(request.user)
             request.session['submitted_application'] = True
             messages.success(request,
-                             'Thanks! Your application has been submitted, '
+                             'Thanks! Your request has been submitted, '
                              'and you will hear from a Hive staff member '
                              'shortly.')
             return redirect('home')
         else:
-            messages.error(request, 'Your application had some problems.')
+            messages.error(request, 'Your submission had some problems.')
     else:
         city = get_current_city()
         form = UserApplicationForm(initial={'city': city and city.id})
