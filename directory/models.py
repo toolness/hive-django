@@ -196,11 +196,10 @@ class Organization(models.Model):
                   "organizations.",
         default=True
     )
-    membership_type = models.ForeignKey(
+    membership_types = models.ManyToManyField(
         OrganizationMembershipType,
         related_name='orgs',
-        blank=True, null=True,
-        on_delete=models.SET_NULL
+        blank=True
     )
 
     def __unicode__(self):
