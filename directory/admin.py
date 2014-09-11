@@ -82,7 +82,7 @@ class OrganizationAdmin(CityScopedAdmin):
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
-    exclude_from_add = ['membership_type', 'is_active']
+    exclude_from_add = ['membership_types', 'is_active']
 
 admin.site.register(models.Organization, OrganizationAdmin)
 
