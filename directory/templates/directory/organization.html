@@ -11,8 +11,10 @@
 </p>
 {% if org.hive_member_since %}
 <p><small>
-  {% if org.membership_type %}{{ org.membership_type.name }}{% endif %}
   Hive {{ org.city.shortest_name }} member since {{ org.hive_member_since|date:"F Y" }}
+  {% for membership_type in org.membership_types.all %}
+    <span class="label label-default" title="{{ membership_type.description }}">{{ membership_type.name }}</span>
+  {% endfor %}
 </small></p>
 {% endif %}
 <div class="rendered-markdown">{{ org.mission|markdown }}</div>

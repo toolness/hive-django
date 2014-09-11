@@ -27,11 +27,11 @@ class ContentChannelInline(admin.TabularInline):
 class OrganizationForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrganizationForm, self).__init__(*args, **kwargs)
-        if 'membership_type' in self.fields:
+        if 'membership_types' in self.fields:
             qs = models.OrganizationMembershipType.objects.filter(
                 city=self.instance.city
             )
-            self.fields['membership_type'].queryset = qs
+            self.fields['membership_types'].queryset = qs
 
 class CityScopedAdmin(admin.ModelAdmin):
     '''
@@ -82,7 +82,7 @@ class OrganizationAdmin(CityScopedAdmin):
     list_filter = ('city',)
     prepopulated_fields = {"slug": ("name",)}
 
-    exclude_from_add = ['membership_type', 'is_active']
+    exclude_from_add = ['membership_types', 'is_active']
 
 admin.site.register(models.Organization, OrganizationAdmin)
 
