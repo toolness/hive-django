@@ -115,6 +115,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "hive.context_processors.origin",
     "hive.context_processors.site",
+    "discourse_sso.context_processors.discourse_sso_origin",
 )
 
 if GA_TRACKING_ID:
