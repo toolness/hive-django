@@ -11,6 +11,11 @@ def city_scoped_directory_patterns(is_multi_city_site):
         url(r'^find.json$', views.city_find_json, name=prefix + 'find_json'),
         url(r'^search/$', views.city_search, name=prefix + 'search'),
         url(r'^activity/$', views.city_activity, name=prefix + 'activity'),
+        url(r'^widgets/$', views.city_widgets),
+        url(r'^widgets/members/$', views.city_members_widget,
+            name=prefix + 'members_widget'),
+        url(r'^widgets/members.js$', views.city_members_widget_js,
+            name=prefix + 'members_widget_js')
     )
 
 urlpatterns = patterns('',

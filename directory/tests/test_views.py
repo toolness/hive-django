@@ -371,3 +371,20 @@ class UserApplyTests(WnycTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ['member@wnyc.org'])
         self.assertNotRegexpMatches(mail.outbox[0].body, self.NO_STAFF_TEXT)
+
+class WidgetTests(WnycTestCase):
+    def test_city_widgets_returns_200(self):
+        response = self.client.get('/widgets/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_city_members_widget_includes_members(self):
+        response = self.client.get('/widgets/members/')
+        self.assertContains(response, 'Radio Rookies', status_code=200)
+
+    def test_city_members_widget_exempts_xframe_options(self):
+        response = self.client.get('/widgets/members/')
+        self.assertFalse('X-Frame-Options' in response)
+
+    def test_city_members_widget_js_includes_iframe_url(self):
+        response = self.client.get('/widgets/members.js')
+        self.assertContains(response, '/widgets/members/', status_code=200)

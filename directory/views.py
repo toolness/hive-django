@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from django.db.models import Q
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 from .multi_city import city_scoped, city_reverse, is_multi_city
 from .models import Organization, Membership, City, is_user_vouched_for, \
@@ -136,6 +137,27 @@ def city_activity(request, city):
     return render(request, 'directory/activity.html', {
         'memberships': memberships
     })
+
+@city_scoped
+def city_widgets(request, city):
+    return render(request, 'directory/widgets.html', {'city': city})
+
+@city_scoped
+@xframe_options_exempt
+def city_members_widget(request, city):
+    orgs = Organization.objects.filter(
+        is_active=True,
+        city=city
+    ).order_by('name')
+
+    return render(request, 'directory/members_widget.html', {
+        'orgs': orgs
+    })
+
+@city_scoped
+def city_members_widget_js(request, city):
+    return render(request, 'directory/members_widget.js',
+                  content_type='application/javascript')
 
 def organization_detail(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,

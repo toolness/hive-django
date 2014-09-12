@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load directory %}
+
+{% block content %}
+  <h1>Hive {{ city.shortest_name }} Widgets</h1>
+  <p>Here are widgets for Hive {{ city.name }} that can be embedded
+    anywhere on the Web.</p>
+  <h2>Member List Widget</h2>
+
+  <h3>HTML</h3>
+
+  <pre>&lt;script src="{{ ORIGIN }}{% city_url 'members_widget_js' %}"&gt;&lt;/script&gt;</pre>
+
+  <h3>Example</h3>
+
+  <script src="{{ ORIGIN }}{% city_url 'members_widget_js' %}"></script>
+
+{% endblock %}
