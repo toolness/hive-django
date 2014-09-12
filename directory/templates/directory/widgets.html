@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load directory %}
+
+{% block content %}
+  <h1>Hive {{ city.shortest_name }} Widgets</h1>
+  <p>Here are widgets for Hive {{ city.name }} that can be embedded
+    anywhere on the Web.</p>
+  <h2>Member List Widget</h2>
+
+  <p>This widget just shows a list of all member organizations.</p>
+
+  <h3>HTML</h3>
+
+  <p>Simply place this code wherever you'd like the widget to appear:</p>
+
+  <pre>&lt;script src="{{ ORIGIN }}{% city_url 'members_widget_js' %}"&gt;&lt;/script&gt;</pre>
+
+  <p>The width of this widget defaults to 100%, and its height automatically adjusts to fit its content. To override these defaults, put the widget in a container element, and style the container to taste.</p>
+
+  <h3>Example</h3>
+
+  <script src="{{ ORIGIN }}{% city_url 'members_widget_js' %}"></script>
+
+{% endblock %}
