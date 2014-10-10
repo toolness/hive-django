@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 <title>Hive Members Widget</title>
-<ul class="list-unstyled">
+<ul class="list-unstyled list-columns">
 {% for org in orgs %}
   <li>
     <a href="{{ org.website }}" target="_blank">{{ org.name }}</a>
