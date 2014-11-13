@@ -8,6 +8,8 @@ from registration.backends.default.views import ActivationView
 from registration.backends.default.views import RegistrationView
 from registration.forms import RegistrationFormUniqueEmail
 
+from .forms import HiveAuthenticationForm
+
 urlpatterns = patterns('',
     url(r'^activate/complete/$',
         TemplateView.as_view(template_name='registration/activation_complete.html'),
@@ -27,7 +29,8 @@ urlpatterns = patterns('',
         name='registration_complete'),
     url(r'^login/$',
         auth_views.login,
-        {'template_name': 'registration/login.html'},
+        {'template_name': 'registration/login.html',
+         'authentication_form': HiveAuthenticationForm},
         name='login'),
     url(r'^logout/$',
         auth_views.logout,
