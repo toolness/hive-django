@@ -39,6 +39,24 @@ class AccountUrlTests(TestCase):
         self.assertPathExists('/accounts/register/')
         self.assertPathExists('/accounts/register/complete/')
 
+    def test_auth_accepts_email(self):
+        User.objects.create_user('foo', 'foo@example.org', 'lol')
+        c = Client()
+        response = c.post('/accounts/login/', {
+            'username': 'foo@example.org',
+            'password': 'lol'
+        })
+        self.assertRedirects(response, '/')
+
+    def test_auth_accepts_username(self):
+        User.objects.create_user('foo', 'foo@example.org', 'lol')
+        c = Client()
+        response = c.post('/accounts/login/', {
+            'username': 'foo',
+            'password': 'lol'
+        })
+        self.assertRedirects(response, '/')
+
     def test_registration_enforces_unique_email(self):
         User(username='foo', email='foo@example.org').save()
         c = Client()
