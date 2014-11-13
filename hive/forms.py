@@ -4,6 +4,11 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import User
 
 class HiveAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        label="Username or email address",
+        max_length=254
+    )
+
     def clean(self):
         username_or_email = self.cleaned_data.get('username')
         if username_or_email and '@' in username_or_email:
