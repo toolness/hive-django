@@ -3,7 +3,8 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.contrib.sites.models import Site, get_current_site
+from django.contrib.sites.models import Site
+from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
 from django.db.models.signals import post_save
