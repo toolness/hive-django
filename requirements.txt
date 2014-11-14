@@ -7,4 +7,4 @@ psycopg2==2.5.2
 gspread==0.1.0
 
 # Required for using Mandrill as an email backend.
-djrill==1.0.0
+djrill==1.2.0
