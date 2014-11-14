@@ -13,6 +13,8 @@ def using_multi_city_site(f):
     return wrapper
 
 class IsMultiCityTests(TestCase):
+    fixtures = ['wnyc.json']
+
     @using_multi_city_site
     def test_returns_true_when_city_does_not_exist(self):
         self.assertTrue(is_multi_city())
@@ -21,7 +23,7 @@ class IsMultiCityTests(TestCase):
         self.assertFalse(is_multi_city())
 
 class CityScopedTests(TestCase):
-    fixtures = ['chicago.json']
+    fixtures = ['wnyc.json', 'chicago.json']
 
     def test_single_city_sites_ignore_multi_city_urls(self):
         response = self.client.get('/chicago/')

@@ -79,7 +79,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
-    'south',
     'crispy_forms',
     'registration',
     'directory',

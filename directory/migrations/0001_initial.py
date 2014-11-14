@@ -1,192 +1,174 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+import directory.phonenumber
+import directory.twitter
+from django.conf import settings
+import django.core.validators
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Organization'
-        db.create_table(u'directory_organization', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-            ('website', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('email_domain', self.gf('django.db.models.fields.CharField')(max_length=50, blank=True)),
-            ('address', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('twitter_name', self.gf('django.db.models.fields.CharField')(max_length=15, blank=True)),
-            ('hive_member_since', self.gf('django.db.models.fields.DateField')()),
-            ('mission', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('min_youth_audience_age', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
-            ('max_youth_audience_age', self.gf('django.db.models.fields.SmallIntegerField')(default=18)),
-            ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'directory', ['Organization'])
+    dependencies = [
+        ('sites', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
 
-        # Adding model 'Expertise'
-        db.create_table(u'directory_expertise', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('category', self.gf('django.db.models.fields.CharField')(max_length=25)),
-            ('details', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='skills', to=orm['auth.User'])),
-        ))
-        db.send_create_signal(u'directory', ['Expertise'])
-
-        # Adding model 'ContentChannel'
-        db.create_table(u'directory_contentchannel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('category', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200)),
-            ('organization', self.gf('django.db.models.fields.related.ForeignKey')(related_name='content_channels', to=orm['directory.Organization'])),
-        ))
-        db.send_create_signal(u'directory', ['ContentChannel'])
-
-        # Adding model 'Membership'
-        db.create_table(u'directory_membership', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('organization', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='memberships', null=True, to=orm['directory.Organization'])),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('twitter_name', self.gf('django.db.models.fields.CharField')(max_length=15, blank=True)),
-            ('phone_number', self.gf('django.db.models.fields.CharField')(max_length=12, blank=True)),
-            ('receives_minigroup_digest', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('is_listed', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'directory', ['Membership'])
-
-        # Adding model 'ImportedUserInfo'
-        db.create_table(u'directory_importeduserinfo', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-            ('was_sent_email', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'directory', ['ImportedUserInfo'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Organization'
-        db.delete_table(u'directory_organization')
-
-        # Deleting model 'Expertise'
-        db.delete_table(u'directory_expertise')
-
-        # Deleting model 'ContentChannel'
-        db.delete_table(u'directory_contentchannel')
-
-        # Deleting model 'Membership'
-        db.delete_table(u'directory_membership')
-
-        # Deleting model 'ImportedUserInfo'
-        db.delete_table(u'directory_importeduserinfo')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'directory.contentchannel': {
-            'Meta': {'object_name': 'ContentChannel'},
-            'category': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'organization': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'content_channels'", 'to': u"orm['directory.Organization']"}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        },
-        u'directory.expertise': {
-            'Meta': {'object_name': 'Expertise'},
-            'category': ('django.db.models.fields.CharField', [], {'max_length': '25'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'details': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'skills'", 'to': u"orm['auth.User']"})
-        },
-        u'directory.importeduserinfo': {
-            'Meta': {'object_name': 'ImportedUserInfo'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'}),
-            'was_sent_email': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
-        },
-        u'directory.membership': {
-            'Meta': {'object_name': 'Membership'},
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_listed': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'organization': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'memberships'", 'null': 'True', 'to': u"orm['directory.Organization']"}),
-            'phone_number': ('django.db.models.fields.CharField', [], {'max_length': '12', 'blank': 'True'}),
-            'receives_minigroup_digest': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'twitter_name': ('django.db.models.fields.CharField', [], {'max_length': '15', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
-        },
-        u'directory.organization': {
-            'Meta': {'object_name': 'Organization'},
-            'address': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'email_domain': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'hive_member_since': ('django.db.models.fields.DateField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'max_youth_audience_age': ('django.db.models.fields.SmallIntegerField', [], {'default': '18'}),
-            'min_youth_audience_age': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
-            'mission': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
-            'twitter_name': ('django.db.models.fields.CharField', [], {'max_length': '15', 'blank': 'True'}),
-            'website': ('django.db.models.fields.URLField', [], {'max_length': '200'})
-        }
-    }
-
-    complete_apps = ['directory']
+    operations = [
+        migrations.CreateModel(
+            name='City',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(help_text=b'The full name of the city (e.g., New York City).', max_length=100)),
+                ('short_name', models.CharField(help_text=b'The short/abbreviated name of the city (e.g., NYC).', max_length=20, blank=True)),
+                ('slug', models.SlugField(help_text=b'A short identifier for the city, used in URLs and such. Only letters, numbers, underscores, and hyphens are allowed.', unique=True)),
+                ('site', models.OneToOneField(null=True, blank=True, to='sites.Site', help_text=b"The site associated with this city. If blank, this city's directory will only be accessible on multi-city sites.")),
+            ],
+            options={
+                'ordering': ['name'],
+                'verbose_name_plural': 'cities',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ContentChannel',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('category', models.CharField(help_text=b'The type of the content channel', max_length=15, choices=[(b'facebook', b'Facebook'), (b'youtube', b'YouTube'), (b'vimeo', b'Vimeo'), (b'flickr', b'Flickr'), (b'tumblr', b'Tumblr'), (b'pinterest', b'Pinterest'), (b'github', b'GitHub'), (b'instagram', b'Instagram'), (b'other', b'Other')])),
+                ('name', models.CharField(help_text=b'The name of the content channel.', max_length=100, blank=True)),
+                ('url', models.URLField(help_text=b'The URL of the content channel.')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Expertise',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('category', models.CharField(help_text=b'The type of the expertise', max_length=25, choices=[(b'youth', b'Youth'), (b'partnerships', b'Collaboration and Partnerships'), (b'rfp', b'RFP'), (b'leveragingresources', b'Leveraging Resources'), (b'volunteers', b'Mentors and Volunteers'), (b'sharingoutcomes', b'Sharing Outcomes'), (b'events', b'Activities and Events'), (b'programdesign', b'Program Design and Facilitation'), (b'badges', b'Badges'), (b'innovation', b'Innovation Design Strategies'), (b'leveraginghive', b'Leveraging Hive'), (b'curriculum', b'Curriculum Development'), (b'assessment', b'Assessment and Evaluative Approaches'), (b'technology', b'Technological Solutions and Possibilities'), (b'other', b'Other')])),
+                ('details', models.CharField(help_text=b'Details about the expertise', max_length=255, blank=True)),
+                ('user', models.ForeignKey(related_name='skills', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ImportedUserInfo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('was_sent_email', models.BooleanField(default=False, help_text=b'Whether the imported user has been sent an email informing them of their new account.')),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Membership',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('title', models.CharField(help_text=b"The person's title at their organization.", max_length=100, blank=True)),
+                ('bio', models.TextField(help_text=b"The person's biography. Markdown and basic HTML tags are allowed.", blank=True)),
+                ('twitter_name', models.CharField(blank=True, help_text=b'The twitter account for the person.', max_length=15, validators=[directory.twitter.validate_twitter_name])),
+                ('phone_number', models.CharField(blank=True, help_text=b"The person's phone number.", max_length=12, validators=[directory.phonenumber.validate_phone_number])),
+                ('receives_minigroup_digest', models.BooleanField(default=False, help_text=b'Whether the person is sent a daily digest of Minigroup activity.')),
+                ('is_listed', models.BooleanField(default=True, help_text=b'Whether the person is listed under their organization in the Hive directory.')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='MembershipRole',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(help_text=b'The name of the role.', max_length=50)),
+                ('description', models.TextField(help_text=b'Description of the role.')),
+                ('city', models.ForeignKey(help_text=b'The Hive city that the role pertains to.', to='directory.City')),
+            ],
+            options={
+                'ordering': ['name'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Organization',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('modified', models.DateTimeField(auto_now=True)),
+                ('name', models.CharField(help_text=b'The full name of the organization.', max_length=100)),
+                ('slug', models.SlugField(help_text=b'A short identifier for the organization, used in URLs and such. Only letters, numbers, underscores, and hyphens are allowed.', unique=True)),
+                ('website', models.URLField(help_text=b"The URL of the organization's primary website.")),
+                ('email_domain', models.CharField(help_text=b'The domain which members of this organization have email addresses at.', max_length=50, blank=True)),
+                ('address', models.TextField(help_text=b"The full address of the organization's main office.", blank=True)),
+                ('twitter_name', models.CharField(blank=True, help_text=b'The twitter account for the organization.', max_length=15, validators=[directory.twitter.validate_twitter_name])),
+                ('hive_member_since', models.DateField(help_text=b'The date the organization joined the Hive network. Only the month and year will be used.', null=True, blank=True)),
+                ('mission', models.TextField(help_text=b"The organization's mission and philosophy. Markdown and basic HTML tags are allowed.", blank=True)),
+                ('min_youth_audience_age', models.SmallIntegerField(default=0, help_text=b"Minimum age of youth, in years, that the organization's programs target.", validators=[django.core.validators.MinValueValidator(0)])),
+                ('max_youth_audience_age', models.SmallIntegerField(default=18, help_text=b"Maximum age of youth, in years, that the organization's programs target.", validators=[django.core.validators.MinValueValidator(0)])),
+                ('is_active', models.BooleanField(default=True, help_text=b'Designates whether this organization should be treated as active. Unselect this instead of deleting organizations.')),
+                ('city', models.ForeignKey(help_text=b'The city to which the organization belongs.', to='directory.City')),
+            ],
+            options={
+                'ordering': ['name'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='OrganizationMembershipType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(help_text=b'The name of the organization membership type.', max_length=50)),
+                ('description', models.TextField(help_text=b'Description of the organization membership type.')),
+                ('city', models.ForeignKey(help_text=b'The Hive city that the membership type pertains to.', to='directory.City')),
+            ],
+            options={
+                'ordering': ['name'],
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='organization',
+            name='membership_types',
+            field=models.ManyToManyField(related_name='orgs', to='directory.OrganizationMembershipType', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='membership',
+            name='organization',
+            field=models.ForeignKey(related_name='memberships', blank=True, to='directory.Organization', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='membership',
+            name='roles',
+            field=models.ManyToManyField(to='directory.MembershipRole', blank=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='membership',
+            name='user',
+            field=models.OneToOneField(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='contentchannel',
+            name='organization',
+            field=models.ForeignKey(related_name='content_channels', to='directory.Organization'),
+            preserve_default=True,
+        ),
+    ]

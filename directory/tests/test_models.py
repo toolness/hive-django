@@ -102,6 +102,8 @@ class CityTests(TestCase):
         self.assertEqual(City(name='Chicago').shortest_name, 'Chicago')
 
 class CityShouldBeMentionedTests(TestCase):
+    fixtures = ['wnyc.json']
+    
     @using_multi_city_site
     def test_always_returns_true_when_multi_city(self):
         city = City.objects.get(pk=1)
