@@ -6,7 +6,7 @@ import feedparser
 from .models import CityBlog
 from directory.models import Organization
 
-CACHE_SECONDS = 60 * 60
+CACHE_SECONDS = 60 * 3
 
 def organization_posts(request, organization_slug):
     org = get_object_or_404(Organization, slug=organization_slug,
