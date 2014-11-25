@@ -51,6 +51,12 @@ class City(models.Model):
     Represents a city that a Hive network exists in.
     '''
 
+    HIVE_TYPE_CHOICES = (
+        ('emerging', 'Emerging'),
+        ('community', 'Community'),
+        ('network', 'Network'),
+    )
+
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     site = models.OneToOneField(
@@ -74,6 +80,12 @@ class City(models.Model):
                   "URLs and such. Only letters, numbers, underscores, and "
                   "hyphens are allowed.",
         unique=True
+    )
+    hive_type = models.CharField(
+        help_text="The type of Hive in this city.",
+        choices=HIVE_TYPE_CHOICES,
+        default='emerging',
+        max_length=25,
     )
 
     @property
