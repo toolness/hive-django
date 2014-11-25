@@ -23,5 +23,6 @@ def organization_posts(request, organization_slug):
         year, month, day = entry['published_parsed'][:3]
         entry['published_datetime'] = datetime.date(year, month, day)
     return render(request, 'cityblogs/organization_posts.html', {
+        'org': org,
         'entries': feed['entries']
     })
