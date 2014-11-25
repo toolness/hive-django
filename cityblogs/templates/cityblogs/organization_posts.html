@@ -1,5 +1,7 @@
-{% for item in feed.entries %}
-  <p><a href="{{ item.link }}">{{ item.title }}</a></p>
-  <p>{{ item.published }}</p>
-  <p>{{ item.description|safe }}</p>
-{% endfor %}
+{% if feed.entries %}
+  <h2>Related Blog Posts</h2>
+  {% for item in feed.entries %}
+    <p><a href="{{ item.link }}">{{ item.title }}</a></p>
+    <p class="text-muted">{{ item.published }}</p>
+  {% endfor %}
+{% endif %}
