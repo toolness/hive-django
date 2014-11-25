@@ -1,3 +1,4 @@
+import datetime
 from urlparse import urljoin
 from django.shortcuts import render, get_object_or_404
 from django.core.cache import cache
@@ -18,6 +19,9 @@ def organization_posts(request, organization_slug):
     if feed is None:
         feed = feedparser.parse(url)
         cache.set(key, feed, CACHE_SECONDS)
+    for entry in feed['entries']:
+        year, month, day = entry['published_parsed'][:3]
+        entry['published_datetime'] = datetime.date(year, month, day)
     return render(request, 'cityblogs/organization_posts.html', {
-        'feed': feed
+        'entries': feed['entries']
     })

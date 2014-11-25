@@ -1,7 +1,7 @@
-{% if feed.entries %}
+{% if entries %}
   <h2>Related Blog Posts</h2>
-  {% for item in feed.entries %}
-    <p><a href="{{ item.link }}">{{ item.title }}</a></p>
-    <p class="text-muted">{{ item.published }}</p>
+  {% for entry in entries %}
+    <p><a href="{{ entry.link }}">{{ entry.title }}</a></p>
+    <p class="text-muted">{{ entry.published_datetime|date:"F j, o" }}</p>
   {% endfor %}
 {% endif %}

@@ -19,8 +19,14 @@ class OrganizationPostTests(TestCase):
         blog = CityBlog(city=City.objects.get(slug='nyc'),
                         url='http://example.org/')
         blog.save()
-        m = mock.MagicMock(return_value={})
+        feeds = {
+            'entries': [
+                {'published_parsed': (2013, 1, 2)}
+            ]
+        }
+        m = mock.MagicMock(return_value=feeds)
         with mock.patch('feedparser.parse', m):
             response = self.client.get('/cityblogs/orgs/wnyc')
         m.assert_called_with('http://example.org/tag/wnyc/feed/')
+        self.assertContains(response, 'January 2, 2013')
         self.assertEqual(response.status_code, 200)
