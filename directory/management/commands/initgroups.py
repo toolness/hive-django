@@ -1,5 +1,31 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, Permission
+from django.apps import apps
+
+def get_perms_from_model_attr(attr):
+    '''
+    Any model in the Django project can define an attribute,
+    such as 'multi_city_editor_permissions', to be a tuple
+    consisting of any subset of 'add', 'change', or 'delete'.
+
+    This function just finds all models in the Django project,
+    sees if they have the given attribute, and returns the
+    permission codenames for all the models.
+
+    This ultimately allows group permissions to be defined in
+    a decentralized way.
+    '''
+
+    perms = []
+    for config in apps.get_app_configs():
+        for model in config.get_models():
+            if hasattr(model, attr):
+                modelname = model.__name__.lower()
+                perms.extend([
+                    '%s_%s' % (perm, modelname)
+                    for perm in getattr(model, attr)
+                ])
+    return tuple(perms)
 
 CITY_EDITOR_PERMS = (
     'add_organization',
@@ -19,7 +45,7 @@ CITY_EDITOR_PERMS = (
 MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
     'add_city',
     'change_city',
-)
+) + get_perms_from_model_attr('multi_city_editor_permissions')
 
 class Command(BaseCommand):
     help = '''\

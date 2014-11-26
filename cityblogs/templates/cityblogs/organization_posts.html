@@ -1,0 +1,11 @@
+{% if entries %}
+  <div class="panel panel-default">
+    <div class="panel-heading">Related Hive {{ org.city.shortest_name }} Blog Posts</div>
+    <div class="panel-body">
+    {% for entry in entries %}
+      <p><a href="{{ entry.link }}" class="small">{{ entry.title }}</a></p>
+      <p class="text-muted small">{{ entry.published_datetime|date:"F j, o" }}</p>
+    {% endfor %}
+    </div>
+  </div>
+{% endif %}

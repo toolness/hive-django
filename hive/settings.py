@@ -83,6 +83,7 @@ INSTALLED_APPS = (
     'registration',
     'directory',
     'mentoring',
+    'cityblogs',
 ) + EMAIL_BACKEND_INSTALLED_APPS
 
 if MINIGROUP_DIGESTIF_USERPASS or is_running_test_suite():

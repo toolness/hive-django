@@ -1,8 +1,21 @@
 {% extends "base.html" %}
 
+{% load static from staticfiles %}
+
 {% block title %}{{ org.name }}{% endblock %}
 
 {% block content %}
 <h1>{{ org.name }}</h1>
-{% include "directory/organization.html" %}
+<div class="row">
+  <div class="col-sm-9">
+    {% include "directory/organization.html" %}
+  </div>
+  <div class="col-sm-3">
+    <div data-cityblogs-splat-url="{% url 'cityblogs_organization_posts' org.slug %}"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/cityblogs.js' %}"></script>
 {% endblock %}
