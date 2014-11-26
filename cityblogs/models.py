@@ -7,6 +7,8 @@ class CityBlog(models.Model):
     Represents a WordPress blog for a Hive city.
     '''
 
+    multi_city_editor_permissions = ('add', 'change', 'delete')
+
     city = models.OneToOneField(
         City,
         help_text="City the blog is for. Must be a WordPress blog.",
