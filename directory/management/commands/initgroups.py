@@ -54,6 +54,8 @@ class Command(BaseCommand):
 
     def set_perms(self, groupname, codenames):
         self.stdout.write("Setting permissions for group '%s'." % groupname)
+        if self.verbosity >= 2:
+            self.stdout.write("  Permissions: %s" % ', '.join(codenames))
         try:
             group = Group.objects.get(name=groupname)
         except Group.DoesNotExist:
@@ -66,6 +68,7 @@ class Command(BaseCommand):
         group.save()
 
     def handle(self, *args, **kwargs):
+        self.verbosity = int(kwargs['verbosity'])
         self.set_perms('City Editors', CITY_EDITOR_PERMS)
         self.set_perms('Multi-City Editors', MULTI_CITY_EDITOR_PERMS)
         self.stdout.write("Done.")
