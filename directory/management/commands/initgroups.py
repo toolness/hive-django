@@ -14,14 +14,14 @@ CITY_EDITOR_PERMS = (
     'change_organizationmembershiptype',
     'delete_organizationmembershiptype',
     'change_flatpage',
-    'add_cityblog',
-    'change_cityblog',
-    'delete_cityblog',
 )
 
 MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
     'add_city',
     'change_city',
+    'add_cityblog',
+    'change_cityblog',
+    'delete_cityblog',
 )
 
 class Command(BaseCommand):
