@@ -28,24 +28,13 @@ def get_perms_from_model_attr(attr):
     return tuple(perms)
 
 CITY_EDITOR_PERMS = (
-    'add_organization',
-    'change_organization',
     'add_user',
     'change_user',
-    'change_membership',
-    'add_membershiprole',
-    'change_membershiprole',
-    'delete_membershiprole',
-    'add_organizationmembershiptype',
-    'change_organizationmembershiptype',
-    'delete_organizationmembershiptype',
     'change_flatpage',
-)
+) + get_perms_from_model_attr('city_editor_permissions')
 
-MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
-    'add_city',
-    'change_city',
-) + get_perms_from_model_attr('multi_city_editor_permissions')
+MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS \
+  + get_perms_from_model_attr('multi_city_editor_permissions')
 
 class Command(BaseCommand):
     help = '''\

@@ -51,6 +51,8 @@ class City(models.Model):
     Represents a city that a Hive network exists in.
     '''
 
+    multi_city_editor_permissions = ('add', 'change')
+
     HIVE_TYPE_CHOICES = (
         ('emerging', 'Emerging'),
         ('community', 'Community'),
@@ -124,6 +126,8 @@ class OrganizationMembershipType(models.Model):
     "community", or something else.
     '''
 
+    city_editor_permissions = ('add', 'change', 'delete')
+
     name = models.CharField(
         help_text="The name of the organization membership type.",
         max_length=50
@@ -146,6 +150,8 @@ class Organization(models.Model):
     '''
     Represents a Hive organization.
     '''
+
+    city_editor_permissions = ('add', 'change')
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -383,6 +389,8 @@ class MembershipRole(models.Model):
     "funding liason", "activity representative", etc.
     '''
 
+    city_editor_permissions = ('add', 'change', 'delete')
+
     name = models.CharField(
         help_text="The name of the role.",
         max_length=50
@@ -405,6 +413,8 @@ class Membership(models.Model):
     '''
     Represents a person who is a member of an organization.
     '''
+
+    city_editor_permissions = ('change',)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
