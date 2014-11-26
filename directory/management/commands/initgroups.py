@@ -14,6 +14,9 @@ CITY_EDITOR_PERMS = (
     'change_organizationmembershiptype',
     'delete_organizationmembershiptype',
     'change_flatpage',
+    'add_cityblog',
+    'change_cityblog',
+    'delete_cityblog',
 )
 
 MULTI_CITY_EDITOR_PERMS = CITY_EDITOR_PERMS + (
