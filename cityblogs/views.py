@@ -10,6 +10,12 @@ from directory.models import Organization
 CACHE_SECONDS = 60 * 3
 
 def organization_posts(request, organization_slug):
+    '''
+    Return a list of blog posts associated with the given
+    organization. This returns an HTML snippet that should be
+    included asynchronously via ajax.
+    '''
+
     org = get_object_or_404(Organization, slug=organization_slug,
                             is_active=True)
     cityblog = get_object_or_404(CityBlog, city=org.city)
