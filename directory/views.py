@@ -16,7 +16,7 @@ from .models import Organization, Membership, City, is_user_vouched_for, \
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
                    MembershipForm, UserProfileForm, OrganizationForm, \
-                   UserApplicationForm
+                   UserApplicationForm, ChooseOrganizationForm
 
 ORGS_PER_PAGE = 5
 
@@ -230,6 +230,7 @@ def user_apply(request):
 def user_edit(request):
     user = request.user
     membership_form = None
+    choose_org_form = None
     data = None
 
     if request.method == 'POST': data = request.POST
@@ -237,6 +238,16 @@ def user_edit(request):
         membership_form = MembershipForm(data=data,
                                          instance=user.membership,
                                          prefix='membership')
+    else:
+        available_orgs = Organization.objects.possible_affiliations_for(user)
+        if available_orgs.count():
+            choose_org_form = ChooseOrganizationForm(
+                data=data,
+                instance=user.membership,
+                prefix='choose_organization',
+                available_orgs=available_orgs
+            )
+
     user_profile_form = UserProfileForm(data=data,
                                         instance=user,
                                         prefix='user_profile')
@@ -244,7 +255,7 @@ def user_edit(request):
                                          prefix='expertise')
     if request.method == 'POST':
         if validate_and_save_forms(user_profile_form, membership_form,
-                                   expertise_formset):
+                                   choose_org_form, expertise_formset):
             messages.success(request, 'Your profile has been updated.')
             return redirect('user_edit')
         else:
@@ -252,6 +263,7 @@ def user_edit(request):
 
     return render(request, 'directory/user_edit.html', {
         'membership_form': membership_form,
+        'choose_org_form': choose_org_form,
         'user_profile_form': user_profile_form,
         'expertise_formset': expertise_formset,
         'expertise_formset_helper': ExpertiseFormSetHelper()

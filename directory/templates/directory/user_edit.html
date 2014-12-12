@@ -26,6 +26,10 @@
   <p>The following information pertains to your membership in 
     <a href="{% url 'organization_edit' user.membership.organization.slug %}">{{ user.membership.organization.name }}</a>.</p>
   {{ membership_form|crispy }}
+{% elif choose_org_form %}
+  <h2>Membership Information</h3>
+  <p>Please choose your organizational affiliation below.</p>
+  {{ choose_org_form|crispy }}
 {% endif %}
 <h2>Expertise</h2>
 <p>We'd like to make it easy for Hive community members to connect with other people who have skills and expertise they need. So please use the area below to describe how awesome you are.</p>

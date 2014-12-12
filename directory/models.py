@@ -141,6 +141,13 @@ class OrganizationMembershipType(models.Model):
     class Meta:
         ordering = ['name']
 
+class OrganizationManager(models.Manager):
+    def possible_affiliations_for(self, user):
+        if not (user.is_active and user.email and '@' in user.email):
+            return self.none()
+        domain_name = user.email.split('@')[1]
+        return self.filter(email_domain=domain_name)
+
 class Organization(models.Model):
     '''
     Represents a Hive organization.
@@ -215,6 +222,8 @@ class Organization(models.Model):
         related_name='orgs',
         blank=True
     )
+
+    objects = OrganizationManager()
 
     def __unicode__(self):
         return self.name

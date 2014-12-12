@@ -32,6 +32,16 @@ class ChannelFormSetHelper(FormHelper):
     form_tag = False
     template = 'directory/table_inline_formset.html'
 
+class ChooseOrganizationForm(forms.ModelForm):
+    def __init__(self, available_orgs, *args, **kwargs):
+        super(ChooseOrganizationForm, self).__init__(*args, **kwargs)
+        self.fields['organization'].queryset = available_orgs
+        self.fields['organization'].required = True
+
+    class Meta:
+        model = Membership
+        fields = ['organization']
+
 class MembershipForm(forms.ModelForm):
     class Meta:
         model = Membership

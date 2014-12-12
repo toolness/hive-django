@@ -22,10 +22,8 @@ def create_membership_for_user(sender, raw, instance, **kwargs):
 
 @receiver(user_activated)
 def auto_register_user_with_organization(sender, user, request, **kwargs):
-    if not (user.email and '@' in user.email): return
     if user.membership.organization: return
-    domain_name = user.email.split('@')[1]
-    orgs = Organization.objects.filter(email_domain=domain_name)
+    orgs = Organization.objects.possible_affiliations_for(user)
     if orgs.count() != 1: return
     org = orgs[0]
     user.membership.organization = org
