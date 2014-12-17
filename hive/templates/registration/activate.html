@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Activation Failed{% endblock %}
+{% block title %}Invalid Activation Link{% endblock %}
 
 {% block content %}
-Unfortunately, activation failed.
+<h1>Hmm.</h1>
+
+<p>It seems this account activation link is no longer active.</p>
+
+<p>It's possible that your account has already been activated&mdash;perhaps try <a href="{% url 'login' %}">logging in</a> again?</p>
 {% endblock %}
