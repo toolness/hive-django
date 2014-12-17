@@ -1,6 +1,6 @@
 {% if user.is_authenticated and not user.membership.organization %}
 {% if not request.session.submitted_application %}
-  <div class="alert alert-warning">
+  <div class="alert alert-info">
     {% if not user.get_full_name %}
       Please fill out your name and other details in your <a href="{% url 'user_edit' %}">user profile</a>.
     {% else %}
