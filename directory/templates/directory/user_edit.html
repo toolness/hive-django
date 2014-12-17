@@ -6,6 +6,16 @@
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
+
+{% if not user.get_full_name %}
+<div class="jumbotron">
+<h1>Tell us about yourself!</h1>
+<p>Please fill out the form below so others in the Hive community can learn a bit more about you.</p>
+</div>
+{% else %}
+{% include "directory/user_apply_alert.html" %}
+{% endif %}
+
 <form method="post" action="{% url 'user_edit' %}">
 {% csrf_token %}
 <h2>Basic Information</h2>
