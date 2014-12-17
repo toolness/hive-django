@@ -7,5 +7,5 @@
 
 <p>Your account is now active!</p>
 
-<p>You should totally <a href="{% url 'login' %}">log in</a> now.</p>
+<p>You should totally <a href="{% url 'login' %}?next={% url 'user_edit' %}">log in</a> now.</p>
 {% endblock %}

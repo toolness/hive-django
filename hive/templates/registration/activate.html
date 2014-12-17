@@ -7,5 +7,5 @@
 
 <p>It seems this account activation link is no longer active.</p>
 
-<p>It's possible that your account has already been activated&mdash;perhaps try <a href="{% url 'login' %}">logging in</a> again?</p>
+<p>It's possible that your account has already been activated&mdash;perhaps try <a href="{% url 'login' %}?next={% url 'user_edit' %}">logging in</a> again?</p>
 {% endblock %}
