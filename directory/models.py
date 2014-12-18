@@ -338,6 +338,8 @@ class ContentChannel(models.Model):
         ('other', 'Other'),
     )
 
+    city_editor_permissions = ('add', 'change', 'delete')
+
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
