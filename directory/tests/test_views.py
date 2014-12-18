@@ -2,6 +2,7 @@ import json
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core import mail
+from django.core.urlresolvers import reverse
 from registration.models import RegistrationProfile
 
 from .test_multi_city import using_multi_city_site
@@ -121,6 +122,13 @@ class UserDetailTests(WnycTestCase):
         self.login_as_wnyc_member()
         response = self.client.get('/users/wnyc_member/')
         self.assertContains(response, 'member@wnyc.org')
+
+    def test_user_get_absolute_url_is_user_detail_page(self):
+        user = User(username='foo')
+        user.save()
+        url = user.get_absolute_url()
+        self.assertEqual(url, '/users/foo/')
+        self.assertEqual(url, reverse('user_detail', args=('foo',)))
 
 class ActivityTests(WnycTestCase):
     def test_allows_members_to_view(self):

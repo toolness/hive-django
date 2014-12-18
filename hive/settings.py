@@ -207,6 +207,10 @@ LOGGING = {
     }
 }
 
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda u: '/users/%s/' % u.username
+}
+
 if is_running_test_suite():
     PASSWORD_HASHERS = (
         'django.contrib.auth.hashers.MD5PasswordHasher',
