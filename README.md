@@ -15,7 +15,6 @@ source venv/bin/activate
 
 pip install -r requirements.minimal.txt
 python manage.py syncdb --noinput
-python manage.py migrate
 python manage.py initgroups
 python manage.py seeddata
 python manage.py runserver
