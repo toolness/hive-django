@@ -1,6 +1,5 @@
 import StringIO
 import os
-from mock import patch
 from django.test import TestCase
 from django.core.management import call_command
 from django.contrib.auth.models import Group
@@ -11,18 +10,16 @@ path = lambda *x: os.path.join(ROOT, *x)
 class ManagementCommandTests(TestCase):
     def test_seeddata_works_with_password(self):
         output = StringIO.StringIO()
-        with patch('sys.stdout', output):
-            call_command('seeddata', password="LOL")
+        call_command('seeddata', password="LOL", stdout=output)
         self.assertRegexpMatches(output.getvalue(), "password 'LOL'")
 
     def test_seeddata_works_with_no_options(self):
         output = StringIO.StringIO()
-        with patch('sys.stdout', output): call_command('seeddata')
+        call_command('seeddata', stdout=output)
         self.assertRegexpMatches(output.getvalue(), "password 'test'")
 
     def test_initgroups_works(self):
-        output = StringIO.StringIO()
-        with patch('sys.stdout', output): call_command('initgroups')
+        call_command('initgroups', stdout=StringIO.StringIO())
         Group.objects.get(name='City Editors')
         Group.objects.get(name='Multi-City Editors')
 
@@ -32,13 +29,13 @@ class ImportOrgsTests(TestCase):
     def test_importorgs_works(self):
         output = StringIO.StringIO()
         errors = StringIO.StringIO()
-        with patch('sys.stdout', output):
-            with patch('sys.stderr', errors):
-                call_command(
-                    'importorgs',
-                    path('test_management_importorgs.csv'),
-                    city='nyc'
-                )
+        call_command(
+            'importorgs',
+            path('test_management_importorgs.csv'),
+            city='nyc',
+            stdout=output,
+            stderr=errors
+        )
         self.assertEqual(
             output.getvalue(),
             "Importing American Museum of Natural History...\n"

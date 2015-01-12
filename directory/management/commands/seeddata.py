@@ -32,7 +32,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         passwd = options['password']
 
-        call_command('loaddata', 'wnyc.json', 'hivenyc.json', 'amnh.json')
+        call_command('loaddata', 'wnyc.json', 'hivenyc.json', 'amnh.json',
+                     stdout=self.stdout, stderr=self.stderr)
         create_user('admin', password=passwd, email='admin@example.org',
                     is_staff=True, is_superuser=True)
 
