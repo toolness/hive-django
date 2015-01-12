@@ -44,6 +44,7 @@ def home(request):
 @permission_required('directory.add_organization')
 def city_importorgs(request, city):
     if request.method == 'POST':
+        import traceback
         from StringIO import StringIO
         from django.core.management import call_command
 
@@ -54,7 +55,7 @@ def city_importorgs(request, city):
                          stdout=output, stderr=output, verbosity=2,
                          dry_run=True)
         except Exception, e:
-            output.write('FATAL ERROR: %s' % e)
+            traceback.print_exc(10, output)
         return HttpResponse(
             output.getvalue(),
             content_type='text/plain'
