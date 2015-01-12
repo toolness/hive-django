@@ -9,7 +9,8 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from directory.models import Organization, ContentChannel, \
-                             ImportedUserInfo, City, MembershipRole
+                             ImportedUserInfo, City, MembershipRole, \
+                             OrganizationMembershipType
 from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
@@ -233,6 +234,9 @@ class ImportOrgsCommand(BaseCommand):
                 org.full_clean()
                 org.save()
 
+                for cat in parse_tags(info['member-category']):
+                    org.membership_types.add(self.get_org_category(cat))
+
                 channels = []
                 for field in CONTENT_CHANNEL_FIELDS:
                     channels.extend(parse_content_channels(info[field]))
@@ -299,6 +303,16 @@ class ImportOrgsCommand(BaseCommand):
         self.debug('Total twitterers: %d' % total_twitterers)
         self.debug('Total membership roles: %d' % total_membership_roles)
         self.debug('Total phone numbers: %d' % total_phone_numbers)
+
+    def get_org_category(self, tag):
+        results = OrganizationMembershipType.objects.filter(
+            name=tag,
+            city=self.city
+        )
+        if not results:
+            raise Exception('Organization membership type "%s" does '
+                            'not exist' % tag)
+        return results[0]
 
     def get_contact_tag(self, tag):
         results = MembershipRole.objects.filter(name=tag, city=self.city)

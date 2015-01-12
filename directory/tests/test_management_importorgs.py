@@ -3,10 +3,12 @@ import doctest
 import unittest
 import StringIO
 from django.test import TestCase
+from django.contrib.auth.models import User
 from django.core.management import call_command
 
 from directory.management.commands import importorgs
-from directory.models import MembershipRole
+from directory.models import Organization, \
+                             MembershipRole, OrganizationMembershipType
 from .test_views import WnycTestCase
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -32,8 +34,15 @@ class UnitTests(unittest.TestCase):
 
 class ImportOrgsTests(WnycTestCase):
     def test_importorgs_works(self):
+        orgtype = OrganizationMembershipType(
+            name='Ultra Org',
+            city=self.wnyc.city
+        )
+        orgtype.save()
+
         role = MembershipRole(name='Awesome Person', city=self.wnyc.city)
         role.save()
+
         output = StringIO.StringIO()
         errors = StringIO.StringIO()
         call_command(
@@ -50,4 +59,15 @@ class ImportOrgsTests(WnycTestCase):
         self.assertRegexpMatches(
             errors.getvalue(),
             "WARNING: cannot parse contact: u'Lisa Doe"
+        )
+
+        org = Organization.objects.get(
+            slug='american-museum-of-natural-history'
+        )
+        self.assertEqual(list(org.membership_types.all()), [orgtype])
+
+        john = User.objects.get(username='johndoe')
+        self.assertEqual(
+            list(john.membership.roles.all()),
+            [role]
         )
