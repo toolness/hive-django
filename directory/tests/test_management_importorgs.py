@@ -6,6 +6,8 @@ from django.test import TestCase
 from django.core.management import call_command
 
 from directory.management.commands import importorgs
+from directory.models import MembershipRole
+from .test_views import WnycTestCase
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
 path = lambda *x: os.path.join(ROOT, *x)
@@ -28,10 +30,10 @@ class UnitTests(unittest.TestCase):
             tags=['super awesome', 'o yea'],
         ))
 
-class ImportOrgsTests(TestCase):
-    fixtures = ['wnyc.json']
-
+class ImportOrgsTests(WnycTestCase):
     def test_importorgs_works(self):
+        role = MembershipRole(name='Awesome Person', city=self.wnyc.city)
+        role.save()
         output = StringIO.StringIO()
         errors = StringIO.StringIO()
         call_command(

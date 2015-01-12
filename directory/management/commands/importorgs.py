@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from directory.models import Organization, ContentChannel, \
-                             ImportedUserInfo, City
+                             ImportedUserInfo, City, MembershipRole
 from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
@@ -281,6 +281,9 @@ class ImportOrgsCommand(BaseCommand):
                     if 'phone' in contact:
                         membership.phone_number = contact['phone']
                         total_phone_numbers += 1
+                    if 'tags' in contact:
+                        for tag in contact['tags']:
+                            membership.roles.add(self.get_contact_tag(tag))
                     membership.full_clean()
                     membership.save()
                     import_info = ImportedUserInfo(user=user)
@@ -293,6 +296,12 @@ class ImportOrgsCommand(BaseCommand):
         self.debug('Total contacts: %d' % total_contacts)
         self.debug('Total twitterers: %d' % total_twitterers)
         self.debug('Total phone numbers: %d' % total_phone_numbers)
+
+    def get_contact_tag(self, tag):
+        results = MembershipRole.objects.filter(name=tag, city=self.city)
+        if not results:
+            raise Exception('Membership role "%s" does not exist' % tag)
+        return results[0]
 
     def set_city(self, city_slug):
         if not city_slug:
