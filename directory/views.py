@@ -3,7 +3,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseForbidden, \
                         HttpResponseBadRequest
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, \
+                                           user_passes_test, \
+                                           permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
@@ -37,6 +39,30 @@ def home(request):
             'cities': City.objects.all().order_by('name')
         })
     return city_home(request)
+
+@city_scoped
+@permission_required('directory.add_organization')
+def city_importorgs(request, city):
+    if request.method == 'POST':
+        from StringIO import StringIO
+        from django.core.management import call_command
+
+        output = StringIO()
+        try:
+            input = StringIO(request.POST['csv'].encode('utf-8'))
+            call_command('importorgs', fileinput=input, city=city.slug,
+                         stdout=output, stderr=output, verbosity=2,
+                         dry_run=True)
+        except Exception, e:
+            output.write('FATAL ERROR: %s' % e)
+        return HttpResponse(
+            output.getvalue(),
+            content_type='text/plain'
+        )
+    else:
+        return render(request, 'directory/importorgs.html', {
+            'city': city
+        })
 
 @city_scoped
 def city_home(request, city):

@@ -312,7 +312,8 @@ class Command(ImportOrgsCommand):
         return [item.decode('utf-8') for item in row]
 
     def get_rows(self, *args, **options):
-        if len(args) != 1:
+        fileinput = options.get('fileinput')
+        if len(args) != 1 and not fileinput:
             raise CommandError('Please specify a CSV filename.')
-        reader = csv.reader(open(args[0], 'rb'))
+        reader = csv.reader(fileinput or open(args[0], 'rb'))
         return [self.unicode_row(row) for row in reader]
