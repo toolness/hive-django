@@ -17,12 +17,15 @@ def load_tests(loader, tests, ignore):
 class UnitTests(unittest.TestCase):
     def test_parse_contact(self):
         pc = importorgs.parse_contact
-        self.assertEqual(pc('Foo Bar\nCool Person\nfoo@bar.org'), dict(
+        text = ('Foo Bar\nCool Person\nfoo@bar.org\n'
+                'tags: super awesome, o yea')
+        self.assertEqual(pc(text), dict(
             full_name='Foo Bar',
             first_name='Foo',
             last_name='Bar',
             title='Cool Person',
-            email='foo@bar.org'
+            email='foo@bar.org',
+            tags=['super awesome', 'o yea'],
         ))
 
 class ImportOrgsTests(TestCase):

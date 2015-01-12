@@ -72,6 +72,15 @@ def parse_content_channels(s):
         channels.append((url_category, url))
     return channels
 
+def parse_tags(s):
+    '''
+    >>> parse_tags(' hello,  there, human person')
+    ['hello', 'there', 'human person']
+    '''
+
+    s = s.strip()
+    return [tag.strip() for tag in s.split(',')]
+
 def parse_contacts(s, stderr=sys.stderr):
     s = s.strip()
     if not s: return []
@@ -91,6 +100,8 @@ def parse_contact(s, stderr=sys.stderr):
         line = line.strip()
         if '@' in line and not line.startswith('@'):
             result['email'] = line
+        elif line.startswith('tags:'):
+            result['tags'] = parse_tags(line[5:])
         elif line.startswith('@'):
             result['twitter'] = line[1:]
         elif is_phone_number(line):
