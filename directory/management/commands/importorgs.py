@@ -9,7 +9,7 @@ from django.db import transaction
 from django.utils.text import slugify
 
 from directory.models import Organization, ContentChannel, \
-                             ImportedUserInfo
+                             ImportedUserInfo, City
 from directory.phonenumber import is_phone_number
 
 MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
@@ -163,6 +163,10 @@ class ImportOrgsCommand(BaseCommand):
             help='don\'t commit imported data to database',
             action='store_true'
         ),
+        make_option('--city',
+            dest='city',
+            help='city slug to import orgs under',
+        ),
     )
 
     def get_rows(self, *args, **options):
@@ -200,6 +204,7 @@ class ImportOrgsCommand(BaseCommand):
 
                 min_age, max_age = parse_age_range(info['youth-audience'])
                 org = Organization(
+                    city=self.city,
                     name=orgname,
                     slug=slugify(orgname)[:50],
                     hive_member_since=parse_month_and_year(
@@ -278,9 +283,18 @@ class ImportOrgsCommand(BaseCommand):
         self.debug('Total twitterers: %d' % total_twitterers)
         self.debug('Total phone numbers: %d' % total_phone_numbers)
 
+    def set_city(self, city_slug):
+        if not city_slug:
+            raise CommandError('City not provided (use --city option).')
+        cities = City.objects.filter(slug=city_slug)
+        if not cities:
+            raise CommandError('City with slug "%s" not found.' % city_slug)
+        self.city = cities[0]
+
     def handle(self, *args, **options):
         self.verbosity = int(options['verbosity'])
         self.latest_row = None
+        self.set_city(options['city'])
         rows = self.get_rows(*args, **options)
 
         try:
