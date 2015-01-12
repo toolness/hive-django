@@ -308,8 +308,11 @@ class Command(ImportOrgsCommand):
     help = 'Import organizations and users from a CSV file.'
     args = '<filename>'
 
+    def unicode_row(self, row):
+        return [item.decode('utf-8') for item in row]
+
     def get_rows(self, *args, **options):
         if len(args) != 1:
             raise CommandError('Please specify a CSV filename.')
         reader = csv.reader(open(args[0], 'rb'))
-        return [row for row in reader]
+        return [self.unicode_row(row) for row in reader]
