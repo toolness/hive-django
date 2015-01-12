@@ -191,6 +191,7 @@ class ImportOrgsCommand(BaseCommand):
             self.stdout.write(msg)
 
     def import_rows(self, rows):
+        total_membership_roles = 0
         total_twitterers = 0
         total_phone_numbers = 0
         total_contacts = 0
@@ -283,6 +284,7 @@ class ImportOrgsCommand(BaseCommand):
                         total_phone_numbers += 1
                     if 'tags' in contact:
                         for tag in contact['tags']:
+                            total_membership_roles += 1
                             membership.roles.add(self.get_contact_tag(tag))
                     membership.full_clean()
                     membership.save()
@@ -295,6 +297,7 @@ class ImportOrgsCommand(BaseCommand):
         self.debug('Total orgs: %d' % len(orginfos))
         self.debug('Total contacts: %d' % total_contacts)
         self.debug('Total twitterers: %d' % total_twitterers)
+        self.debug('Total membership roles: %d' % total_membership_roles)
         self.debug('Total phone numbers: %d' % total_phone_numbers)
 
     def get_contact_tag(self, tag):
