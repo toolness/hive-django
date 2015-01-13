@@ -22,8 +22,22 @@
   </h1>
   <form method="get" action="{% city_url 'search' %}">
     <input class="form-control" placeholder="Search for organizations {% if show_privileged_info %}and people {% endif %}here" data-find-url="{% city_url 'find_json' %}" name="query">
-  </form>
+  </form>  
 </div>
+
+{% if user.is_staff %}
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    <span class="glyphicon glyphicon-wrench"></span>
+    <span class="sr-only">Tools</span> <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    <li><a href="{% city_url 'importorgs' %}">Organization Import Simulator&hellip;</a></li>
+    <li><a href="{% city_url 'widgets' %}">Embeddable Widgets&hellip;</a></li>
+  </ul>
+</div>
+{% endif %}
+
 {% for org in orgs %}
   <h2><a href="{{ org.get_absolute_url }}" class="nondescript-link">{{ org.name }}</a></h2>
   {% include "directory/organization.html" %}

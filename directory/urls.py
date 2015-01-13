@@ -13,7 +13,7 @@ def city_scoped_directory_patterns(is_multi_city_site):
         url(r'^activity/$', views.city_activity, name=prefix + 'activity'),
         url(r'^importorgs/$', views.city_importorgs,
             name=prefix + 'importorgs'),
-        url(r'^widgets/$', views.city_widgets),
+        url(r'^widgets/$', views.city_widgets, name=prefix + 'widgets'),
         url(r'^widgets/members/$', views.city_members_widget,
             name=prefix + 'members_widget'),
         url(r'^widgets/members.js$', views.city_members_widget_js,
