@@ -4,7 +4,7 @@
 psycopg2==2.5.2
 
 # Required for importing data from Google spreadsheets.
-gspread==0.1.0
+gspread==0.2.2
 
 # Required for using Mandrill as an email backend.
 djrill==1.2.0
