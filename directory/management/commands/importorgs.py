@@ -221,7 +221,7 @@ class ImportOrgsCommand(BaseCommand):
                     name=orgname,
                     slug=slugify(orgname)[:50],
                     hive_member_since=parse_month_and_year(
-                        info['hive-nyc-member-since']
+                        info['hive-member-since']
                     ),
                     mission=info['organizational-mission'],
                     website=normalize_url(info['url']),
