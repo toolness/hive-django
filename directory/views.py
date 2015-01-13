@@ -43,11 +43,16 @@ def home(request):
 @city_scoped
 @permission_required('directory.add_organization')
 def city_importorgs(request, city):
-    if request.method == 'POST':
-        import traceback
-        from StringIO import StringIO
-        from django.core.management import call_command
+    import os
+    import base64
+    import traceback
+    from StringIO import StringIO
+    from django.core.management import call_command
 
+    ROOT = os.path.abspath(os.path.dirname(__file__))
+    path = lambda *x: os.path.join(ROOT, *x)
+
+    if request.method == 'POST':
         output = StringIO()
         try:
             input = StringIO(request.POST['csv'].encode('utf-8'))
@@ -61,7 +66,11 @@ def city_importorgs(request, city):
             content_type='text/plain'
         )
     else:
+        csv_url = 'data:text/csv;charset=UTF-8;base64,%s' % base64.b64encode(
+            open(path('tests', 'test_management_importorgs.csv'), 'rb').read()
+        )
         return render(request, 'directory/importorgs.html', {
+            'csv_url': csv_url,
             'city': city
         })
 
