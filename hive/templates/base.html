@@ -40,6 +40,9 @@
               <li><a href="{% url 'admin:index' %}">Site Administration</a></li>
               {% endif %}
               <li><a href="{% url 'user_edit' %}">Edit Profile</a></li>
+              {% if user.membership.organization %}
+              <li><a href="{% url 'organization_edit' organization_slug=user.membership.organization.slug %}">Edit Organization Profile</a></li>
+              {% endif %}
               {% if request.session.user_switched_from %}
               <li><a href="#" data-submit-form-onclick>
                 <form method="post" action="{% url 'switch_user_back' %}">
