@@ -66,10 +66,14 @@ def city_importorgs(request, city):
             content_type='text/plain'
         )
     else:
+        py_url = 'data:text/plain;charset=UTF-8;base64,%s' % base64.b64encode(
+            open(path('management', 'commands', 'importorgs.py'), 'rb').read()
+        )
         csv_url = 'data:text/csv;charset=UTF-8;base64,%s' % base64.b64encode(
             open(path('tests', 'test_management_importorgs.csv'), 'rb').read()
         )
         return render(request, 'directory/importorgs.html', {
+            'py_url': py_url,
             'csv_url': csv_url,
             'city': city
         })
