@@ -1,5 +1,14 @@
 [
 {
+  "pk": 1, 
+  "model": "directory.organizationmembershiptype", 
+  "fields": {
+    "name": "Awesome",
+    "description": "Awesome organizations are the best possible sort.",
+    "city": 1
+  }
+},
+{
   "pk": 3, 
   "model": "directory.organization", 
   "fields": {
@@ -13,6 +22,7 @@
     "slug": "amnh",
     "email_domain": "amnh.org",
     "name": "American Museum of Natural History",
+    "membership_types": [1],
     "city": 1
   }
 },

@@ -65,6 +65,13 @@ class ImportOrgsTests(WnycTestCase):
         response = self.client.get('/importorgs/')
         self.assertEqual(response.status_code, 200)
 
+class OrganizationMembershipTypeTests(WnycAndAmnhTestCase):
+    def test_contains_orgs_with_type(self):
+        response = self.client.get('/orgtypes/1/')
+        self.assertContains(response, 'Awesome', status_code=200)
+        self.assertContains(response, 'amnh')
+        self.assertNotContains(response, 'wnyc')
+
 class SearchTests(WnycTestCase):
     def query(self, query, ignore_last_result=True):
         return self.client.get('/search/', {'query': query})
