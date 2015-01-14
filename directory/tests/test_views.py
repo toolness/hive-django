@@ -52,6 +52,11 @@ class WnycAndAmnhTestCase(WnycTestCase):
                     password='lol', organization=self.amnh)
 
 class ImportOrgsTests(WnycTestCase):
+    def give_perm_to_wnyc_user_and_login(self):
+        perm = Permission.objects.get(codename='add_organization')
+        self.wnyc_member.user_permissions.add(perm)
+        self.login_as_wnyc_member()
+
     def test_users_without_permission_are_denied(self):
         self.login_as_non_member()
         self.assertRedirectToLogin('/importorgs/')
@@ -59,11 +64,14 @@ class ImportOrgsTests(WnycTestCase):
         self.assertRedirectToLogin('/importorgs/')
 
     def test_users_with_permission_are_allowed(self):
-        perm = Permission.objects.get(codename='add_organization')
-        self.wnyc_member.user_permissions.add(perm)
-        self.login_as_wnyc_member()
+        self.give_perm_to_wnyc_user_and_login()
         response = self.client.get('/importorgs/')
         self.assertEqual(response.status_code, 200)
+
+    def test_dry_run_is_used(self):
+        self.give_perm_to_wnyc_user_and_login()
+        response = self.client.post('/importorgs/', {'csv': ''})
+        self.assertContains(response, "Dry run complete.", status_code=200)
 
 class OrganizationMembershipTypeTests(WnycAndAmnhTestCase):
     def test_contains_orgs_with_type(self):
