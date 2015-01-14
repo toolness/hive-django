@@ -13,7 +13,7 @@
 <p><small>
   Hive {{ org.city.shortest_name }} member since {{ org.hive_member_since|date:"F Y" }}
   {% for membership_type in org.membership_types.all %}
-    <span class="label label-default" title="{{ membership_type.description }}">{{ membership_type.name }}</span>
+    <span class="label label-default" title="{{ membership_type.description }}"><a href="{% url 'organization_membership_type' id=membership_type.id %}">{{ membership_type.name }}</a></span>
   {% endfor %}
 </small></p>
 {% endif %}

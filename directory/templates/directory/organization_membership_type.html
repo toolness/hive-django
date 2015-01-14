@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Organization Type: {{ orgtype.name }}{% endblock %}
+
+{% block content %}
+<h1><span class="text-muted">Organization Type:</span> {{ orgtype.name }}</h1>
+{% if orgtype.city.should_be_mentioned %}
+<p><small>Hive {{ orgtype.city.name }}</small></p>
+{% endif %}
+<p>{{ orgtype.description }}</p>
+<p>The following organizations in Hive {{ orgtype.city.shortest_name }} have this classification:</p>
+<ul class="list-unstyled">
+  {% for org in orgtype.orgs.all_active %}
+    <li><a href="{{ org.get_absolute_url }}">{{ org.name }}</a></li>
+  {% empty %}
+    <li><em>No organizations found.</em></li>
+  {% endfor %}
+</ul>
+{% endblock %}

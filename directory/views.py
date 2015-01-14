@@ -14,7 +14,8 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from .multi_city import city_scoped, city_reverse, is_multi_city
 from .models import Organization, Membership, City, is_user_vouched_for, \
-                    is_user_privileged, get_current_city
+                    is_user_privileged, get_current_city, \
+                    OrganizationMembershipType
 from .forms import ExpertiseFormSet, ExpertiseFormSetHelper, \
                    ContentChannelFormSet, ChannelFormSetHelper, \
                    MembershipForm, UserProfileForm, OrganizationForm, \
@@ -235,6 +236,12 @@ def organization_edit(request, organization_slug):
         'form': form,
         'channel_formset': channel_formset,
         'channel_formset_helper': channel_formset_helper
+    })
+
+def organization_membership_type(request, id):
+    orgtype = get_object_or_404(OrganizationMembershipType, id=id)
+    return render(request, 'directory/organization_membership_type.html', {
+        'orgtype': orgtype
     })
 
 @user_passes_test(is_user_privileged)

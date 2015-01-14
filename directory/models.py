@@ -138,10 +138,19 @@ class OrganizationMembershipType(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('organization_membership_type',
+                       args=(str(self.id),))
+
     class Meta:
         ordering = ['name']
 
 class OrganizationManager(models.Manager):
+    use_for_related_fields = True
+
+    def all_active(self):
+        return self.filter(is_active=True)
+
     def possible_affiliations_for(self, user):
         if not (user.is_active and user.email and '@' in user.email):
             return self.none()

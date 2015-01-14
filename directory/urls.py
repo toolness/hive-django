@@ -26,7 +26,9 @@ urlpatterns = patterns('',
         views.organization_detail, name='organization_detail'),
     url(r'^orgs/(?P<organization_slug>[A-Za-z0-9_\-]+)/edit/$',
         views.organization_edit, name='organization_edit'),
-
+    url(r'^orgtypes/(?P<id>[0-9]+)/$',
+        views.organization_membership_type,
+        name='organization_membership_type'),
     # Note that this happens to be in sync with the default
     # get_absolute_url() on the User model. If this URL changes,
     # we should set settings.ABSOLUTE_URL_OVERRIDES as per

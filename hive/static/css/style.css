@@ -79,3 +79,7 @@ img.user-detail-gravatar {
     columns: 2;
   }
 }
+
+.label.label-default a {
+  color: inherit;
+}

@@ -9,7 +9,7 @@
   <li>
     <a href="{% url 'organization_detail' org.slug %}" target="_blank">{{ org.name }}</a>
     {% for membership_type in org.membership_types.all %}
-      <small><span class="label label-default" title="{{ membership_type.description }}">{{ membership_type.name }}</span></small>
+      <small><span class="label label-default" title="{{ membership_type.description }}"><a href="{% url 'organization_membership_type' id=membership_type.id %}" target="_blank">{{ membership_type.name }}</a></span></small>
     {% endfor %}
   </li>
 {% endfor %}
