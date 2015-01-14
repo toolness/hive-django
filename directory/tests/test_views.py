@@ -1,6 +1,6 @@
 import json
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.core import mail
 from django.core.urlresolvers import reverse
 from registration.models import RegistrationProfile
@@ -20,10 +20,13 @@ class WnycTestCase(TestCase):
     def login_as_wnyc_member(self):
         self.client.login(username='wnyc_member', password='lol')
 
-    def assertNonMembersAreDenied(self, url):
-        self.login_as_non_member()
+    def assertRedirectToLogin(self, url):
         response = self.client.get(url, follow=True)
         self.assertRedirects(response, '/accounts/login/?next=' + url)
+
+    def assertNonMembersAreDenied(self, url):
+        self.login_as_non_member()
+        self.assertRedirectToLogin(url)
 
     def setUp(self):
         super(WnycTestCase, self).setUp()
@@ -47,6 +50,20 @@ class WnycAndAmnhTestCase(WnycTestCase):
         self.amnh = get_org('amnh')
         create_user('amnh_member', email='member@amnh.org',
                     password='lol', organization=self.amnh)
+
+class ImportOrgsTests(WnycTestCase):
+    def test_users_without_permission_are_denied(self):
+        self.login_as_non_member()
+        self.assertRedirectToLogin('/importorgs/')
+        self.login_as_wnyc_member()
+        self.assertRedirectToLogin('/importorgs/')
+
+    def test_users_with_permission_are_allowed(self):
+        perm = Permission.objects.get(codename='add_organization')
+        self.wnyc_member.user_permissions.add(perm)
+        self.login_as_wnyc_member()
+        response = self.client.get('/importorgs/')
+        self.assertEqual(response.status_code, 200)
 
 class SearchTests(WnycTestCase):
     def query(self, query, ignore_last_result=True):
